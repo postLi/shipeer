@@ -15,6 +15,6 @@ export default {
   @import "./style/main.css";
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-
+  height: 100%;
 }
 </style>

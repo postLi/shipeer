@@ -1,0 +1,17 @@
+<template>
+    <div class="header">
+
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "header"
+    }
+</script>
+
+<style scoped lang="scss" type="text/css">
+  .header{
+    height: 54px;
+  }
+</style>
