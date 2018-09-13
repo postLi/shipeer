@@ -21,9 +21,14 @@
         <el-form class="centent-form">
           <h3>企业用户登录</h3>
           <div class="form-tab">
-            <span>验证码登录 &nbsp;|</span>
-            <span>账户登录</span>
+            <span class="tabVer">验证码登录 &nbsp;|</span>
+            <span class="tabLogin">账户登录</span>
           </div>
+          <el-form-item class="">
+            <el-input placeholder="请输入手机号码">
+
+            </el-input>
+          </el-form-item>
           <el-form-item class="">
             <el-input>
               <template slot="append">2123</template>
@@ -143,6 +148,18 @@
             color: #333;
             margin: 36px auto 30px;
             text-align: center;
+          }
+          .form-tab{
+            text-align: center;
+            color: #333333;
+            font-size: 14px;
+            padding-bottom: 10px;
+            span:first-of-type{
+
+            }
+            span:last-of-type{
+
+            }
           }
           .el-form-item {
             border-radius: 2px;
