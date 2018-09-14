@@ -21,8 +21,8 @@
         <el-form class="centent-form">
           <h3>企业用户登录</h3>
           <div class="form-tab">
-            <span class="tabVer">验证码登录 &nbsp;|</span>
-            <span class="tabLogin">账户登录</span>
+            <span class="tabVer">账户登录  &nbsp;|</span>
+            <span class="tabLogin">验证码登录</span>
           </div>
           <el-form-item class="">
             <el-input placeholder="请输入手机号码">
@@ -55,7 +55,7 @@
 
 <script>
   export default {
-    name: "index"
+    
   }
 </script>
 
