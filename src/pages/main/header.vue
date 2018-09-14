@@ -1,6 +1,17 @@
 <template>
-    <div class="header">
-
+    <div class="header flex_r">
+      <div class="header-left flex">
+        <img src="../../assets/jiank_logo.png" alt="">
+      </div>
+      <div class="header-right flex_ce flex_1">
+        <div class="header-right-context flex_a height_100">
+          <div class="font">手机版</div>
+          <div class="divide"></div>
+          <div class="font">客服电话：400-189-2856</div>
+          <div class="divide"></div>
+          <div class="font">张三丰</div>
+        </div>
+      </div>
     </div>
 </template>
 
@@ -10,8 +21,34 @@
     }
 </script>
 
-<style scoped lang="scss" type="text/css">
+<style scoped lang="scss">
   .header{
     height: 54px;
+    .header-left{
+      width: 190px;
+      height: 100%;
+      background-color: #2fb301;
+    }
+    .header-right{
+      box-shadow: 2px -2px 2px 1px;
+      .header-right-context{
+        margin-right: 40px;
+
+      }
+    }
+  }
+
+  .divide{
+    width: 1px;
+    height: 32px;
+    background-color: #c6c8ce;
+    margin: 0 29px;
+  }
+  .font{
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0;
+    color: #333333;
   }
 </style>
