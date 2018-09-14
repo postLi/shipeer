@@ -2,9 +2,9 @@
   <div class="login-con-lll">
     <div class="login-top">
       <div class="top-wrapper clearfix">
-        <img src="../../assets/login/lll01-ky.png" alt="">
+        <img src="static/lll01-ky.png" alt="">
         <div class="top-telphone">
-          <span>合作热线：</span><span>400-890-3558</span>
+          <span>合作热线：</span><span>400-888-2856</span>
         </div>
       </div>
 
@@ -26,15 +26,14 @@
             <span @click="tabId=0" :class="[tabId === 0 ? 'activet' : 'unatctiv']" >账户登录 </span>|
             <span @click="tabId=1" :class="[tabId === 1 ? 'activet' : 'unatctiv']">验证码登录</span>
           </div>
-          <el-form class="tab-loginClass" v-show="tabId===0">
+          <el-form class="tab-loginClass" v-show="tabId===0" :model="userData" :rules="userRules" ref="userLogin">
             <el-form-item class="">
-              <el-input placeholder="请输入手机号码"  prefix-icon="el-icon-mobile-phone
-">
+              <el-input placeholder="请输入手机号码"  prefix-icon="el-icon-mobile-phone" v-model="userData.userPhone">
 
               </el-input>
             </el-form-item>
             <el-form-item class="">
-              <el-input placeholder="请输入密码"  prefix-icon="el-icon-goods">
+              <el-input placeholder="请输入密码" type="password"  prefix-icon="el-icon-goods" v-model="userData.userPassword" maxlength="6">
 
               </el-input>
             </el-form-item>
@@ -45,20 +44,19 @@
             </el-form-item>
 
           </el-form>
-          <el-form class="tab-verClass" v-show="tabId===1">
-            <el-form-item class="">
-              <el-input placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone
-">
+          <el-form class="tab-verClass" v-show="tabId===1" :model="verData" :rules="verRules" ref="verLogin">
+            <el-form-item class="" >
+              <el-input placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone" v-model="verData.verPhone">
               </el-input>
             </el-form-item>
 
             <el-form-item class="">
-              <el-input placeholder="请输入图形验证码">
+              <el-input placeholder="请输入图形验证码" v-model="verData.verGra">
                 <template slot="append">67890</template>
               </el-input>
             </el-form-item>
             <el-form-item class="">
-              <el-input  placeholder="请输入短信验证码">
+              <el-input  placeholder="请输入短信验证码" v-model="verData.verNote">
                 <template slot="append">获取验证码</template>
               </el-input>
             </el-form-item>
@@ -86,10 +84,36 @@
 </template>
 
 <script>
+  import {REGEX} from '../../utils/valiRegex'
   export default {
     data(){
       return {
-        tabId:0
+        tabId:0,
+        userData:{
+          userPhone:'',
+          userPassword:'',
+        },
+        verData:{
+          verPhone:'',
+          verGra:'',
+          verNote:''
+        },
+        userRules:{
+          userPassword:[
+            {required: true,message:"密码不能为空"}
+          ],
+          userPhone:[
+            {required: true,message:"请输入正确手机号码",pattern: REGEX.MOBILE}
+          ]
+        },
+        verRules:{
+          userPassword:[
+            {required: true,message:"密码不能为空"}
+          ],
+          verPhone:[
+            {required: true,message:"请输入正确手机号码",pattern: REGEX.MOBILE}
+          ]
+        }
       }
     },
     mounted(){
@@ -97,7 +121,19 @@
     },
     methods:{
       subLogin(){
-        this.$message('登录功能暂未开放');
+        // this.$refs['userLogin'].validate(valid => {
+        //   if(valid){
+        //     console.log(valid);
+        //     this.$refs['verLogin'].validate(valid => {
+        //       if(valid){
+        //         this.$message('登录功能暂未开放');
+        //       }
+        //     })
+        //   }else{
+        //
+        //   }
+        // })
+
       }
     }
   }
@@ -113,7 +149,8 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    overflow: auto;
+    overflow: hidden;
+    min-width: 1230px;
     .login-top{
       background-color:#000;
       opacity: 0.5;
@@ -122,12 +159,14 @@
       z-index: 2;
       width: 100%;
       padding: 20px 0 20px 70px;
+
       .top-wrapper{
         max-width: 1230px;
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         position: relative;
+        min-width: 600px;
         img{
           height: 35px;
           margin: 10px auto;
@@ -139,6 +178,7 @@
           display: inline-block;
           float: right;
           color: #fff;
+
           span:first-of-type{
             font-size: 30px;
           }
