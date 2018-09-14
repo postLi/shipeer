@@ -2,25 +2,25 @@
 <template>
 
   <div>
-    <div v-for='(item,index) in data' style="line-height: 44px;">
-      <div v-if="count === 0 " class="tree-node0 flex_a border0">
+    <div v-for='(item,index) in data' style="line-height: 50px;">
+      <div v-if="count === 0 " class=" flex_a border0" style="height: 50px;position: relative">
 
         <!--<i  class="iconfont icon-yingyong margin_r_10" v-if="item.id === 228" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
         <!--<i  class="iconfont icon-qiaquan margin_r_10" v-if="item.id === 315" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
-        <div style="white-space: nowrap;">
+        <div class="tree-node0 flex_a" style="white-space: nowrap;height: 40px">
           <span @click="test(item)" class="pointer el-tree-node__label" >
-           <span :style="{'color':(item.selected)? '#ffffff' : 'rgb(255, 255, 255,0.65)'}">{{item.name}}</span>
+           <span :style="{'color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgba(255, 255, 255,0.65)'}">{{item.name}}</span>
         </span>
         </div>
         <span @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length !== 0'
-              :style="{transform:(item.show)?'rotate(270deg)':'rotate(90deg)','color':(item.selected)? '#ffffff' : 'rgb(255, 255, 255,0.65)'}"
+              :style="{transform:(item.show)?'rotate(270deg)':'rotate(90deg)','color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgb(255, 255, 255,0.65)'}"
               class="el-tree-node__expand-icon el-icon-arrow-left triangle0"></span>
       </div>
 
-      <div v-if="count !== 0" class="tree-node flex_a border1" :style="{'padding-left':  count *  30  + 'px','background-color':(item.selected )? '#2fb301' : ''}">
-        <div class="tree_item">
+      <div v-if="count !== 0" class=" flex_a border1" style="height: 50px">
+        <div class="tree_item flex_a" style="height: 40px" :style="{'padding-left':  count *  30  + 'px','background-color':(item.selected )? '#2fb301' : ''}">
           <span @click="test(item)" class="pointer el-tree-node__label" >
-            <span :style="{'color':(item.selected )? '#ffffff' : 'rgb(255, 255, 255,0.65)'}">{{item.name}}</span>
+            <span :style="{'color':(item.selected )? '#ffffff' : 'rgba(255, 255, 255,0.65)'}">{{item.name}}</span>
         </span>
         </div>
 
@@ -144,14 +144,11 @@
   }
   .tree-node0 {
     padding: 0 20px;
-    position: relative;
-  }
-  .tree-node {
-    padding: 0 60px;
+    /*position: relative;*/
   }
   .tree_item{
-    width: 112px;
-    margin-right: 40px;
+    width: 100%;
+    /*margin-right: 40px;*/
     white-space: nowrap;
   }
   .border0:hover{
@@ -161,17 +158,12 @@
   /*.border1:hover{*/
     /*background-color: #2fb301;*/
   /*}*/
-  .tree-node:hover {
-    /*background: #48576a;*/
-  }
 
   .triangle0{
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     left: 165px;
-    top: calc(22px - 8px);
+    top: calc(22px - 3px);
   }
-  .triangle{
-    font-size: 16px;
-  }
+
 </style>
