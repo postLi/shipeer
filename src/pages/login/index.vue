@@ -21,32 +21,64 @@
         <el-form class="centent-form">
           <h3>企业用户登录</h3>
           <div class="form-tab">
-            <span class="tabVer">账户登录  &nbsp;|</span>
-            <span class="tabLogin">验证码登录</span>
+            <!--class="tabLogin"-->
+            <!--class="tabVer"-->
+            <span @click="tabId=0" :class="[tabId === 0 ? 'activet' : 'unatctiv']" >账户登录 </span>|
+            <span @click="tabId=1" :class="[tabId === 1 ? 'activet' : 'unatctiv']">验证码登录</span>
           </div>
-          <el-form-item class="">
-            <el-input placeholder="请输入手机号码">
+          <el-form class="tab-loginClass" v-show="tabId===0">
+            <el-form-item class="">
+              <el-input placeholder="请输入手机号码"  prefix-icon="el-icon-mobile-phone
+">
 
-            </el-input>
-          </el-form-item>
-          <el-form-item class="">
-            <el-input>
-              <template slot="append">2123</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item class="">
-            <el-input>
-              <template slot="append">获取验证码</template>
-            </el-input>
-          </el-form-item>
+              </el-input>
+            </el-form-item>
+            <el-form-item class="">
+              <el-input placeholder="请输入密码"  prefix-icon="el-icon-goods">
+
+              </el-input>
+            </el-form-item>
+            <el-form-item class="">
+              <el-input placeholder="请输入图形验证码">
+                <template slot="append">12345</template>
+              </el-input>
+            </el-form-item>
+
+          </el-form>
+          <el-form class="tab-verClass" v-show="tabId===1">
+            <el-form-item class="">
+              <el-input placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone
+">
+              </el-input>
+            </el-form-item>
+
+            <el-form-item class="">
+              <el-input placeholder="请输入图形验证码">
+                <template slot="append">67890</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item class="">
+              <el-input  placeholder="请输入短信验证码">
+                <template slot="append">获取验证码</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <div class='login-rember'>
+            <ul>
+              <li>
+                <img src="../../assets/login/wechat.png" alt="">
+               微信登录</li>
+              <li> 注册 </li>
+
+              <li v-show="tabId===0">忘记密码 <span>|</span></li>
+
+            </ul>
+          </div>
           <div class="login-btn">
-            <el-button type="success">登录</el-button>
+            <el-button type="success" @click="subLogin">登录</el-button>
           </div>
         </el-form>
-        <div class='login-rember'>
-          <span>忘记密码</span>
-          <span>立即注册</span>
-        </div>
+
       </div>
 
     </div>
@@ -55,11 +87,24 @@
 
 <script>
   export default {
-    
+    data(){
+      return {
+        tabId:0
+      }
+    },
+    mounted(){
+
+    },
+    methods:{
+      subLogin(){
+        this.$message('登录功能暂未开放');
+      }
+    }
   }
 </script>
 
 <style lang="scss">
+  ul,li{ padding:0;margin:0;list-style:none}
   .login-con-lll {
     position: relative;
     height: 100%;
@@ -119,14 +164,15 @@
         .left-word{
           color: #fff;
           span:first-of-type{
-            margin-top: 20px;
+            margin: 20px 0 12px;
             display: block;
             font-size: 30px ;
+            letter-spacing: 4px;
           }
           span:last-of-type{
             font-size: 25px ;
-            padding-top: 10px;
             color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
           }
         }
       }
@@ -138,46 +184,95 @@
           width: 100%;
           display: inline-block;
           padding: 0 25px 23px;
-          background: #fff;
-          border: 1px solid #13407c;
+          background: rgba(255,255,255,.9);
+          /*border: 1px solid #13407c;*/
           /*border-radius: 5px;*/
           /*border-radius: 10px;*/
           transition: .5s;
           h3{
-            font-size: 16px;
+            font-size: 18px;
             color: #333;
-            margin: 36px auto 30px;
+            margin: 24px auto 30px;
             text-align: center;
           }
           .form-tab{
             text-align: center;
-            color: #333333;
+            color:#333;
             font-size: 14px;
-            padding-bottom: 10px;
+            padding-bottom: 25px;
             span:first-of-type{
-
+              margin-right: 30px;
             }
             span:last-of-type{
-
+              margin-left: 30px;
+              /*color: skyblue;*/
+              /*padding-left: 60px;*/
+            }
+            .tabLogin{
+              color: red;
+            }
+            .activet{
+              color: #1890ff;
+              border-bottom: 1px solid #1890ff;
+            }
+            .unatctiv{
+              /*color:red;*/
             }
           }
           .el-form-item {
-            border-radius: 2px;
-            border: 1px solid #ccc;
-            background: skyblue;
-            color: #454545;
+            /*border-radius: 2px;*/
+            color: #9b9b9b;
             margin-bottom: 20px!important;
+            .el-input__inner{
+
+              border-top: 2px solid #ccc;
+              border-right: 1px solid #ccc;
+              border-bottom: 1px solid #ccc;
+              border-left: 1px solid #ccc;
+            }
           }
           .login-btn{
             margin-top: 42px;
-            margin-bottom: 20px;
+            padding: 20px 0;
             height: 40px;
+            .el-button{
+              width: 100%;
+            }
+          }
+          .login-rember{
+
+            ul{
+
+              li:first-of-type{
+                float: left;
+                cursor: pointer;
+              }
+              li:nth-of-type(3),li:nth-of-type(2){
+                float: right;
+                color: #1890ff;
+                cursor: pointer;
+              }
+              li:nth-of-type(2){
+                padding-left: 10px;
+              }
+              li:nth-of-type(3){
+                padding-right: 20px;
+                span{
+                  padding-left: 20px;
+                }
+              }
+            }
+            font-size: 14px;
+            color: #333;
+            margin-top: 20px;
+          }
+          .tab-loginClass{
+
           }
         }
-        .login-rember{
-          font-size: 14px;
-          color: #fff;
-          margin-top: 20px;
+        .centent-form:hover{
+          transform: 2s;
+          box-shadow: 0 1px 30px rgba(0,0,0,.3);
         }
 
       }
