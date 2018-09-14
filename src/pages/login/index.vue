@@ -2,7 +2,7 @@
   <div class="login-con-lll">
     <div class="login-top">
       <div class="top-wrapper clearfix">
-        <img src="static/lll01-ky.png" alt="">
+        <img src="../../assets/login/lll01-ky.png" alt="">
         <div class="top-telphone">
           <span>合作热线：</span><span>400-888-2856</span>
         </div>
@@ -121,6 +121,19 @@
     },
     methods:{
       subLogin(){
+
+        let formData = new FormData();
+        formData.append('grant_type','password');
+        this.formData.userPhone = this.formData.userPhone + '|aflc-2'
+        formData.append('username',this.formData.userPhone);
+        formData.append('password',this.formData.userPassword);
+
+
+
+        this.$http.post(`/uaa/oauth/token`, formData).then(res => {
+        console.log(res)
+        })
+
         // this.$refs['userLogin'].validate(valid => {
         //   if(valid){
         //     console.log(valid);

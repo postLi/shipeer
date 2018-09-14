@@ -11,6 +11,9 @@ Vue.use(Vuex);
 Vue.use(ElementUI);
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
+const url = 'http://192.168.1.78:7010';
+
+Axios.defaults.baseURL = url ;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
