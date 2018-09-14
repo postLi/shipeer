@@ -1,10 +1,8 @@
 <template>
   <div id="main">
     <header-nav></header-nav>
-    <div>
-      <div style="width: 268px">
-        <left-nav></left-nav>
-      </div>
+    <div class="flex_r h">
+      <left-nav></left-nav>
       <div >
         <router-view></router-view>
       </div>
@@ -48,6 +46,11 @@
 
 
 <style scoped >
-
+ #main{
+   height: 100%;
+ }
+  .h{
+    height: calc(100% - 54px);
+  }
 </style>
 
