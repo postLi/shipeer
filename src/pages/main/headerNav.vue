@@ -1,11 +1,14 @@
 <template>
     <div class="header flex_r">
       <div class="header-left flex">
-        <img src="../../assets/jiank_logo.png" alt="">
+        <img src="../../assets/main/jiank_logo.png" alt="">
       </div>
       <div class="header-right flex_ce flex_1">
         <div class="header-right-context flex_a height_100">
-          <div class="font">手机版</div>
+          <div class=" flex_a">
+            <img src="../../assets/main/nav_phone.png" alt="">
+            <span class="font margin_l_10">手机版</span>
+            </div>
           <div class="divide"></div>
           <div class="font">客服电话：400-189-2856</div>
           <div class="divide"></div>

@@ -57,7 +57,7 @@
       data() {
         return {
           leftData:[
-            {name: "在线下单", id: 1,  router: "/main",children: [],selected:false},
+            {name: "在线下单", id: 1,  router: "/order",children: [],selected:false},
             {name: "订单管理", id: 2,  router: "/",children: [],selected:false},
             {name: "地址管理", id: 3,  router: "/main",children: [
                 {name: "常用地址", id: 4,  router: "/main",children: [],selected:false},
