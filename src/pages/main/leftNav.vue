@@ -81,7 +81,7 @@
 
 <style scoped lang="scss">
   .left-body{
-    width: 190px;
+    min-width: 190px;
     background-color: #2a2a2a;
   }
 </style>

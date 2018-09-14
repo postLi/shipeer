@@ -37,3 +37,10 @@
 .pointer{cursor: pointer;}
 .b_c_w{background-color: white}
 .f_r{color: #ff300d}
+.f_w{ color: #ffffff;}
+.my-input{
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 12px;
+}

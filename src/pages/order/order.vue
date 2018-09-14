@@ -56,18 +56,80 @@
 
   <div class="item-4 flex_r">
     <div class="item-l"><span class="f_r">*</span>提货地：</div>
-    <div class="flex">
-      <div class="item-4-1 flex_sb">
-        <div class="flex_1" @click="showMap()">必填</div>
-        <div>常用地址</div>
+    <div>
+      <div class="flex">
+        <div class="item-4-1 flex_sb">
+          <div class="flex_1" @click="showMap()">必填</div>
+          <div>常用地址</div>
 
-        <div style="position: absolute;top: 40px;left: 10px">
-          dfsgsdfgsd
+          <div style="position: absolute;top: 40px;">
+            <div class="content" v-show="dialogVisible">
+              <div class="window" >
+                <div class="title-4 f_w flex_a padding_l_10">提货地</div>
+                <div class="margin_10">
+                  <span>你可以拖动地图选择位置</span>
+                  <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="提货详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
+                    :autosize="{ minRows: 2, maxRows: 4}"
+                    v-model="form.from.address">
+                  </el-input>
+                  <el-input
+                    style="width: 220px"
+                    class="margin_t_10"
+                    autosize
+                    placeholder="发货人联系电话（必填）"
+                    size="small"
+                    v-model="form.from.tel">
+                  </el-input>
+                  <el-input
+                    style="width: 220px"
+                    class="margin_t_10"
+                    autosize
+                    placeholder="提货联系人（选填）"
+                    size="small"
+                    v-model="form.from.name">
+                  </el-input>
+                  <el-input
+                    style="width: 220px"
+                    class="margin_t_10"
+                    autosize
+                    placeholder="楼层及门牌号（选填）"
+                    size="small"
+                    v-model="form.from.floor">
+                  </el-input>
+                  <el-checkbox v-model="form.from.checked">保存为常用地址</el-checkbox>
+                  <div class="flex">
+                    <el-button class="margin_t_10 f_w" style="background-color: #2fb301;width: 80px" type="success" size="small">确定</el-button>
+                  </div>
+
+                </div>
+              </div>
+              <div  class="map-content" ref="allmap"></div>
+            </div>
+          </div>
+        </div>
+        <el-button size="small" @click="" style="background-color: #2fb301;color: white">选择常用路线</el-button>
+      </div>
+      <div class="flex_r">
+        <div class="item-base margin_t_10 flex_a margin_r_50">
+          <img src="../../assets/main/menpaih.png" alt="">
+          <input class="my-input margin_l_10" placeholder="楼层及门牌号（选填）" v-model="form.from.floor"/>
+        </div>
+
+        <div class="item-base margin_t_10 flex_a margin_r_50">
+          <img src="../../assets/main/menpaih.png" alt="">
+          <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="form.from.name"/>
+        </div>
+
+        <div class="item-base margin_t_10 flex_a margin_r_50">
+          <img src="../../assets/main/menpaih.png" alt="">
+          <input class="my-input margin_l_10" placeholder="收货联系人电话（必填）" v-model="form.from.tel"/>
         </div>
       </div>
-      <el-button size="small" @click="" style="background-color: #2fb301;color: white">选择常用路线</el-button>
-
     </div>
+
 
 
   </div>
@@ -76,51 +138,7 @@
 
     <!--<el-button type="text" @click="test()"> map</el-button>-->
 
-<div class="content" v-show="dialogVisible">
-  <div class="window" >
-    <div class="title flex_a padding_l_10">提货地</div>
-    <div class="margin_10">
-      <span>你可以拖动地图选择位置</span>
-      <el-input
-        type="textarea"
-        autosize
-        placeholder="提货详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
-        :autosize="{ minRows: 2, maxRows: 4}"
-        v-model="form.form.address">
-      </el-input>
-      <el-input
-        style="width: 220px"
-        class="margin_t_10"
-        autosize
-        placeholder="发货人联系电话（必填）"
-        size="small"
-        v-model="form.form.tel">
-      </el-input>
-      <el-input
-        style="width: 220px"
-        class="margin_t_10"
-        autosize
-        placeholder="提货联系人（选填）"
-        size="small"
-        v-model="form.form.name">
-      </el-input>
-      <el-input
-        style="width: 220px"
-        class="margin_t_10"
-        autosize
-        placeholder="楼层及门牌号（选填）"
-        size="small"
-        v-model="form.form.floor">
-      </el-input>
-      <el-checkbox v-model="form.form.checked">保存为常用地址</el-checkbox>
-      <div class="flex">
-        <el-button class="margin_t_10" style="background-color: #2fb301;width: 80px" type="success" size="small">确定</el-button>
-      </div>
 
-    </div>
-  </div>
-  <div  class="map-content" ref="allmap"></div>
-</div>
 
 
   </div>
@@ -159,7 +177,7 @@
           form:{
             city:'',
             date:'',
-            form:{address:'',tel:'',name:'',floor:'',checked:false}
+            from:{address:'',tel:'',name:'',floor:'',checked:false}
           }
         }
       },
@@ -200,6 +218,9 @@
 </script>
 
 <style scoped lang="scss">
+  .margin_r_50{
+    margin-right: 50px;
+  }
   .content{
     position: relative;
   }
@@ -216,14 +237,14 @@
     z-index: 1;
     top: 10px;
     left: 10px;
-    .title{
+    .title-4{
       height: 38px;
       background-color: #2fb301;
       font-size: 14px;
       font-weight: normal;
       font-stretch: normal;
       letter-spacing: 0;
-      color: #ffffff;
+
     }
   }
 
@@ -285,11 +306,13 @@
     margin: 19px 0 0 20px;
     .item-4-1 {
       position: relative;
+      margin-right: 20px;
       width: 940px;
       height: 32px;
       background-color: #ffffff;
       border-radius: 2px;
       border: solid 1px #dcdfe6;
+      box-sizing: border-box;
       :nth-of-type(1){
         font-size: 12px;
         font-weight: normal;
@@ -307,4 +330,11 @@
     }
   }
 
+  .item-base{
+    width: 280px;
+    height: 31px;
+    border-radius: 2px;
+    border: solid 1px #dcdfe6;
+    box-sizing: border-box;
+  }
 </style>
