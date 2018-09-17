@@ -20,7 +20,7 @@
       </div>
       <div class="centent-right">
         <el-form class="centent-form">
-          <h3>企业用户登录</h3>
+          <h3>待定页面</h3>
           <div class="form-tab">
             <!--class="tabLogin"-->
             <!--class="tabVer"-->
@@ -75,7 +75,7 @@
                 <img src="../../assets/login/wechat.png" alt="">
                 微信登录
               </li>
-              <li @click="gotoRegister"> 注册</li>
+              <li> 注册</li>
 
               <li v-show="tabId===0">忘记密码 <span>|</span></li>
 
@@ -176,9 +176,6 @@
     },
 
     methods: {
-      gotoRegister(){
-        this.$router.push({path: '/register'})
-      },
       getServerPhone(){
         return validLoginServicePhone().then(res=>{
           if(res.status ===200){
@@ -186,11 +183,16 @@
           }else{
             this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           }
+          // this.serverPhone = res
         }).catch(err => {
+          // console.log(err,'错误')
+          // this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
+          // this.loading = false
         })
       },
       getValidNum() {
         if (!this.verData.verPhone) {
+          // this.$message.info('请输入正确手机号码')
           this.$message({
             message: '请输入正确手机号码~',
             type: 'warning'
@@ -261,6 +263,7 @@
                     message: '您的账号或者密码有误~',
                     type: 'warning'
                   })
+                  // this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
                 }
               })
             } else {

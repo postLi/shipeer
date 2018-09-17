@@ -12,15 +12,42 @@
           <div class="divide"></div>
           <div class="font">客服电话：400-189-2856</div>
           <div class="divide"></div>
-          <div class="font">张三丰</div>
+          <!--<div class="font">张三丰</div>-->
+          <div class="font">
+            <el-popover
+              placement="top-start"
+              width="200"
+              trigger="hover"
+              class="user-center"
+              >
+              <el-row :span="2">
+                <el-col>用户中心</el-col>
+              </el-row>
+              <el-row>
+                <el-col>修改密码</el-col>
+              </el-row>
+              <el-row>
+                <el-col>退出登录</el-col>
+              </el-row>
+              <el-button slot="reference">张三丰<i class="el-icon-arrow-down"></i></el-button>
+            </el-popover>
+          </div>
         </div>
       </div>
     </div>
 </template>
 
 <script>
+  import {getUser} from '@/api/login'
     export default {
-        name: "header"
+        data(){
+          return{
+            visible: false
+          }
+        },
+      methods:{
+
+      }
     }
 </script>
 
@@ -53,5 +80,15 @@
     font-stretch: normal;
     letter-spacing: 0;
     color: #333333;
+  }
+  .el-popover{
+    .el-row{
+      .el-col{
+        padding: 10px 0;
+      }
+      .el-col:hover{
+        background: #ffe;
+      }
+    }
   }
 </style>

@@ -58,14 +58,14 @@
         return {
           leftData:[
             {name: "在线下单", id: 1,  router: "/order",children: [],selected:false,show:false},
-            {name: "订单管理", id: 2,  router: "/",children: [],selected:false,show:false},
+            {name: "订单管理", id: 2,  router: "/orderManage/allOrder",children: [],selected:false,show:false},
             {name: "地址管理", id: 3,  router: "",children: [
                 {name: "常用地址", id: 4,  router: "/main",children: [],selected:false,show:false},
                 {name: "常用路线", id: 5,  router: "/main",children: [],selected:false,show:false},
               ],selected:false,show:false},
-            {name: "我的司机", id: 6,  router: "/main",children: [],selected:false,show:false},
+            {name: "我的司机", id: 6,  router: "/MyDriver",children: [],selected:false,show:false},
             {name: "收费标准", id: 7,  router: "/main",children: [],selected:false,show:false},
-            {name: "管理中心", id: 3,  router: "",children: [
+            {name: "管理中心", id: 3,  router: "/manageCenter",children: [
                 {name: "企业钱包", id: 4,  router: "/main",children: [],selected:false,show:false},
               ],selected:false,show:false},
           ],
