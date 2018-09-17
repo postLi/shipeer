@@ -11,7 +11,11 @@ import AlcencelOrder from '@/pages/orderManage/alcencel.vue'
 import AllOrderOrder from '@/pages/orderManage/allOrder.vue'
 import AlreadyOrder from '@/pages/orderManage/already.vue'
 import ServerOrder from '@/pages/orderManage/server.vue'
-Vue.use(Router)
+
+import AddressManage from '@/pages/addressManage/addressManage.vue'
+import RouteManage from '@/pages/routeManage/routeManage.vue'
+Vue.use(Router);
+
 
 export default new Router({
   routes: [
@@ -25,7 +29,6 @@ export default new Router({
           name: 'Order',
           component: Order,
         },
-        ,
         {
           path: '/myDriver',
           name: 'MyDriver',
@@ -64,12 +67,19 @@ export default new Router({
           name: 'ManageCenter',
           component: ManageCenter,
         },
-
+        {
+          path: '/addressManage',
+          name: 'AddressManage',
+          component: AddressManage,
+        },
+        {
+          path: '/routeManage',
+          name: 'RouteManage',
+          component: RouteManage,
+        },
 
       ]
     },
-
-
     {
       path: '/', component: Login,name:'Login'
     },

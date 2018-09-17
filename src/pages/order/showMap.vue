@@ -81,7 +81,7 @@
 
 <style scoped lang="scss">
   .content-top{
-    position: absolute;top: 40px;z-index: 1;
+    position: absolute;top: 40px;z-index: 100;
     .content{
       position: relative;
       box-shadow: 1px 2px 5px 0px #DEDEDE;
@@ -90,7 +90,7 @@
         height: 333px;
         background-color: white;
         position: absolute;
-        z-index: 1;
+        z-index: 100;
         top: 10px;
         left: 10px;
         .title-4{
@@ -105,13 +105,13 @@
         top: calc(50% - 28px);
         left: 50%;
         transform: translateX(-50%) translateY(-50%);
-        z-index: 2;
+        z-index: 102;
       }
       .close{
         position: absolute;
         top: 0;
         right: 0;
-        z-index: 2;
+        z-index: 102;
       }
     }
   }

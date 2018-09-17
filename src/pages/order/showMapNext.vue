@@ -14,7 +14,8 @@
             <span class="order-value">2018-12-20 09:45</span>
           </div>
           <div class="flex_1"><span class="order-key">起步价（小面包车）：</span><span class="order-value">¥45元</span></div>
-          <div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">23</span>分钟</span></div>
+          <!--<div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{getDuration}}</span>分钟</span></div>-->
+          <div class="flex_1"><span class="order-value">全程预计需要{{getDuration}}</span></div>
         </div>
 
         <div class="flex_a margin_t_10">
@@ -38,8 +39,6 @@
           <div class="margin_l_10">收费标准</div>
         </div>
 
-
-
         <div class="order-pay">
           <div class="top flex_r">
             <div class="flex_a">付款方式： </div>
@@ -48,10 +47,7 @@
                 <div class=" top-item-h pointer flex" @click="selectPay(item.id)" :class="[(payTypeId === item.id)?'':'b-b']">{{item.name}}</div>
               </div>
             </div>
-
           </div>
-
-
 
           <div class="padding_10">
             <div class="flex_a pay-select">
@@ -74,8 +70,6 @@
             </div>
           </div>
 
-
-
         </div>
 
       </div>
@@ -89,7 +83,8 @@
 
 <script>
     export default {
-        name: "showMapNext",
+      name: "showMapNext",
+      props:["getDuration"],
       data(){
           return{
             radio:1,
