@@ -124,9 +124,9 @@
 
         let formData = new FormData();
         formData.append('grant_type','password');
-        this.formData.userPhone = this.formData.userPhone + '|aflc-2'
-        formData.append('username',this.formData.userPhone);
-        formData.append('password',this.formData.userPassword);
+        // this.formData.userPhone = this.formData.userPhone + '|aflc-2'
+        formData.append('username',this.userData.userPhone);
+        formData.append('password',this.userData.userPassword);
 
 
 
