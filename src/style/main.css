@@ -18,6 +18,7 @@
 .flex_sa{display: flex;align-items: center;justify-content: space-around;}
 .flex_ec{display: flex;align-items: flex-end;justify-content: center;}
 .flex_es{display: flex;align-items: flex-end;justify-content: space-between;}
+.flex_f_c{display: flex;justify-content: center;flex-direction: column}
 .flex_1{flex: 1;}
 .flex_2{flex: 2;}
 .flex_3{flex: 3;}
@@ -37,3 +38,13 @@
 .pointer{cursor: pointer;}
 .b_c_w{background-color: white}
 .f_r{color: #ff300d}
+.f_w{ color: #ffffff;}
+.my-input{
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 12px;
+  background-color: transparent;
+}
+.o_f{overflow: auto;}
+.p_r{position: relative}

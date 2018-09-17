@@ -33,7 +33,7 @@
       background-color: #2fb301;
     }
     .header-right{
-      box-shadow: 2px -2px 2px 1px;
+      /*box-shadow: 2px -2px 2px 1px;*/
       .header-right-context{
         margin-right: 40px;
 
