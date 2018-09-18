@@ -8,14 +8,15 @@
 
   <div class="item-margin item-1 flex_r">
     <div class="item-l"><span class="f_r">*</span>选择城市：</div>
-    <el-select v-model="form.city" placeholder="请选择城市" size="small" style="width: 250px">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-      </el-option>
-    </el-select>
+    <el-cascader placeholder="请选择城市" size="small"
+    :props="defaultProps"
+    :options="cityList"
+    v-model="form.code"
+    :show-all-levels="false"
+    filterable
+    clearable
+    @change="handleChange">
+    </el-cascader>
 
     <div class="item-1-2">
       <span>选择用车时间：</span>
@@ -26,17 +27,20 @@
         v-model="form.date"
         type="date"
         :picker-options="pickerOptions1"
-        placeholder="选择日期">
+        value-format="timestamp"
+        placeholder="选择日期"
+      @change="changeDate"
+      >
       </el-date-picker>
     </div>
 
     <div  class="item-1-3">
-      <el-select v-model="form.city" placeholder="选择时间" size="small" style="width: 121px">
+      <el-select v-model="form.time" placeholder="选择时间" size="small" style="width: 121px">
         <el-option
-          v-for="item in options1"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in timeList"
+          :key="item.time"
+          :label="item.timeShow"
+          :value="item.time">
         </el-option>
       </el-select>
     </div>
@@ -46,7 +50,23 @@
   <div class="item-margin item-2 flex_r">
     <div class="item-l"><span class="f_r">*</span>选择车型：</div>
     <div class="flex_ae">
-      <img v-for="(item,index) in carList" :key="item.id" class="pointer" :src="item.name" alt="" @click="selectCar(item.id)" :style="{'filter':(form.carId === item.id)?'opacity(100%)': 'opacity(50%)'}">
+      <div class="p_r flex" style="width: 208px" v-for="(item,index) in carList" :key="item.carType" >
+        <img @mouseover="selectHover(item.list[0])" @mouseout="outHover(item.list[0])" style="height: 60px" class="pointer" :src="item.list[0].servicePic" alt="" @click="selectCar(item.list[0].carTypeCode)" :style="{'filter':(form.carId === item.list[0].carTypeCode)?'opacity(100%)': 'opacity(50%)'}">
+        <div class="img-mark" v-show="item.list[0].show">
+          <div class="margin_t_10 flex_a">
+            <span class="left">载重</span>
+            <span>{{item.list[0].capacityTon}}吨</span>
+          </div>
+          <div class="margin_t_10 flex_a">
+            <span  class="left">长宽高</span>
+            <span>{{item.list[0].carLength}}*{{item.list[0].carWidth}}*{{item.list[0].carHeight}}米</span>
+          </div>
+          <div class="margin_t_10 flex_a">
+            <span  class="left">载货体积</span>
+            <span>{{item.list[0].capacitySquare}}方</span>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -54,7 +74,7 @@
 
   <div class="item-margin item-3 flex_r">
     <div class="item-l">特殊规格(选填)：</div>
-    <el-button size="small" @click="buttonClick(item.id)" v-for="(item,index) in buttonList" :key="item.id" :style="{'background-color':(item.id === form.buttonId)?'#1890ff':'#f2f2f2','color':(item.id === form.buttonId)?'white':'black'}">{{item.name}}</el-button>
+    <el-button size="small" @click="specClick(item.id)" v-for="(item,index) in specList" :key="item.id" :style="{'background-color':(item.id === form.specId)?'#1890ff':'#f2f2f2','color':(item.id === form.specId)?'white':'black'}">{{item.name}}</el-button>
   </div>
 
   <!--提货地-->
@@ -319,10 +339,16 @@
   import showMap from './showMap.vue'
   import showMapNext from './showMapNext'
   import addRoute from './addRoute'
+  import { getApi } from "@/api/api.js";
     export default {
         name: "order",
       data() {
         return {
+          defaultProps: {
+            value:'code',
+            children: 'cities',
+            label: 'name'
+          },
           pickerOptions1: {
             disabledDate(time) {
               return time.getTime()  + 3600 * 1000 * 24 < Date.now();
@@ -332,13 +358,14 @@
           windowRoute:false,//选择线路弹窗
           addressRoute:false,//地址弹窗
           search_route:'',
-          buttonList:[{id:1,name:"加长"},{id:2,name:"拆座"},{id:3,name:"高栏"}],
+          specList:[],//车辆规格
           requestList:[{id:1,name:"需要装卸（与司机议价）"},{id:2,name:"需要回单（免费）"},{id:3,name:"需要回款（免费）"},{id:4,name:"电子回单（免费）"}],
           carList:[
-            {id:1,name: require("../../assets/main/xm@3x.png")},
-            {id:2,name: require("../../assets/main/xh@3x.png")},
-            {id:3,name: require("../../assets/main/zh@3x.png")},
-            {id:4,name: require("../../assets/main/dh@3x.png")}],
+            // {id:1,name: require("../../assets/main/xm@3x.png")},
+            // {id:2,name: require("../../assets/main/xh@3x.png")},
+            // {id:3,name: require("../../assets/main/zh@3x.png")},
+            // {id:4,name: require("../../assets/main/dh@3x.png")}
+            ],//车辆列表
           searchAddressList:[{id:1,name1:'11',name2:'22',name3:'33',},
             {id:2,name1:'11',name2:'22',name3:'33',},
             {id:3,name1:'11',name2:'22',name3:'33',},
@@ -361,27 +388,69 @@
             value: '2',
             label: '12:00'
           }],
-          map:null,//地图实例
-          map1:null,
           mapNext:null,
+          timeList:[],//时间列表
           form:{//主页表单
+            code:[],//城市code
+            date:'',//选择日期
+            time:'',//选择的时间
             city:'',
-            date:'',
-            carId:1,
-            buttonId:1,
+            carId:"AF01801",
+            specId:'',//车辆规格id
             requestId:1,
             tip:'',
-            from:{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false},
-            to:[{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,show:false,map1:'',loadOne1:true,zoom1:14,}],
+            from:{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,map:null,loadOne:true,zoom:14,},
+            to:[{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,show:false,map1:null,loadOne1:true,zoom1:14,}],
             remarks:''
           },
-          zoom:14,//地图缩放
-          loadOne:true,//地图实例运行一次
           getDuration:'',//起终时间
-          distAddress:0//主页选择目的地index
+          distAddress:0,//主页选择目的地index
+          cityList:[],//城市列表
         }
       },
       methods:{
+        outHover(item){
+          this.$set(item,'show',false);
+        },
+        selectHover(item){
+          this.$set(item,'show',true);
+        },
+        changeDate(date){
+          this.form.time = '';
+         let getDate = new Date().getDate();
+         let dd = new Date(date).format("dd") *1;
+          let startTime = date;
+          let EndTime = date + 86400000;
+          console.log(startTime)
+          console.log(EndTime)
+          let t1 = 60 * 1000 * 15;
+          let timeList = [];
+          if(getDate === dd){
+            //今天
+            let now = new Date() * 1;
+        let haveTime =   EndTime - now;
+            let ii = Math.ceil(haveTime/t1);
+            for(let i=ii;i>=0;i--){
+              timeList.push({time:EndTime - t1 * i,timeShow:new Date(EndTime - t1 * i).format("hh:mm")})
+            }
+            console.log(timeList)
+            this.timeList = timeList
+          }else {
+            //不是今天
+            let ii = 86400000/t1;
+
+            for(let i=0;i<ii;i++){
+              timeList.push({time:startTime + t1 * i,timeShow:new Date(startTime + t1 * i).format("hh:mm")})
+            }
+            console.log(timeList)
+            this.timeList = timeList
+          }
+
+
+        },
+        handleChange(data){
+        console.log(data)
+        },
         selectDistAddress(item){
           item.show = !item.show
         },
@@ -428,102 +497,104 @@
         selectCar(id){
           this.form.carId = id;
         },
-        buttonClick(id){
-          this.form.buttonId = id;
+        specClick(id){
+          this.form.specId = id;
         },
         requestClick(id){
           this.form.requestId = id;
         },
           showMap(){
-            let geoc = new BMap.Geocoder();
-            setTimeout( ()=> {
-              if(this.loadOne === true){
-                this.loadOne = false;
-                this.map =new BMap.Map(this.$refs.childClick.$refs.allmap, {enableMapClick:false});
-                let point =  this.form.from.centerPoint;
-                this.map.centerAndZoom(point, this.zoom);
-                this.map.enableScrollWheelZoom(true);
-
-                geoc.getLocation(point, (re) => {
-                  console.log(re)
-                  this.form.from.address = re.address;
-                });
-                this.map.addEventListener('zoomend',(e) =>{
-                  let center1 = this.map.getCenter();
-                  let centerPoint = new BMap.Point(center1.lng, center1.lat);
-                  console.log( centerPoint);
-                  this.zoom = this.map.getZoom();
-                  geoc.getLocation(centerPoint,(re) => {
-                    console.log(re);
-                    this.form.from.centerPoint = centerPoint;
-                    this.form.from.address = re.address;
-                  });
-                });
-              }
-              this.map.addEventListener('moveend',(e) =>{
-                let center1 = this.map.getCenter();
-                let centerPoint = new BMap.Point(center1.lng, center1.lat);
-                console.log( centerPoint);
-                geoc.getLocation(centerPoint,(re) => {
-                  console.log(re);
-                  this.form.from.centerPoint = centerPoint;
-                  this.form.from.address = re.address;
-                });
-              });
-
-              this.$refs.childClick.getMapStatus();
-
-            },100);
-
+            let centerPoint = [113.275722,23.144614];
             this.$refs.childClick.ok();
+              if(this.form.from.loadOne === true){
+                this.form.from.loadOne = false;
+                this.form.from.map = new AMap.Map(this.$refs.childClick.$refs.allmap, {
+                  resizeEnable: true,
+                  zoom:14,
+                  center: centerPoint
+                });
+                AMap.service('AMap.Geocoder',() =>{
+                  let geocoder = new AMap.Geocoder({});
+                  geocoder.getAddress(centerPoint,  (status, result) =>{
+                    if (status === 'complete' && result.info === 'OK') {
+                      this.form.from.centerPoint = centerPoint;
+                      this.form.from.address = result.regeocode.formattedAddress;
+                    }
+                  });
+                  this.form.from.map.on("zoomchange",(e)=>{
+                    console.log( this.form.from.map.getCenter())
+                    let centerPoint = [this.form.from.map.getCenter().lng,this.form.from.map.getCenter().lat];
+
+                  })
+                  this.form.from.map.on("moveend",(e)=>{
+                    console.log( this.form.from.map.getCenter())
+                    let centerPoint = [this.form.from.map.getCenter().lng,this.form.from.map.getCenter().lat];
+                    geocoder.getAddress(centerPoint,  (status, result) =>{
+                      if (status === 'complete' && result.info === 'OK') {
+                        console.log(result);
+                        this.form.from.centerPoint = centerPoint;
+                        this.form.from.address = result.regeocode.formattedAddress;
+                      }
+                    });
+                  });
+
+                })
+              }
+            //  this.$refs.childClick.getMapStatus();
           },
         showMap1(item,i){
-          let geoc = new BMap.Geocoder();
-          setTimeout( ()=> {
+          let centerPoint = [113.275722,23.144614];
+          this.$refs[i][0].ok();
             if(item.loadOne1 === true){
               item.loadOne1 = false;
-              item.map1 =new BMap.Map(this.$refs[i][0].$refs.allmap, {enableMapClick:false});
-              let point =  this.form.from.centerPoint;
-              item.map1.centerAndZoom(point, item.zoom1);
-              item.map1.enableScrollWheelZoom(true);
-
-              geoc.getLocation(point, (re) => {
-                console.log(re)
-                item.address = re.address;
+              item.map1 = new AMap.Map(this.$refs[i][0].$refs.allmap, {
+                resizeEnable: true,
+                zoom:14,
+                center: centerPoint
               });
-              item.map1.addEventListener('zoomend',(e) =>{
-                let center1 = item.map1.getCenter();
-                let centerPoint = new BMap.Point(center1.lng, center1.lat);
-                console.log( centerPoint);
-                item.zoom1 = item.map1.getZoom();
-                geoc.getLocation(centerPoint,(re) => {
-                  console.log(re);
-                  item.centerPoint = centerPoint;
-                  item.address = re.address;
+              AMap.service('AMap.Geocoder',() =>{
+                let geocoder = new AMap.Geocoder({});
+                geocoder.getAddress(centerPoint,  (status, result) =>{
+                  if (status === 'complete' && result.info === 'OK') {
+                    item.centerPoint = centerPoint;
+                    item.address = result.regeocode.formattedAddress;
+                  }
                 });
-              });
+                item.map1.on("zoomchange",(e)=>{
+                  console.log( item.map1.getCenter())
+                  let centerPoint = [item.map1.getCenter().lng,item.map1.getCenter().lat];
+
+                })
+                item.map1.map.on("moveend",(e)=>{
+                  console.log( item.map1.getCenter())
+                  let centerPoint = [item.map1.getCenter().lng,item.map1.getCenter().lat];
+                  geocoder.getAddress(centerPoint,  (status, result) =>{
+                    if (status === 'complete' && result.info === 'OK') {
+                      console.log(result);
+                      item.centerPoint = centerPoint;
+                      item.address = result.regeocode.formattedAddress;
+                    }
+                  });
+                });
+              })
             }
 
-            item.map1.addEventListener('moveend',(e) =>{
-              let center1 = item.map1.getCenter();
-              let centerPoint = new BMap.Point(center1.lng, center1.lat);
-              console.log( centerPoint);
-              geoc.getLocation(centerPoint,(re) => {
-                console.log(re);
-                item.centerPoint = centerPoint;
-                item.address = re.address;
-              });
-            });
+            // this.$refs[i][0].getMapStatus();
 
-            this.$refs[i][0].getMapStatus();
-
-          },100);
-          this.$refs[i][0].ok();
         },
         createMap(){
-          let centerPoint = new BMap.Point(113.275722,23.144614);
-          this.form.from.centerPoint = centerPoint;
+          // let centerPoint = new BMap.Point(113.275722,23.144614);
+          // this.form.from.centerPoint = centerPoint;
 
+          var citysearch = new AMap.CitySearch();
+          citysearch.getLocalCity(function(status, result) {
+            if (status === 'complete' && result.info === 'OK') {
+              if (result && result.city && result.bounds) {
+                console.log(result);
+                // this.form.code[1] = result.adcode;
+              }
+            }
+          });
         },
       },
 
@@ -532,9 +603,40 @@
       },
       mounted(){
         this.createMap();
-        // this.$http.post(`index.php?controller=Statistics&action=terminal&token`, {}).then(res => {
-        // console.log(res)
+        //城市列表
+        getApi('/aflc-common/aflcCommonAddressApi/cityList').then((res)=>{
+          res.forEach((item)=>{
+            item.code = item.pinyin;
+            item.name = item.pinyin;
+          });
+          this.cityList = res;
+        });
+
+
+        //选择车型
+        // getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarTypeList').then((res)=>{
+        //   console.log(res)
         // })
+
+        //车辆规格
+        getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarSpecList').then((res)=>{
+          this.specList = res
+        });
+
+        //价格服务 //额外需求
+        getApi('/aflc-sm/aflcPriceApi/getPriceByArea/440110').then((res)=>{
+          if(res[0].serviceName === "同城"){
+            res[0].list.forEach((item)=>{
+              item.list[0].show = false;
+            });
+            this.carList = res[0].list;
+
+            getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res[0].serviceCode}`).then((res)=>{
+              console.log(res)
+            })
+
+          }
+        })
       }
     }
 </script>
@@ -586,12 +688,32 @@
   }
 }
   .item-2{
-    width: 940px;
-    img{
-      margin-right: 73px;
+    /*width: 940px;*/
+    .p_r{
+      /*margin-right: 73px;*/
     }
   }
+  .img-mark{
+    position: absolute;
+    width: 208px;
+    height: 136px;
+    z-index: 2;
+    top: 62px;
+    left: 0;
+    background-color: rgba(51,51,51,0.8);
+    padding: 15px;
+    box-sizing: border-box;
+    span{
+      font-size: 14px;
+      color: #ffffff;
+    }
+    .left{
+      width: 80px;
+      font-size: 14px;
 
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
   .item-3{
   }
 

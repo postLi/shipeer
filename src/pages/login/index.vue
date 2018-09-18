@@ -1,6 +1,6 @@
 
 <template>
-  <div class="login-con-lll" v-loading="loading">
+  <div class="login-con-lll" v-loading="loading" :style="{'background-image':backgroundImg}">
     <div class="login-top">
       <div class="top-wrapper clearfix">
         <img src="../../assets/login/lll01-ky.png" alt="">
@@ -132,6 +132,7 @@
         }
       }
       return {
+        backgroundImg:'url(' + require('../../assets/login/lll01-bg.png') + ')',
         serverPhone:'',
         timer: null,
         imgsrc: '',
@@ -315,7 +316,7 @@
     position: relative;
     height: 100%;
     min-height: 86px;
-    background-image: url(../../assets/login/lll01-bg.png);
+    /*background-image: url(../../assets/login/lll01-bg.png);*/
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
