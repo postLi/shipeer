@@ -85,6 +85,7 @@
     .el-row{
       .el-col{
         padding: 10px 0;
+        text-align: center;
       }
       .el-col:hover{
         background: #ffe;
