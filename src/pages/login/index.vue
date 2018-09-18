@@ -36,9 +36,13 @@
             </el-form-item>
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
-                        maxlength="6" clearable>
+                         clearable>
 
               </el-input>
+              <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
+                        <!--maxlength="6" clearable>-->
+
+              <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
               <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable>
@@ -135,8 +139,8 @@
         loading: false,
         tabId: 0,
         userData: {
-          userPhone: '13088888886',
-          userPassword: '123456',
+          userPhone: '13201030260',
+          userPassword: 'f5668764ca9d2de67219e54dac82928c',
           pwVcode: ''
         },
         verData: {
@@ -253,7 +257,9 @@
               login(this.userData.userPhone + '|aflc-2', this.userData.userPassword).then((data) => {
                 if (data) {
                   VueJsCookie.set('28kytoken', data.access_token)
+                  VueJsCookie.set('28kyuPhone', this.userData.userPhone)
                   // 跳转到首页
+                  // console.log(data)
                   this.$router.push({path: '/order'})
                   this.loading = false
                 }else{
@@ -274,6 +280,7 @@
               loginValid(this.verData.verPhone + '|aflc-2', this.verData.verNote).then((data) => {
                 if (data) {
                   VueJsCookie.set('28kytoken', data.access_token)
+                  VueJsCookie.set('28kyuPhone', this.verData.verPhone)
                   // 跳转到首页
                   this.$router.push({path: '/order'})
                   this.loading = false
@@ -341,7 +348,7 @@
           display: inline-block;
           float: right;
           color: #fff;
-
+          padding-right: 50px;
           span:first-of-type {
             font-size: 30px;
           }

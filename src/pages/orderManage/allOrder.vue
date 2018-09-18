@@ -141,7 +141,7 @@
       return {
         currentPage3: 5,
         dataset:[
-          // {data:'',num:1}
+          {data:'',num:1}
         ]
 
       }
@@ -160,6 +160,7 @@
         console.log(`当前页: ${val}`);
       },
       handleClick(row) {
+        this.$router.push({path: '/orderRouter/payFoy'})
         console.log(row);
       },
       addColl(){

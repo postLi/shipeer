@@ -8,9 +8,10 @@ import Axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css';
 import VueJsCookie from 'vue-js-cookie'
 import { Message, MessageBox } from 'element-ui'
+import { mapGetters } from 'vuex'
 
 Vue.config.productionTip = false;
-Vue.use(Vuex);
+// Vue.use(Vuex);
 Vue.use(ElementUI);
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
@@ -95,6 +96,7 @@ Axios.interceptors.response.use(
           }
         })
         VueJsCookie.remove('28kytoken')
+        VueJsCookie.remove('28kyuPhone')
 
 
         // 401:非法的token;Token 过期了;
@@ -113,7 +115,6 @@ Axios.interceptors.response.use(
     return Promise.reject(err)
   }
 )
-
 
 
 
