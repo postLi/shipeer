@@ -65,8 +65,8 @@
                 {name: "已取消", id: 2.1,  router: "/OrderManage/alcencel",children: [],selected:false,show:false},
               ],selected:false,show:false},
             {name: "地址管理", id: 3,  router: "",children: [
-                {name: "常用地址", id: 4,  router: "/main",children: [],selected:false,show:false},
-                {name: "常用路线", id: 5,  router: "/main",children: [],selected:false,show:false},
+                {name: "常用地址", id: 4,  router: "/addressManage",children: [],selected:false,show:false},
+                {name: "常用路线", id: 5,  router: "/routeManage",children: [],selected:false,show:false},
               ],selected:false,show:false},
             // {name: "我的司机", id: 6,  router: "/orderRouter/inSingle",children: [],selected:false,show:false},
             {name: "我的司机", id: 6,  router: "/orderRouter/payFoy",children: [],selected:false,show:false},
