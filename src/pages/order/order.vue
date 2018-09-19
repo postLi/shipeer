@@ -84,42 +84,9 @@
       <div class="flex">
         <div class="item-4-1 flex_sb p_r">
           <div class="flex_1 input" @click="showMap()">{{(form.from.address === '')?'必填':form.from.address}}</div>
-          <div class="address" @click="addressRoute = !addressRoute">常用地址</div>
+          <div class="address" @click="selectSourceAddress()">常用地址</div>
           <show-map :data="form.from" ref="childClick"></show-map>
-
-          <div class="address-line flex_f" v-show="addressRoute">
-            <div class="title flex_sb margin_b_10">
-              <span class="window-title-left">选用常用地址</span>
-              <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="addressRoute = false">
-            </div>
-            <div class="search flex_sb">
-              <div class="search-body flex_a">
-                <div class="flex_1 height_100 search-left flex_a">
-                  <input type="text" v-model="search_route" class="my-input margin_l_10" placeholder="请输入关键字搜索">
-                </div>
-
-                <div class="search-right height_100 flex pointer">
-                  搜索
-                </div>
-
-              </div>
-              <el-button size="small" @click="" type="primary">新增常用地址</el-button>
-            </div>
-            <div class="flex_1 o_f">
-              <div class="address-item flex_a" v-for="(item,index) in searchAddressList" :key="item.id">
-                <div class="height_100 address-item-left flex_1 flex_f_c">
-                  <div>{{item.name1}}</div>
-                  <div>{{item.name2}}</div>
-                  <div>{{item.name3}}</div>
-                </div>
-                <div class="height_100 flex_a address-item-right margin_r_10">
-                  <div class="edit">编辑</div>
-                  <div class="del">删除</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          <show-address :showAddress="form.from" ref="addressData" :type="1"></show-address>
         </div>
         <div class="p_r">
           <el-button size="small" style="background-color: #2fb301;color: white" @click="windowRoute = !windowRoute">选择常用线路</el-button>
@@ -185,41 +152,9 @@
       <div class="flex">
         <div class="item-4-1 flex_sb p_r">
           <div class="flex_1 input" @click="showMap1(item,index)">{{(item.address === '')?'必填':item.address}}</div>
-          <div class="address" @click="selectDistAddress(item)">常用地址</div>
+          <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
           <show-map :data="item" :ref="index"></show-map>
-          <div class="address-line flex_f" v-show="item.show">
-            <div class="title flex_sb margin_b_10">
-              <span class="window-title-left">选用常用地址</span>
-              <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="item.show = false">
-            </div>
-            <div class="search flex_sb">
-              <div class="search-body flex_a">
-                <div class="flex_1 height_100 search-left flex_a">
-                  <input type="text" v-model="search_route" class="my-input margin_l_10" placeholder="请输入关键字搜索">
-                </div>
-
-                <div class="search-right height_100 flex pointer">
-                  搜索
-                </div>
-
-              </div>
-              <el-button size="small" @click="" type="primary">新增常用地址</el-button>
-            </div>
-            <div class="flex_1 o_f">
-              <div class="address-item flex_a" v-for="(item,index) in searchAddressList" :key="item.id">
-                <div class="height_100 address-item-left flex_1 flex_f_c">
-                  <div>{{item.name1}}</div>
-                  <div>{{item.name2}}</div>
-                  <div>{{item.name3}}</div>
-                </div>
-                <div class="height_100 flex_a address-item-right margin_r_10">
-                  <div class="edit">编辑</div>
-                  <div class="del">删除</div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          <show-address :showAddress="item" :ref="index" :type="0"></show-address>
         </div>
         <el-button size="small" v-if="index === 0" type="success" icon="el-icon-circle-plus" style="background-color: white;color: #2fb301" @click="addNewDestination()">新增目的地</el-button>
         <el-button size="small" v-if="index !== 0" type="danger" icon="el-icon-remove" style="background-color: white;color: #ff300d" @click="delNewDestination(index)">删除目的地</el-button>
@@ -246,14 +181,13 @@
   <div class="item-margin item-5 flex_r">
     <div class="item-l">货物名称：</div>
     <div  class="item-5-1">
-      <el-select v-model="form.city" placeholder="" size="small" style="width: 140px">
-        <el-option
-          v-for="item in options1"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+      <el-autocomplete style="width: 140px" size="small" v-model="form.goods" :fetch-suggestions="goodsSearch"
+        placeholder="请输入货物" @select="handleSelect">
+        <template slot-scope="{ item }">
+          <div >{{ item.name }}</div>
+        </template>
+      </el-autocomplete>
+
     </div>
     <div  class="item-5-1">
       <el-select v-model="form.city" placeholder="" size="small" style="width: 140px">
@@ -281,7 +215,11 @@
 
   <div class="item-margin item-6 flex_r">
     <div class="item-l">额外需求(选填)：</div>
-    <el-button size="small" @click="requestClick(item.id)" v-for="(item,index) in requestList" :key="item.id" :style="{'background-color':(item.id === form.requestId)?'#1890ff':'#f2f2f2','color':(item.id === form.requestId)?'white':'black'}">{{item.name}}</el-button>
+    <el-button size="small" @click="requestClick(item.extraId)" v-for="(item,index) in requestList" :key="item.extraId"
+               :style="{'background-color':(item.extraId === form.requestId)?'#1890ff':'#f2f2f2','color':(item.extraId === form.requestId)?'white':'black'}">
+      <span v-if="item.extraName ==='需要装卸'">{{item.extraName}}（与司机议价）</span>
+      <span v-else>{{item.extraName}}（免费）</span>
+    </el-button>
   </div>
 
   <div class="item-margin item-7 flex_r">
@@ -292,6 +230,7 @@
         <div class="aa">/60</div>
       </div>
       <el-input
+        maxlength="60"
         type="textarea"
         autosize
         placeholder="请输入货物类型、订单备注等"
@@ -335,11 +274,13 @@
 </template>
 
 <script>
+  import VueJsCookie from 'vue-js-cookie'
   import myDialog from '../../components/myDialog'
   import showMap from './showMap.vue'
   import showMapNext from './showMapNext'
   import addRoute from './addRoute'
-  import { getApi } from "@/api/api.js";
+  import showAddress from './showAddress'
+  import { getApi ,postApi} from "@/api/api.js";
     export default {
         name: "order",
       data() {
@@ -356,20 +297,16 @@
             },
           nextSuccess:false,//下一步
           windowRoute:false,//选择线路弹窗
-          addressRoute:false,//地址弹窗
           search_route:'',
           specList:[],//车辆规格
-          requestList:[{id:1,name:"需要装卸（与司机议价）"},{id:2,name:"需要回单（免费）"},{id:3,name:"需要回款（免费）"},{id:4,name:"电子回单（免费）"}],
+          requestList:[],//额外需求
+          goodsList:[],//货物列表
           carList:[
             // {id:1,name: require("../../assets/main/xm@3x.png")},
             // {id:2,name: require("../../assets/main/xh@3x.png")},
             // {id:3,name: require("../../assets/main/zh@3x.png")},
             // {id:4,name: require("../../assets/main/dh@3x.png")}
             ],//车辆列表
-          searchAddressList:[{id:1,name1:'11',name2:'22',name3:'33',},
-            {id:2,name1:'11',name2:'22',name3:'33',},
-            {id:3,name1:'11',name2:'22',name3:'33',},
-            {id:4,name1:'11',name2:'22',name3:'33',}],
           searchRouteList:[
             {id:1,name0:[{a:'11',b:'22'},{a:'22',b:'22'},{a:'33',b:'22'}]},
             {id:2,name0:[{a:'11',b:'22'},{a:'22',b:'22'},{a:'33',b:'22'}]},
@@ -397,9 +334,10 @@
             city:'',
             carId:"AF01801",
             specId:'',//车辆规格id
-            requestId:1,
+            requestId:'',//额外需求id
+            goods:'',//货物
             tip:'',
-            from:{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,map:null,loadOne:true,zoom:14,},
+            from:{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,map:null,loadOne:true,zoom:14,show:false,},
             to:[{address:'',tel:'',name:'',floor:'',centerPoint:null,checked:false,show:false,map1:null,loadOne1:true,zoom1:14,}],
             remarks:''
           },
@@ -409,6 +347,20 @@
         }
       },
       methods:{
+        goodsSearch(queryString, cb){
+          let restaurants = this.goodsList;
+          let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+          console.log(results)
+          cb(results);
+        },
+        createFilter(queryString) {
+          return (restaurant) => {
+            return (restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          };
+        },
+        handleSelect(item) {
+          this.form.goods = item.name;
+        },
         outHover(item){
           this.$set(item,'show',false);
         },
@@ -417,42 +369,52 @@
         },
         changeDate(date){
           this.form.time = '';
-         let getDate = new Date().getDate();
-         let dd = new Date(date).format("dd") *1;
-          let startTime = date;
-          let EndTime = date + 86400000;
-          console.log(startTime)
-          console.log(EndTime)
-          let t1 = 60 * 1000 * 15;
-          let timeList = [];
-          if(getDate === dd){
-            //今天
-            let now = new Date() * 1;
-        let haveTime =   EndTime - now;
-            let ii = Math.ceil(haveTime/t1);
-            for(let i=ii;i>=0;i--){
-              timeList.push({time:EndTime - t1 * i,timeShow:new Date(EndTime - t1 * i).format("hh:mm")})
+          if(date !== null){
+            let getDate = new Date().getDate();
+            let dd = new Date(date).format("dd") *1;
+            let startTime = date;
+            let EndTime = date + 86400000;
+            console.log(startTime)
+            console.log(EndTime)
+            let t1 = 60 * 1000 * 15;
+            let timeList = [];
+            if(getDate === dd){
+              //今天
+              let now = new Date() * 1;
+              let haveTime =   EndTime - now;
+              let ii = Math.ceil(haveTime/t1) - 3;
+              timeList.unshift({time:now,timeShow:'立即用车'});
+              for(let i=ii;i>=0;i--){
+                timeList.push({time:EndTime - t1 * i,timeShow:new Date(EndTime - t1 * i).format("hh:mm")})
+              }
+              console.log(timeList)
+              this.timeList = timeList
+            }else {
+              let ii = 86400000/t1;
+              for(let i=0;i<ii;i++){
+                timeList.push({time:startTime + t1 * i,timeShow:new Date(startTime + t1 * i).format("hh:mm")})
+              }
+              this.timeList = timeList
             }
-            console.log(timeList)
-            this.timeList = timeList
           }else {
-            //不是今天
-            let ii = 86400000/t1;
-
-            for(let i=0;i<ii;i++){
-              timeList.push({time:startTime + t1 * i,timeShow:new Date(startTime + t1 * i).format("hh:mm")})
-            }
-            console.log(timeList)
-            this.timeList = timeList
+            this.timeList = [];
           }
-
-
         },
         handleChange(data){
         console.log(data)
         },
-        selectDistAddress(item){
-          item.show = !item.show
+        selectSourceAddress(){
+          this.form.from.show = !this.form.from.show;
+          if(this.form.from.show === true){
+            this.$refs.addressData.getList();
+          }
+        },
+
+        selectDistAddress(item,i){
+          item.show = !item.show;
+          if(item.show === true){
+            this.$refs[i][1].getList();
+          }
         },
         delNewDestination(i){
           this.form.to.splice(i,1)
@@ -466,33 +428,34 @@
         },
 
         next(){
-          this.nextSuccess = true;
-          setTimeout( ()=> {
-            console.log(this.form)
+          console.log(this.form)
 
-            this.mapNext =new BMap.Map(this.$refs.childClickNext.$refs.allMapNext, {enableMapClick:false});
-            // this.mapNext.centerAndZoom(this.form.to.centerPoint, 14);
-            this.mapNext.enableScrollWheelZoom(true);
-
-            let driving = new BMap.DrivingRoute(this.mapNext, {
-              renderOptions:{map: this.mapNext, autoViewport: true,},
-              onSearchComplete: (res)=>{
-                if (driving.getStatus() != BMAP_STATUS_SUCCESS){
-                  return ;
-                }
-                let plan = res.getPlan(0);
-                // this.getDuration = (plan.getDuration(false)/60).toFixed(0)
-                this.getDuration = plan.getDuration(true)
-              },
-            });
-            driving.search(this.form.from.centerPoint, this.form.to.centerPoint);
-            let starIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
-            let endIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
-            driving.setMarkersSetCallback((res)=>{
-              res[0].marker.setIcon(starIcon);
-              res[1].marker.setIcon(endIcon);
-            })
-          },200)
+          // this.nextSuccess = true;
+          // setTimeout( ()=> {
+          //
+          //   this.mapNext =new BMap.Map(this.$refs.childClickNext.$refs.allMapNext, {enableMapClick:false});
+          //   // this.mapNext.centerAndZoom(this.form.to.centerPoint, 14);
+          //   this.mapNext.enableScrollWheelZoom(true);
+          //
+          //   let driving = new BMap.DrivingRoute(this.mapNext, {
+          //     renderOptions:{map: this.mapNext, autoViewport: true,},
+          //     onSearchComplete: (res)=>{
+          //       if (driving.getStatus() != BMAP_STATUS_SUCCESS){
+          //         return ;
+          //       }
+          //       let plan = res.getPlan(0);
+          //       // this.getDuration = (plan.getDuration(false)/60).toFixed(0)
+          //       this.getDuration = plan.getDuration(true)
+          //     },
+          //   });
+          //   driving.search(this.form.from.centerPoint, this.form.to.centerPoint);
+          //   let starIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
+          //   let endIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
+          //   driving.setMarkersSetCallback((res)=>{
+          //     res[0].marker.setIcon(starIcon);
+          //     res[1].marker.setIcon(endIcon);
+          //   })
+          // },200)
         },
         selectCar(id){
           this.form.carId = id;
@@ -508,37 +471,32 @@
             this.$refs.childClick.ok();
               if(this.form.from.loadOne === true){
                 this.form.from.loadOne = false;
-                this.form.from.map = new AMap.Map(this.$refs.childClick.$refs.allmap, {
-                  resizeEnable: true,
-                  zoom:14,
-                  center: centerPoint
-                });
-                AMap.service('AMap.Geocoder',() =>{
-                  let geocoder = new AMap.Geocoder({});
-                  geocoder.getAddress(centerPoint,  (status, result) =>{
-                    if (status === 'complete' && result.info === 'OK') {
-                      this.form.from.centerPoint = centerPoint;
-                      this.form.from.address = result.regeocode.formattedAddress;
+                AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) =>{
+                  this.form.from.map = new AMap.Map(this.$refs.childClick.$refs.allmap, {
+                    zoom: 14,
+                    scrollWheel: true,
+                    center: centerPoint
+                  });
+                  var positionPicker = new PositionPicker({
+                    mode: 'dragMap',
+                    map: this.form.from.map,
+                    iconStyle: {
+                      url: './static/ti.png',
+                      ancher: [16, 56],
+                      size: [32,56]
                     }
                   });
-                  this.form.from.map.on("zoomchange",(e)=>{
-                    console.log( this.form.from.map.getCenter())
-                    let centerPoint = [this.form.from.map.getCenter().lng,this.form.from.map.getCenter().lat];
+                  positionPicker.on('success', (positionResult)=> {
 
-                  })
-                  this.form.from.map.on("moveend",(e)=>{
-                    console.log( this.form.from.map.getCenter())
-                    let centerPoint = [this.form.from.map.getCenter().lng,this.form.from.map.getCenter().lat];
-                    geocoder.getAddress(centerPoint,  (status, result) =>{
-                      if (status === 'complete' && result.info === 'OK') {
-                        console.log(result);
-                        this.form.from.centerPoint = centerPoint;
-                        this.form.from.address = result.regeocode.formattedAddress;
-                      }
-                    });
+                    console.log(positionResult.regeocode.pois[0].name)
+                    console.log(positionResult)
+                    this.form.from.address = positionResult.address;
                   });
-
-                })
+                  positionPicker.on('fail', (positionResult)=> {
+                  });
+                  positionPicker.start();
+                  this.form.from.map.panBy(0, 1);
+                });
               }
             //  this.$refs.childClick.getMapStatus();
           },
@@ -547,36 +505,30 @@
           this.$refs[i][0].ok();
             if(item.loadOne1 === true){
               item.loadOne1 = false;
-              item.map1 = new AMap.Map(this.$refs[i][0].$refs.allmap, {
-                resizeEnable: true,
-                zoom:14,
-                center: centerPoint
-              });
-              AMap.service('AMap.Geocoder',() =>{
-                let geocoder = new AMap.Geocoder({});
-                geocoder.getAddress(centerPoint,  (status, result) =>{
-                  if (status === 'complete' && result.info === 'OK') {
-                    item.centerPoint = centerPoint;
-                    item.address = result.regeocode.formattedAddress;
+              AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) =>{
+                item.map1 = new AMap.Map(this.$refs[i][0].$refs.allmap, {
+                  zoom: 14,
+                  scrollWheel: true,
+                  center: centerPoint
+                });
+                var positionPicker = new PositionPicker({
+                  mode: 'dragMap',
+                  map: item.map1,
+                  iconStyle: {
+                    url: './static/ti.png',
+                    ancher: [16, 56],
+                    size: [32,56]
                   }
                 });
-                item.map1.on("zoomchange",(e)=>{
-                  console.log( item.map1.getCenter())
-                  let centerPoint = [item.map1.getCenter().lng,item.map1.getCenter().lat];
-
-                })
-                item.map1.map.on("moveend",(e)=>{
-                  console.log( item.map1.getCenter())
-                  let centerPoint = [item.map1.getCenter().lng,item.map1.getCenter().lat];
-                  geocoder.getAddress(centerPoint,  (status, result) =>{
-                    if (status === 'complete' && result.info === 'OK') {
-                      console.log(result);
-                      item.centerPoint = centerPoint;
-                      item.address = result.regeocode.formattedAddress;
-                    }
-                  });
+                positionPicker.on('success', (positionResult)=> {
+                  console.log(positionResult.regeocode.pois[0].name)
+                  item.address = positionResult.address;
                 });
-              })
+                positionPicker.on('fail', (positionResult)=> {
+                });
+                positionPicker.start();
+                item.map1.panBy(0, 1);
+              });
             }
 
             // this.$refs[i][0].getMapStatus();
@@ -599,7 +551,7 @@
       },
 
       components: {
-        myDialog,showMap,showMapNext,addRoute
+        myDialog,showMap,showMapNext,addRoute,showAddress
       },
       mounted(){
         this.createMap();
@@ -614,9 +566,9 @@
 
 
         //选择车型
-        // getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarTypeList').then((res)=>{
-        //   console.log(res)
-        // })
+        getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarTypeList').then((res)=>{
+          console.log(res)
+        })
 
         //车辆规格
         getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarSpecList').then((res)=>{
@@ -630,13 +582,17 @@
               item.list[0].show = false;
             });
             this.carList = res[0].list;
-
             getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res[0].serviceCode}`).then((res)=>{
-              console.log(res)
+              this.requestList = res;
             })
 
           }
         })
+
+        //货物名称
+        getApi('/aflccommonservice/sysDict/getSysDictByCodeGet/AF034').then((res)=>{
+          this.goodsList = res
+        });
       }
     }
 </script>
@@ -697,7 +653,7 @@
     position: absolute;
     width: 208px;
     height: 136px;
-    z-index: 2;
+    z-index: 300;
     top: 62px;
     left: 0;
     background-color: rgba(51,51,51,0.8);
@@ -780,69 +736,7 @@
 
     }
   }
-  .address-line{
-    position: absolute;
-    top: 41px;
-    right: 0;
-    z-index: 1;
-    width: 486px;
-    height: 262px;
-    background-color: white;
-    box-shadow: 1px 2px 5px 0px #DEDEDE;
-    padding: 8px;
-    box-sizing: border-box;
 
-    .search{
-      .search-body{
-        width: 298px;
-        height: 35px;
-        border-radius: 3px;
-        .search-left{
-          background-color: #f2f2f2;
-          border: 1px solid #f2f2f2;
-          border-bottom-left-radius: 5px;
-          border-top-left-radius: 5px;
-
-        }
-        .search-right{
-          width: 50px;
-          color: white;
-          background-color: #2fb301;
-          border: 1px solid #2fb301;
-          border-bottom-right-radius: 5px;
-          border-top-right-radius: 5px;
-        }
-      }
-    }
-    .address-item{
-      height: 61px;
-      border-bottom: 1px dotted #f2f2f2;
-
-      .address-item-left{
-        font-size: 12px;
-        :nth-of-type(1){
-          color: #333333;
-        }
-        :nth-of-type(2),:nth-of-type(3){
-          color: #999999;
-        }
-      }
-      .address-item-right{
-        .edit{
-          font-size: 12px;
-
-          color: #1890ff;
-          margin-right: 36px;
-        }
-        .del{
-          font-size: 12px;
-
-          color: #ff300d;
-        }
-      }
-    }
-
-  }
 
 
   .route-line{

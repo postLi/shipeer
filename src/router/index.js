@@ -98,6 +98,10 @@ export default new Router({
     {
       path: '/register', component: Register,name:'Register'
     },
-
+    {
+      path: '/order1',
+      name: 'Order1',
+      component: Order,
+    },
   ]
 })
