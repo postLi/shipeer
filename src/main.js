@@ -10,6 +10,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import VueJsCookie from 'vue-js-cookie'
 import {getUserInfo,removeUserInfo} from '@/utils/auth'
 import { Message, MessageBox } from 'element-ui'
+import '@/icons' // icon
 import { mapGetters } from 'vuex'
 
 Vue.config.productionTip = false;

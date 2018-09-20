@@ -30,13 +30,13 @@
           <el-form class="tab-loginClass" v-show="tabId===0" :model="userData" :rules="userRules" ref="userLogin">
             <el-form-item class="" prop="userPhone">
               <el-input :maxlength="11" placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone"
-                        v-model="userData.userPhone" clearable>
+                        v-model="userData.userPhone" clearable  @click.native.prevent="subLogin">
 
               </el-input>
             </el-form-item>
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
-                         clearable>
+                         clearable @click.native.prevent="subLogin">
 
               </el-input>
               <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
@@ -45,7 +45,7 @@
               <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
-              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable>
+              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable @click.native.prevent="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
@@ -54,21 +54,23 @@
 
           </el-form>
           <el-form class="tab-verClass" v-show="tabId===1" :model="verData" :rules="verRules" ref="verLogin">
-            <el-form-item class="" prop="verPhone">
+            <!--prop="verPhone"-->
+            <el-form-item class="" >
               <el-input placeholder="请输入手机号码" :maxlength="11" prefix-icon="el-icon-mobile-phone"
-                        v-model="verData.verPhone" clearable>
+                        v-model="verData.verPhone" clearable @click.native.prevent="subLogin">
               </el-input>
             </el-form-item>
 
             <el-form-item class="" prop="verGra">
-              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable>
+              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable @click.native.prevent="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
               </el-input>
             </el-form-item>
-            <el-form-item class="ver-note" prop="verNote">
-              <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable>
+            <!--prop="verNote"-->
+            <el-form-item class="ver-note" >
+              <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @click.native.prevent="subLogin">
                 <template slot="append"><span @click="getValidNum">{{getValidtile}}</span></template>
               </el-input>
             </el-form-item>

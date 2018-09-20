@@ -1,7 +1,8 @@
 import Axios from 'axios'
-import {getUserInfo} from '@/utils/auth'
 import VueJsCookie from 'vue-js-cookie'
 let swg1 = 'aflcsmservice_wtc'
+let swg2 = 'aflcSmService'
+let swg3 = 'aflcorderservice-lyc'
 export function postFindMywallet() {
   return Axios.post('/aflcusercenterservice/aflcMywalletApi/findMywallet')
 }
@@ -16,6 +17,12 @@ export function postFindAflcReward(params) {
 //   return Axios.get(''+swg1+'/sm/aflcCouponUse/v1/couponCountWeb/'+userId)
 // }
 export function getCouponCount() {
-  return Axios.get(''+swg1+'/sm/aflcCouponUse/v1/couponCountWeb')
+  return Axios.get(''+swg2+'/sm/aflcCouponUse/v1/couponCountWeb')
 }
-
+// /order/aflcOrderPayment/v1/findShipperOrderPayment
+// 货主交易记录
+export function postFindSOPayment(params) {
+  return Axios.post(''+swg3+'/order/aflcOrderPayment/v1/findShipperOrderPayment',params).then(res =>{
+    return res.data || { list: [], totalCount: 0 }
+  })
+}

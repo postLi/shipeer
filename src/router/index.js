@@ -6,9 +6,13 @@ import Register from '@/pages/register/index.vue'
 import PayFor from '@/pages/orderRouter/payFoy.vue'
 import InSingle from '@/pages/orderRouter/inSingle.vue'
 import AlOrder from '@/pages/orderRouter/alOrder.vue'
+import GetPickUp from '@/pages/orderRouter/getPickUp.vue'
 import Order from '@/pages/order/order.vue'
 import MyDriver from '@/pages/myDriver/index.vue'
 import ManageCenter from '@/pages/manageCenter/index.vue'
+import ManageAllRecod from '@/pages/manageCenter/allRecod.vue'
+import ManageCoupon from '@/pages/manageCenter/coupon.vue'
+import ManageCouponList from '@/pages/manageCenter/couponList.vue'
 import OrderManage from '@/pages/orderManage/index.vue'
 import AlcencelOrder from '@/pages/orderManage/alcencel.vue'
 import AllOrderOrder from '@/pages/orderManage/allOrder.vue'
@@ -74,6 +78,21 @@ export default new Router({
         },
         {
           path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
+        },{
+          path: '/orderRouter/getPickUp', component: GetPickUp,name:'GetPickUp'
+        },
+        {
+          path: '/allRecod',
+          name: 'ManageAllRecod',
+          component: ManageAllRecod,
+        }, {
+          path: '/coupon',
+          name: 'ManageCoupon',
+          component: ManageCoupon,
+        },{
+          path: '/couponList',
+          name: 'ManageCouponList',
+          component: ManageCouponList,
         },
         {
           path: '/manageCenter',

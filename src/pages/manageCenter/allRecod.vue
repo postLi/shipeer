@@ -1,5 +1,6 @@
 <template>
-  <div class="table-lll">
+  <div class="table-lll-al">
+    <h4>交易记录查询：</h4>
     <Search @change="getSearchParam"></Search>
     <div class="info-table">
       <el-table
@@ -13,130 +14,122 @@
         tooltip-effect="dark"
         :default-sort = "{prop: 'id', order: 'ascending'}"
         style="width: 100%">
-        <el-table-column
-          fixed
-          sortable
-          type="selection"
-          width="50">
-        </el-table-column>
+
         <el-table-column
           fixed
           sortable
           prop="id"
           label="序号"
-          width="90">
+          width="80">
           <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
-          width="150"
-          label="订单号">
+          prop="orderSerial"
+          width="125"
+          label="交易流水号">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="belongCityName"
-          width="130"
-          label="城市">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="carSpec"
-          width="120"
-          label="需求车型">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="abnormalNo"
-          width="120"
-          label="运费总额">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="useCarTime"
+          prop="orderFinishTime"
           width="160"
-          label="用车时间">
+          label="订单完成时间">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
+          prop="incomeExpendTypeName"
           width="120"
-          label="付款状态">
+          label="收支类型">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
-          width="120"
-          label="提货地">
+          prop="payWayName"
+          width="110"
+          label="交易方式">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
-          width="120"
+          prop="tradeTypeName"
+          width="110"
+          label="交易类型">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="orderTypeName"
+          width="110"
+          label="服务类型">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="startLocation"
+          width="190"
+          label="出发地">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="endLocation"
+          width="192"
           label="目的地">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="carNumber"
+          prop="totalAmount"
           width="120"
+          label="金额">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="carNumber"
+          width="100"
           label="车牌号">
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="driverName"
-          width="100"
+          width="120"
           label="司机">
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="driverMobile"
-          width="130"
-          label="司机联系电话">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="abnormalNo"
           width="120"
-          label="操作">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
-            <el-button @click="handleClick1(scope.row)" type="text" size="small">派单中</el-button>
-          </template>
+          label="联系电话">
         </el-table-column>
       </el-table>
     </div>
     <div class="page">
-      <div class="block">
-        <!--<span class="demonstration">调整每页显示条数</span>-->
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage2"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="sizes, prev, pager, next"
-          :total="1000">
-        </el-pagination>
-      </div>
+      <!--<div class="block">-->
+        <!--&lt;!&ndash;<span class="demonstration">调整每页显示条数</span>&ndash;&gt;-->
+        <!--<el-pagination-->
+          <!--@size-change="handleSizeChange"-->
+          <!--@current-change="handleCurrentChange"-->
+          <!--:current-page.sync="currentPage2"-->
+          <!--:page-sizes="[100, 200, 300, 400]"-->
+          <!--:page-size="100"-->
+          <!--layout="sizes, prev, pager, next"-->
+          <!--:total="1000">-->
+        <!--</el-pagination>-->
+      <!--</div>-->
     </div>
   </div>
 </template>
 
 <script>
   import Search from './components/search'
-  import {postMyOrderList} from '@/api/concentrateAxios/orderManage'
+  import {postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
+  import {pickerOptions2} from '@/utils/'
   export default{
     data(){
       return {
@@ -148,7 +141,15 @@
           currentPage:1,
           pageSize:5,
           vo:{
-
+            carInfo:'',
+            incomeExpendType:'',
+            tradeEndTime:'',
+            tradeStartTime:'',
+            // "accountId": "string",
+            // "carInfo": "string",
+            // "incomeExpendType": "string",
+            // "tradeEndTime": "2018-09-20T07:05:11.259Z",
+            // "tradeStartTime": "2018-09-20T07:05:11.259Z"
           }
         }
 
@@ -162,8 +163,7 @@
     },
     methods:{
       getPaymentList(){
-        return postMyOrderList(this.senDataList).then(res =>{
-          console.log(res,'列表')
+        return postFindSOPayment(this.senDataList).then(res =>{
           this.dataset = res.list
         }).catch(err => {
           this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
@@ -208,13 +208,16 @@
 </script>
 
 <style lang="scss">
-  .table-lll{
-    margin-top: 10px;
+  .table-lll-al{
+    margin: 10px;
     background: #fff;
+    h4{
+      margin: 40px 0 15px 40px;
+    }
     .info-table{
       /*display: flex;*/
       /*padding-top: 20px;*/
-        padding: 10px 10px 40px;
+        padding: 0 10px 0 40px;
         height: 100%;
         -ms-flex-positive: 1;
         flex-grow: 1;
@@ -224,9 +227,6 @@
       .el-table th>.cell{
         text-align: center;
         color: #333;
-        .el-button--text{
-          border-bottom: 1px solid #409EFF;
-        }
 
       }
       .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{

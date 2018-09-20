@@ -1,14 +1,15 @@
 <template>
-    <router-view/>
+  <router-view/>
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+  export default {
+    name: 'App'
+  }
 </script>
 
-<style>
+<style lang="scss">
   @import "./style/main.css";
 
+  @import './style/index.scss';
 </style>

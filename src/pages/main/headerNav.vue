@@ -30,11 +30,11 @@
                 <el-col>修改密码</el-col>
               </el-row>
               <el-row>
-                <el-col>退出登录</el-col>
+                <el-col><span @click="laygot">退出登录</span></el-col>
               </el-row>
             </el-popover>
             <div class="avatar-wrapper" v-popover:popoveruser>
-              <img class="user-avatar" :src="userInfoData.shipperCardFile">
+              <img class="user-avatar" :src="userInfoData.shipperCardFile?userInfoData.shipperCardFile:'../../assets/role.png'">
               <span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span>
             </div>
           </div>
@@ -46,8 +46,7 @@
 <script>
   import VueJsCookie from 'vue-js-cookie'
   import {getUser,validLoginServicePhone} from '@/api/login'
-  import {setUserInfo} from '@/utils/auth'
-  import {getServerPhone} from '@/utils/auth'
+  import {setUserInfo,getUserInfo,removeUserInfo,getServerPhone} from '@/utils/auth'
     export default {
         data(){
           return{
@@ -73,6 +72,12 @@
         gotoManageC(){
           this.$router.push({path: '/manageCenter'})
         },
+        laygot(){
+          this.$router.push({path: '/'})
+          VueJsCookie.remove('28kytoken')
+          VueJsCookie.remove('28kyuPhone')
+          removeUserInfo()
+        }
         // getServerPhone(){
         //   return validLoginServicePhone().then(res=>{
         //     if(res.status ===200){

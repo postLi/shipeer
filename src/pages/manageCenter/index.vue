@@ -6,7 +6,8 @@
             <ul>
               <li>
                 <div class="liImg">
-                  <img :src="userInfoData.shipperCardFile" alt="">
+                  <!--<span style="color: red"><icon-svg iconClass="baobiao2_yingyeehzb"></icon-svg></span>-->
+                  <img :src="userInfoData.shipperCardFile?userInfoData.shipperCardFile:'../../assets/role.png'" alt="">
                 </div>
                 <div class="liMessage">
                   <span>欢迎您,&nbsp;&nbsp;{{userInfoData.mobile}}</span>
@@ -31,6 +32,7 @@
             <ul>
               <li>
                <div class="liClass">
+
                  <img src="../../assets/main/fahuor.png" alt="">
                  <p>账户余额</p>
                  <p>¥{{infoData.balance}}</p>
@@ -41,7 +43,7 @@
             </ul>
             <ul>
               <li>
-                <div class="liClass">
+                <div class="liClass" @click="gotoCoupon">
                   <img src="../../assets/main/fahuor.png" alt="">
                   <p>在线交易优惠金</p>
                   <p>¥{{infoData.rewardMax}}</p>
@@ -52,7 +54,7 @@
             </ul>
             <ul>
               <li>
-                <div class="liClass">
+                <div class="liClass" @click="gotoCouponList">
                   <img src="../../assets/main/fahuor.png" alt="">
                   <p>优惠券</p>
                   <p>{{infoData.nums}}张</p>
@@ -70,76 +72,68 @@
             <div class="accountBtn">
               <ul>
                 <li>近期交易</li>
-                <li>查看全部交易记录</li>
+                <li @click="gotoAllRecod">查看全部交易记录</li>
               </ul>
             </div>
             <div class="info-table">
               <el-table
                 ref="multipleTable"
                 :data="dataset"
-                stripe
                 border
                 @row-dblclick="getDbClick"
                 @row-click="clickDetails"
                 @selection-change="getSelection"
-                height="100%"
-                tooltip-effect="dark"
                 :default-sort = "{prop: 'id', order: 'ascending'}"
                 style="width: 100%">
-                <el-table-column
-                  fixed
-                  sortable
-                  type="selection"
-                  width="50">
-                </el-table-column>
+
                 <el-table-column
                   fixed
                   sortable
                   prop="id"
                   label="序号"
                   width="100">
-                  <template slot-scope="scope"></template>
+                  <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
                 </el-table-column>
                 <el-table-column
                   fixed
                   sortable
-                  prop="abnormalNo"
+                  prop="orderSerial"
                   width="250"
                   label="交易流水号">
                 </el-table-column>
                 <el-table-column
                   fixed
                   sortable
-                  prop="abnormalNo"
+                  prop="incomeExpendTypeName"
                   width="200"
                   label="收支类型">
                 </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="abnormalNo"
+                    prop="payWayName"
                     width="250"
                     label="交易方式">
                   </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="abnormalNo"
+                    prop="tradeTypeName"
                     width="250"
                     label="交易类型">
                   </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="abnormalNo"
+                    prop="totalAmount"
                     width="250"
                     label="金额">
                   </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="abnormalNo"
-                    width="250"
+                    prop="payTime"
+                    width="277"
                     label="交易时间">
                   </el-table-column>
               </el-table>
@@ -154,7 +148,7 @@
   import VueJsCookie from 'vue-js-cookie'
   import Vue from 'vue'
   // import {getUser} from '@/api/login'
-  import {postFindMywallet,postFindAflcReward,getCouponCount} from '@/api/concentrateAxios/manageCenter'
+  import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
 
     export default {
@@ -175,6 +169,13 @@
             vo:{
 
             }
+          },
+          senDataList:{
+            currentPage:1,
+            pageSize:5,
+            vo:{
+
+            }
           }
         }
       },
@@ -188,14 +189,13 @@
           this.getWallet()
           this.getRewardInfo()
           this.getCouponCountInfo()
+          this.getPaymentList()
         },
         getWallet(){
 
           return postFindMywallet(this.userInfoData.userToken).then(res =>{
             if(res.status===200){
               this.infoData.balance = res.mywallet.mywallet
-              console.log(res,'设置')
-              // this.infoData.rewardMax = res.list[0].rewardMax
             }
             else{
               this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
@@ -205,28 +205,25 @@
         },
         getRewardInfo(){
           return postFindAflcReward(this.senData).then(res => {
-            if(res.status===200){
-              this.infoData.rewardMax = res.list[0].rewardMax
-            }
-            else{
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-            }
+            this.infoData.rewardMax = res.list[0].rewardMax
 
+          }).catch(err => {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
         },
         getCouponCountInfo(){
-          //this.userInfoData.shipperId
           return getCouponCount().then(res => {
             if(res.status===200){
-              // nums
               this.infoData.nums = res.data
-              // console.log(res,'设置11111')
             }
             else{
               this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
             }
-            // this.infoData.rewardMax = res.list[0].rewardMax
-
+          })
+        },
+        getPaymentList(){
+          return postFindSOPayment(this.senDataList).then(res =>{
+            this.dataset = res.list
           })
         },
         // getUserInfo(){
@@ -251,6 +248,15 @@
         },
         getSelection(selection){
           this.selected = selection
+        },
+        gotoAllRecod(){
+          this.$router.push({path: '/allRecod'})
+        },
+        gotoCoupon(){
+          this.$router.push({path: '/coupon'})
+        },
+        gotoCouponList(){
+          this.$router.push({path: '/couponList'})
         }
       }
     }
@@ -395,6 +401,7 @@
         ul:nth-of-type(2) li:hover,ul:nth-of-type(3) li:hover,ul:nth-of-type(4) li:hover {
           transform: 2s;
           box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+          cursor: pointer;
         }
       }
 
@@ -421,6 +428,7 @@
               text-align: right;
               color: #3b99f0;
               font-size: 14px;
+              cursor: pointer;
             }
           }
         }
@@ -436,6 +444,9 @@
             text-align: center;
             color: #333;
 
+          }
+          .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+            text-align: center;
           }
         }
       }
