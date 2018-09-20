@@ -11,13 +11,13 @@
         <el-input v-model="searchForm.name"></el-input>
       </el-form-item>
       <el-form-item label="司机">
-        <el-input v-model="searchForm.name"></el-input>
+        <el-input  placeholder="司机姓名/联系电话/车牌号"></el-input>
       </el-form-item>
     </el-form>
     <div class="search-btn">
       <!--<el-row>-->
-        <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
-        <el-button type="info" size="mini" @click="clearForm">重置</el-button>
+        <el-button type="success" size="mini" @click="onSubmit" icon="el-icon-search">查询</el-button>
+        <el-button type="info" size="mini" @click="clearForm" icon="el-icon-refresh">重置</el-button>
       <!--</el-row>-->
     </div>
   </div>
@@ -49,10 +49,16 @@
   display: flex;
   .el-form{
     display: flex;
+    .el-form-item{
+      .el-form-item__label{
+        color: #333;
+      }
+    }
+
   }
   .search-btn{
     display: flex;
-    padding-left: 20px;
+    padding-left: 50px;
     .el-button{
       height: 40px;
     }

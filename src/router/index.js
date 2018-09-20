@@ -63,16 +63,17 @@ export default new Router({
               name: 'ServerOrder',
               component: ServerOrder,
             },
-            {
-              path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'
-            },
-            {
-              path: '/orderRouter/inSingle', component: InSingle,name:'InSingle'
-            },
-            {
-              path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
-            }
-          ]
+
+          ],
+        },
+        {
+          path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'
+        },
+        {
+          path: '/orderRouter/inSingle', component: InSingle,name:'InSingle'
+        },
+        {
+          path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
         },
         {
           path: '/manageCenter',

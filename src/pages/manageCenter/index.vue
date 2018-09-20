@@ -1,58 +1,70 @@
 <template>
-    <div class="orderManageClass-lll">
+    <div class="orderManageClass-lll" v-loading="loading">
       <el-container>
         <el-header>
           <div class="headerClass">
-            <div class="img">
-              <img :src="userInfoData.shipperCardFile" alt="">
-              <!--<img src="../../assets/role.png" alt="">-->
-            </div>
-              <ul>
-                <li>欢迎您,{{userInfoData.mobile}}<span>更换手机号</span></li>
-                <li> 企业名称:{{userInfoData.companyName}}</li>
+            <ul>
+              <li>
+                <div class="liImg">
+                  <img :src="userInfoData.shipperCardFile" alt="">
+                </div>
+                <div class="liMessage">
+                  <span>欢迎您,&nbsp;&nbsp;{{userInfoData.mobile}}</span>
+                  <span>更换手机号</span>
+                </div>
+                <div class="liOther" style="padding-top:22px">
+                  <span>企业名称:</span>
+                  <span >{{userInfoData.companyName}}</span>
+                </div>
+                <div class="liOther">
+                  <span>联系人:</span>
+                  <span>{{userInfoData.contacts}}</span>
+                </div>
+                <div class="liOther">
+                  <span>企业认证:</span>
+                  <span>{{userInfoData.shipperStatusName}}</span>
+                  <span class="spanClass" v-if="userInfoData.shipperStatus === AF0010403">去认证</span>
+                </div>
+              </li>
 
-              </ul>
-              <ul>
-                <li>联系人:{{userInfoData.contacts}}</li>
-                <li>企业认证:{{userInfoData.shipperStatusName}}<span v-if="userInfoData.shipperStatus === AF0010403">去认证</span></li>
-              </ul>
+            </ul>
+            <ul>
+              <li>
+               <div class="liClass">
+                 <img src="../../assets/main/fahuor.png" alt="">
+                 <p>账户余额</p>
+                 <p>¥{{infoData.balance}}</p>
+                 <p>（充值特惠，去充值）</p>
+               </div>
+
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <div class="liClass">
+                  <img src="../../assets/main/fahuor.png" alt="">
+                  <p>在线交易优惠金</p>
+                  <p>¥{{infoData.rewardMax}}</p>
+                  <p></p>
+                </div>
+
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <div class="liClass">
+                  <img src="../../assets/main/fahuor.png" alt="">
+                  <p>优惠券</p>
+                  <p>{{infoData.nums}}张</p>
+                  <p></p>
+                </div>
+
+              </li>
+            </ul>
           </div>
         </el-header>
         <el-main>
           <div class="mainClass">
-            <div class="accountClass">
-              <h5>我的账户</h5>
-
-              <div class="contentClass">
-                <ul class="bigUl">
-                  <li>
-                    <div>$</div>
-                    <ul>
-                      <li>账户余额</li>
-                      <li>￥888</li>
-                    </ul>
-                  </li>
-                </ul>
-                <ul class="bigUl">
-                  <li>
-                    <div>$</div>
-                    <ul>
-                      <li>账户余额</li>
-                      <li>￥888</li>
-                    </ul>
-                  </li>
-                </ul>
-                <ul class="bigUl">
-                  <li>
-                    <div>$</div>
-                    <ul>
-                      <li>账户余额</li>
-                      <li>￥888</li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-            </div>
 
 
             <div class="accountBtn">
@@ -141,39 +153,96 @@
 <script>
   import VueJsCookie from 'vue-js-cookie'
   import Vue from 'vue'
-  import {getUser} from '@/api/login'
-  import {getUserInfo,setUserInfo} from '../../utils/auth'
+  // import {getUser} from '@/api/login'
+  import {postFindMywallet,postFindAflcReward,getCouponCount} from '@/api/concentrateAxios/manageCenter'
+  import {getUserInfo} from '@/utils/auth'
 
     export default {
       data(){
         return{
           dataset:[],
           selected:[],
-          userInfoData:{}
+          infoData:{
+            rewardMax:0.00,
+            balance:0.00,
+            nums:0
+          },
+          userInfoData:getUserInfo(),
+          loading:false,
+          senData:{
+            currentPage:100,
+            pageSize:1,
+            vo:{
+
+            }
+          }
         }
       },
       mounted(){
-        this.getUserInfo()
-        // this.userInfoData = getUserInfo()
-        // this.getUserInfo()
+
+        this.getFn()
+
       },
       methods:{
-        getUserInfo(){
-          let uPhone = VueJsCookie.get('28kyuPhone')
-          return getUser(uPhone).then(res=>{
+        getFn(){
+          this.getWallet()
+          this.getRewardInfo()
+          this.getCouponCountInfo()
+        },
+        getWallet(){
+
+          return postFindMywallet(this.userInfoData.userToken).then(res =>{
             if(res.status===200){
-              this.userInfoData = res.data
-              this.$store.commit('setUserInfo', res.data)
-              console.log('1111111')
-              window.USERDATA = res.data
-              setUserInfo(this.userInfoData)
-              console.log(this.userInfoData,'用户')
-            }else{
-              this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+              this.infoData.balance = res.mywallet.mywallet
+              console.log(res,'设置')
+              // this.infoData.rewardMax = res.list[0].rewardMax
+            }
+            else{
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
             }
 
           })
         },
+        getRewardInfo(){
+          return postFindAflcReward(this.senData).then(res => {
+            if(res.status===200){
+              this.infoData.rewardMax = res.list[0].rewardMax
+            }
+            else{
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            }
+
+          })
+        },
+        getCouponCountInfo(){
+          //this.userInfoData.shipperId
+          return getCouponCount().then(res => {
+            if(res.status===200){
+              // nums
+              this.infoData.nums = res.data
+              // console.log(res,'设置11111')
+            }
+            else{
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            }
+            // this.infoData.rewardMax = res.list[0].rewardMax
+
+          })
+        },
+        // getUserInfo(){
+        //   let uPhone = VueJsCookie.get('28kyuPhone')
+        //   return getUser(uPhone).then(res=>{
+        //     if(res.status===200){
+        //       this.userInfoData = res.data
+        //       this.$store.commit('setUserInfo', res.data)
+        //       window.USERDATA = res.data
+        //       setUserInfo(this.userInfoData)
+        //     }else{
+        //       this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+        //     }
+        //
+        //   })
+        // },
         getDbClick(){
 
         },
@@ -194,99 +263,179 @@
     list-style: none;
   }
   .orderManageClass-lll{
+    background: rgb(242,242,242);
+    /*margin: 10px;*/
     .el-header {
-      background-color: #B3C0D1;
+      padding: 0 0 ;
+      background-color: #fff;
       color: #333;
       height: 100% !important;
-      /*text-align: center;*/
-      /*line-height: 560px;*/
+      margin: 10px;
       .headerClass{
         display: flex;
-        margin: 10px 20px 10px 10px ;
-        .img{
-          img{
-            width: 56px;
-            height: 46px;
+        ul:first-of-type{
+          flex: 1;
+          border-right: 2px dotted #ddd;
+          margin-bottom: 8px;
+          li{
+            padding: 42px 40px 5px 40px;
+            .liImg{
+              text-align: center;
+              vertical-align: middle;
+              img{
+                border-radius:50%;
+                width: 128px;
+                height: 128px;
+              }
+            }
+            .liMessage{
+              margin-top: 10px;
+              span:first-of-type{
+                color: rgb(67,67,67);
+                font-size: 15px;
+                font-weight: 600;
+                padding-right: 20px;
+              }
+              span:last-of-type{
+                color: rgb(127,188,215);
+                border-bottom: 1px solid rgb(127,188,215);
+                /*cursor: pointer;*/
+              }
+            }
+            .liOther{
+              padding-top: 10px;
+              span:first-of-type{
+                font-size: 14px;
+                color: #999;
 
-          }
-        }
-          ul{
-             flex:1;
-            width: 100%;
-            max-width: 420px;
-            min-width: 520px;
-            li{
-              span{
-                padding-left: 20px;
-                color: #eee;
+              }
+              span:nth-of-type(2){
+                color: rgb(67,67,67);
+                font-size: 14px;
+                font-weight: 600;
+                padding: 0 20px 30px;
+              }
+              span.spanClass{
+                color: rgb(127,188,215);
+                border-bottom: 1px solid rgb(127,188,215);
+
               }
             }
           }
-          ul:first-of-type{
-            margin-left: 50px;
-          }
-          ul:last-of-type{
+        }
+        ul:nth-of-type(2),ul:nth-of-type(3),ul:nth-of-type(4){
+          flex: 1;
+          margin: 30px 0px 30px 0px;
+          li{
+            background: rgb(50,199,8);
+            .liClass{
+              vertical-align: middle;
+              text-align: center;
+              padding-top: 58px;
+              img{
+                width: 32px;
+                height: 32px;
+
+              }
+              p:first-of-type{
+                color: #fff;
+                font-size: 16px;
+                margin-bottom: -10px;
+              }
+              p:nth-of-type(2){
+                color: #fff;
+                font-size: 36px;
+                letter-spacing: 1px;
+              }
+              p:nth-of-type(3){
+                margin-top: -30px;
+                padding-bottom: 60px;
+                color:rgb(228,236,11);
+                font-size: 12px;
+              }
+            }
 
           }
+        }
+        ul:nth-of-type(2){
+          margin-left: 30px;
+          li{
+            .liClass{
+              p:last-of-type{
+                padding-bottom: 75px;
+              }
+            }
+          }
+        }
+        ul:nth-of-type(3){
+          margin-right: 100px;
+          margin-left: 100px;
+          /*margin:30px 100px 30px 100px;*/
+          li{
+            background: #f9c52b;
+            .liClass{
+              p:last-of-type{
+                padding-bottom: 91px;
+              }
+            }
+          }
+        }
+        ul:nth-of-type(4){
+          margin-right: 80px;
+          li{
+            background: #ec5a64;
+            .liClass{
+              p:last-of-type{
+                padding-bottom: 75px;
+                padding-bottom: 85px;
+              }
+            }
+          }
+        }
+        ul:nth-of-type(2) li:hover,ul:nth-of-type(3) li:hover,ul:nth-of-type(4) li:hover {
+          transform: 2s;
+          box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+        }
       }
+
     }
     .el-main {
-      background-color: #E9EEF3;
+      background-color: #fff;
       color: #333;
+      margin:0 10px 10px 10px;
+      padding: 0 0 ;
       .mainClass{
-        .accountClass{
-          .h5{
-
-          }
-          .contentClass{
-            display: flex;
-            ul.bigUl{
-              flex: 1;
-              background: #67C23A;
-              width: 100%;
-              max-width: 320px;
-              margin: 10px;
-              li{
-                div{
-                  text-align: left;
-                  padding: 20px;
-                  font-size: 30px;
-                  color: #fff;
-                  float: left;
-                }
-                ul{
-                  float: left;
-                  li{
-                    color: #fff;
-                    padding-top: 10px;
-                  }
-                }
-
-              }
-            }
-          }
-
-        }
         .accountBtn{
+          margin: 40px 40px 10px 40px;
           ul{
             display: flex;
             li:first-of-type{
               flex: 1;
               text-align: left;
+              color: #333;
+              font-size: 18px;
+              font-weight: 600;
             }
             li:last-of-type{
               flex: 1;
               text-align: right;
+              color: #3b99f0;
+              font-size: 14px;
             }
           }
         }
         .info-table{
-          padding: 10px 10px 40px;
+          margin: 0 40px 10px 40px;
           height: 100%;
           -ms-flex-positive: 1;
           flex-grow: 1;
-          .cel{
+          .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
+            background-color: #fafafa;
+          }
+          .el-table th>.cell{
             text-align: center;
+            color: #333;
+
           }
         }
       }

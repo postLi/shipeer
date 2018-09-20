@@ -1,10 +1,10 @@
 <template>
   <div class="customer-manager tab-wrapper">
     <div class="eltab clearfix">
-      <router-link to="/OrderManage/allOrder" class="tab-label">全部(100)</router-link>
-      <router-link to="/OrderManage/server" class="tab-label">服务中(20)</router-link>
-      <router-link to="/OrderManage/already" class="tab-label">已完成(60)</router-link>
-      <router-link to="/OrderManage/alcencel" class="tab-label">已取消(20)</router-link>
+      <router-link to="/OrderManage/allOrder" class="tab-label"><span>全部&nbsp;&nbsp;(100)</span></router-link>
+      <router-link to="/OrderManage/server" class="tab-label"><span>服务中&nbsp;&nbsp;(20)</span></router-link>
+      <router-link to="/OrderManage/already" class="tab-label"><span>已完成&nbsp;&nbsp;(60)</span></router-link>
+      <router-link to="/OrderManage/alcencel" class="tab-label"><span>已取消&nbsp;&nbsp;(20)</span></router-link>
     </div>
     <keep-alive>
       <router-view></router-view>
@@ -25,28 +25,46 @@
     text-decoration: none;
   }
   .tab-wrapper {
-    height: 100%;
+    /*background: red;*/
+    margin: 10px 10px 0 10px;
+    /*height: 100%;*/
     /*padding-top: 8px;*/
      .eltab {
       width: 100%;
-      height: 32px;
-      line-height: 30px;
+      /*height: 32px;*/
+      /*line-height: 30px;*/
+       display: flex;
+       background: #fff;
       /*border-bottom: 1px solid #91cbf7;*/
 
     }
 
     .tab-label {
       float: left;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding: 15px 60px 20px 60px;
+      /*padding-left: 60px;*/
+      /*padding-right: 60px;*/
       border-radius: 3px 3px 0 0;
-      border: 1px solid #d2d2d2;
-      font-size: 14px;
+      border-right: 1px solid #d2d2d2;
+      font-size: 16px;
       border-left-width: 0;
-      border-bottom : 1px solid #3e9ff1;;
+      background: #fff;
+      /*border-bottom : 1px solid #3e9ff1;;*/
       position: relative;
       top: 0;
+      color: #999;
       cursor: pointer;
+      span{
+        /*padding: 10px 0 10px 0;*/
+        /*text-align: center;*/
+        /*border-right: 1px solid #d2d2d2;*/
+      }
+    }
+    .tab-label:last-of-type{
+      border-right: none;
+    }
+    .tab-label:first-of-type{
+      border-left: none;
     }
     .tab-label:hover{
       background: #ffe;
@@ -59,15 +77,18 @@
 
   }
   .tab-wrapper .active-tab, .tab-wrapper .router-link-active {
-    color: #3e9ff1;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;
     /*border-color: #3e9ff1;*/
-    border-bottom-color: #fff;
+    border-bottom: 2px solid #2fb301;
+    border-left: 1px solid #d2d2d2;
     z-index: 2;
     left: -1px;
     top: -1px;
-    border-left-color: #3e9ff1;
-    border-top-color:  #3e9ff1;
-    border-right-color: #3e9ff1;
+    /*border-left-color: #3e9ff1;*/
+    /*border-top-color:  #3e9ff1;*/
+    /*border-right-color: #3e9ff1;*/
     border-top-width: 2px;
   }
 </style>

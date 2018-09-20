@@ -7,6 +7,7 @@ import ElementUI from 'element-ui';
 import Axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css';
 import VueJsCookie from 'vue-js-cookie'
+import {getUserInfo,removeUserInfo} from '@/utils/auth'
 import { Message, MessageBox } from 'element-ui'
 import { mapGetters } from 'vuex'
 
@@ -21,16 +22,24 @@ const url = '/api';
 
 // request拦截器
 Axios.interceptors.request.use(config => {
+  if (!config.params) {
+    config.params = {}
+  }
+
   let token = VueJsCookie.get('28kytoken')
+  if (getUserInfo() && getUserInfo().userToken) {
+
+    // config.headers.user_token = getUserInfo().userToken
+    config.params['user_token'] = getUserInfo().userToken
+  }
+
   if (token) {
     // 让每个请求携带自定义token 请根据实际情况自行修改
     config.headers['access_token'] = token
     // config.headers.Authorization = 'Bearer ' + getToken()
 
     // 暂时放到链接中
-    if (!config.params) {
-      config.params = {}
-    }
+
     config.params['access_token'] = token
     // console.log(config.url, config.params)
   }
@@ -97,6 +106,7 @@ Axios.interceptors.response.use(
         })
         VueJsCookie.remove('28kytoken')
         VueJsCookie.remove('28kyuPhone')
+        removeUserInfo()
 
 
         // 401:非法的token;Token 过期了;

@@ -23,8 +23,8 @@
               class="user-center"
 
               >
-              <el-row :span="2" @click="gotoManageC">
-                <el-col >管理中心</el-col>
+              <el-row :span="2" >
+                <el-col ><span @click="gotoManageC">管理中心</span></el-col>
               </el-row>
               <el-row>
                 <el-col>修改密码</el-col>
@@ -34,8 +34,8 @@
               </el-row>
             </el-popover>
             <div class="avatar-wrapper" v-popover:popoveruser>
-              <img class="user-avatar" src="../../assets/role.png">
-              <span class="user-name">张三丰<i class="el-icon-arrow-down"></i></span>
+              <img class="user-avatar" :src="userInfoData.shipperCardFile">
+              <span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span>
             </div>
           </div>
         </div>
@@ -44,36 +44,45 @@
 </template>
 
 <script>
+  import VueJsCookie from 'vue-js-cookie'
   import {getUser,validLoginServicePhone} from '@/api/login'
+  import {setUserInfo} from '@/utils/auth'
+  import {getServerPhone} from '@/utils/auth'
     export default {
         data(){
           return{
             visible: false,
-            serverPhone:''
+            serverPhone:getServerPhone(),
+            userInfoData:{},
+            uPhone:VueJsCookie.get('28kyuPhone')
           }
         },
       mounted(){
-          this.getServerPhone()
+          return getUser(this.uPhone).then(res=>{
+            if(res.status===200){
+              this.userInfoData = res.data
+              setUserInfo(this.userInfoData)
+            }else{
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            }
+
+          })
+        // }
       },
       methods:{
         gotoManageC(){
           this.$router.push({path: '/manageCenter'})
         },
-          getUserInfo(){
-            return getUser().then(res=>{
-
-            })
-          },
-        getServerPhone(){
-          return validLoginServicePhone().then(res=>{
-            if(res.status ===200){
-              this.serverPhone = res.data.value
-            }else{
-              this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-            }
-          }).catch(err => {
-          })
-        },
+        // getServerPhone(){
+        //   return validLoginServicePhone().then(res=>{
+        //     if(res.status ===200){
+        //       this.serverPhone = res.data.value
+        //     }else{
+        //       this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+        //     }
+        //   }).catch(err => {
+        //   })
+        // },
       }
     }
 </script>

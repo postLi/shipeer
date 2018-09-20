@@ -101,6 +101,7 @@
   import {login, loginValid, loginCode, validLoginCode, validLoginPhone,validLoginServicePhone} from '@/api/login'
   import Axios from 'axios'
   import VueJsCookie from 'vue-js-cookie'
+  import {setServerPhone} from '@/utils/auth'
 
   export default {
     data() {
@@ -188,6 +189,7 @@
         return validLoginServicePhone().then(res=>{
           if(res.status ===200){
             this.serverPhone = res.data.value
+            setServerPhone(this.serverPhone)
           }else{
             this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           }

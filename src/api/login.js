@@ -57,21 +57,15 @@ export function loginCode(imageWidth = 120, imageHeight = 30) {
 export function validLoginCode(code) {
   return Axios.get('/aflccommonservice/common/aflcMemberCenter/v1/checkImageCode/' + code)
 }
-// http://192.168.1.78:7010/aflc-common/aflcCommonSmsApi/sendCodeSms/13888888888
-// http://192.168.1.78:7010/aflc-common/aflcCommonSms/sendCodeSms/13888888888
-
 export function validLoginPhone(code) {
   return Axios.post('/aflc-common/aflcCommonSms/sendCodeSms/' + code)
 }
-//http://192.168.1.78:7010/aflc-common/aflcCommonSysDistApi/getPlatformCustomerServicePhone
-// http://192.168.1.78:7010/aflccommonservice/aflcCommonSysDistApi/getPlatformCustomerServicePhone
-// /aflc-common/aflcCommonSysDistApi/getPlatformCustomerServicePhone
+
 export function validLoginServicePhone() {
   return Axios.get('/aflc-common/aflcCommonSysDistApi/getPlatformCustomerServicePhone')
 }
 
 
-// 根据手机号码获取货主信息根据手机号码获取货主信息
 
 export function getUser(mobile) {
   return Axios.get('/aflc-common/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)

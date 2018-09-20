@@ -1,5 +1,5 @@
 <template>
-  <div class="driver-lll">
+  <div class="table-lll">
     <Search @change="getSearchParam"></Search>
     <div class="info-table">
       <el-table
@@ -181,8 +181,9 @@
 </script>
 
 <style lang="scss">
-  .driver-lll{
-    padding-top: 10px;
+  .table-lll{
+    margin-top: 10px;
+    background: #fff;
     .info-table{
       /*display: flex;*/
       /*padding-top: 20px;*/
@@ -190,6 +191,14 @@
         height: 100%;
         -ms-flex-positive: 1;
         flex-grow: 1;
+      .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
+        background-color: #fafafa;
+      }
+      .el-table th>.cell{
+        text-align: center;
+        color: #333;
+
+      }
 
     }
     .page{
