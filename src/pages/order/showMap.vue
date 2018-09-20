@@ -43,8 +43,7 @@
 
         </div>
       </div>
-      <!--<div class="ti" style="width: 2px;height: 2px;background-color: #ff300d"></div>-->
-      <img src="../../assets/main/ti.png" class="ti" alt="">
+
       <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="dialogVisible = false">
       <div  class="map-content" ref="allmap"></div>
     </div>
@@ -100,13 +99,7 @@
 
         }
       }
-      .ti{
-        position: absolute;
-        top: calc(50% - 28px);
-        left: 50%;
-        transform: translateX(-50%) translateY(-50%);
-        z-index: 102;
-      }
+
       .close{
         position: absolute;
         top: 0;
