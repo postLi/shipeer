@@ -1,7 +1,22 @@
 <template>
   <div class="search-form-al">
     <el-form ref="form" :model="searchForm" label-width="100px">
-      <el-form-item label="减免日期：">
+      <el-form-item label="充值日期：" v-if="pfrecord === true">
+        <div class="block">
+          <el-date-picker
+            v-model="searchCreatTime"
+            type="daterange"
+            align="right"
+            :picker-options="pickerOptions2"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            unlink-panels
+          >
+          </el-date-picker>
+        </div>
+        <!--<el-input v-model="searchForm.name"></el-input>-->
+      </el-form-item>
+      <el-form-item label="减免日期：" v-else>
         <div class="block">
           <el-date-picker
             v-model="searchCreatTime"
@@ -45,6 +60,14 @@
         }
       }
     },
+    props:{
+      pfrecord:Boolean
+    },
+    watch:{
+      pfrecord(newVal,ordVal){
+
+      }
+    },
     methods: {
       onSubmit() {
         this.searchForm.tradeStartTime = this.searchCreatTime ? parseTime(this.searchCreatTime[0], '{y}-{m}-{d} ') + '00:00:00' : ''
@@ -82,6 +105,9 @@
       padding-left: 100px;
       .el-button {
         height: 40px;
+      }
+      .el-button:first-of-type{
+        margin-right: 20px;
       }
     }
   }

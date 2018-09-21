@@ -13,6 +13,7 @@ import ManageCenter from '@/pages/manageCenter/index.vue'
 import ManageAllRecod from '@/pages/manageCenter/allRecod.vue'
 import ManageCoupon from '@/pages/manageCenter/coupon.vue'
 import ManageCouponList from '@/pages/manageCenter/couponList.vue'
+import ManageToPayCoupon from '@/pages/manageCenter/toPayCoupon.vue'
 import OrderManage from '@/pages/orderManage/index.vue'
 import AlcencelOrder from '@/pages/orderManage/alcencel.vue'
 import AllOrderOrder from '@/pages/orderManage/allOrder.vue'
@@ -89,10 +90,15 @@ export default new Router({
           path: '/coupon',
           name: 'ManageCoupon',
           component: ManageCoupon,
-        },{
+        },
+        {
           path: '/couponList',
           name: 'ManageCouponList',
           component: ManageCouponList,
+        }, {
+          path: '/toPayCoupon',
+          name: 'ManageToPayCoupon',
+          component: ManageToPayCoupon,
         },
         {
           path: '/manageCenter',

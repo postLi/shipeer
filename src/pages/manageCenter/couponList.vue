@@ -16,7 +16,7 @@
         <el-main>
           <div class="mainClass">
             <el-tabs v-model="activeName" @tab-click="handleClick">
-              <el-tab-pane label="用户管理" name="first">
+              <el-tab-pane label="可用" name="first">
                 <div class="info-table">
                   <el-table
                     ref="multipleTable"
@@ -74,7 +74,7 @@
                   </el-table>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="配置管理" name="second">
+              <el-tab-pane label="已使用" name="second">
                 <div class="info-table">
                   <el-table
                     ref="multipleTable"
@@ -132,7 +132,7 @@
                   </el-table>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="角色管理" name="third">
+              <el-tab-pane label="已过期" name="third">
                 <div class="info-table">
                   <el-table
                     ref="multipleTable"
@@ -190,64 +190,7 @@
                   </el-table>
                 </div>
               </el-tab-pane>
-              <el-tab-pane label="定时任务补偿" name="fourth">
-                <div class="info-table">
-                  <el-table
-                    ref="multipleTable"
-                    :data="dataset"
-                    border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-                    :default-sort = "{prop: 'id', order: 'ascending'}"
-                    style="width: 100%">
 
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="id"
-                      label="序号"
-                      width="128">
-                      <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="orderSerial"
-                      width="300"
-                      label="交易流水号">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="incomeExpendTypeName"
-                      width="300"
-                      label="交易方式">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="payWayName"
-                      width="300"
-                      label="金额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="tradeTypeName"
-                      width="300"
-                      label="充值后余额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="totalAmount"
-                      width="300"
-                      label="订单完成时间">
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </el-tab-pane>
             </el-tabs>
 
           </div>

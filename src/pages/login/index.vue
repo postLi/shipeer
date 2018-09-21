@@ -30,13 +30,13 @@
           <el-form class="tab-loginClass" v-show="tabId===0" :model="userData" :rules="userRules" ref="userLogin">
             <el-form-item class="" prop="userPhone">
               <el-input :maxlength="11" placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone"
-                        v-model="userData.userPhone" clearable  @click.native.prevent="subLogin">
+                        v-model="userData.userPhone" clearable  @keyup.enter.native="subLogin">
 
               </el-input>
             </el-form-item>
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
-                         clearable @click.native.prevent="subLogin">
+                         clearable @keyup.enter.native="subLogin">
 
               </el-input>
               <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
@@ -45,7 +45,7 @@
               <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
-              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable @click.native.prevent="subLogin">
+              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable @keyup.enter.native="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
@@ -57,12 +57,12 @@
             <!--prop="verPhone"-->
             <el-form-item class="" >
               <el-input placeholder="请输入手机号码" :maxlength="11" prefix-icon="el-icon-mobile-phone"
-                        v-model="verData.verPhone" clearable @click.native.prevent="subLogin">
+                        v-model="verData.verPhone" clearable @keyup.enter.native="subLogin">
               </el-input>
             </el-form-item>
 
             <el-form-item class="" prop="verGra">
-              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable @click.native.prevent="subLogin">
+              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable @keyup.enter.native="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
@@ -70,7 +70,7 @@
             </el-form-item>
             <!--prop="verNote"-->
             <el-form-item class="ver-note" >
-              <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @click.native.prevent="subLogin">
+              <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
                 <template slot="append"><span @click="getValidNum">{{getValidtile}}</span></template>
               </el-input>
             </el-form-item>
@@ -358,6 +358,7 @@
             font-size: 30px;
           }
           span:last-of-type {
+            padding-right: 55px;
             font-size: 40px;
           }
         }
@@ -466,7 +467,7 @@
 
           }
           .login-btn {
-            margin-top: 42px;
+            margin: 42px 0 40px 0;
             padding: 20px 0;
             height: 40px;
             .el-button {

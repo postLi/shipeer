@@ -1,18 +1,58 @@
 <template>
-    <div class="orderManageClass-lll" v-loading="loading">
+    <div class="orderManageClass-lll-tpCoupon" v-loading="loading">
       <el-container>
         <el-header>
           <div class="headerClass">
-            <ul>
-              <li>在线交易优惠金</li>
-              <li>余额：888.88元</li>
-              <li>累计减免：<span>1888.88</span>元</li>
-            </ul>
+            <div class="headerTop">
+              <h4>充值金额：</h4>
+              <ul class="clearfix">
+                <li @click="tabId=0" :class="[tabId === 0 ? 'active' : 'unatctiv']">
+                  <p>300元</p>
+                  <p>赠送60</p>
+                </li>
+                <li @click="tabId=1" :class="[tabId === 1 ? 'active' : 'unatctiv']">
+                  <p>500元</p>
+                  <p>赠送100</p>
+                </li>
+                <li @click="tabId=2" :class="[tabId === 2 ? 'active' : 'unatctiv']">
+                  <p>300元</p>
+                  <p>赠送60</p>
+                </li>
+                <li @click="tabId=3" :class="[tabId === 3 ? 'active' : 'unatctiv']">
+                  <p>500元</p>
+                  <p>赠送100</p>
+                </li>
+                <li @click="tabId=4" :class="[tabId === 4 ? 'active' : 'unatctiv']">
+                  <p>300元</p>
+                  <p>赠送60</p>
+                </li>
+                <li>
+                  必须为10的倍数
+                  <!--<p>必须为10的倍数</p>-->
+                  <!--<p></p>-->
+                </li>
+              </ul>
+            </div>
+            <div class="headerFoot">
+              <h4>支付方式：</h4>
+              <el-radio v-model="radio" label="1" class="wetclass" @change="checked('check1')">
+                <span class="spanClass">
+                  <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
+                </span>
+                微信支付
+                <img src="../../assets/role.png" alt="" v-if="checkedW">
+              </el-radio >
+              <el-radio v-model="radio" label="2" class="wetclass" @change="checked('check2')">
+                <span class="spanClass"><icon-svg iconClass="lll02zfb" class="svg"></icon-svg></span>
+                支付宝
+                <img src="../../assets/main/fahuor.png" alt="" v-if="checkedZ">
+              </el-radio >
+            </div>
           </div>
         </el-header>
         <el-main>
           <div class="mainClass">
-            <h4>减免记录：</h4>
+            <h4>充值记录查询：</h4>
             <searchTime @change="getSearchParam" :pfrecord="isPfrecord"></searchTime>
 
             <!--<div class="accountBtn">-->
@@ -92,9 +132,16 @@
     export default {
       data(){
         return{
-          isPfrecord:false,
+          isPfrecord:true,
+          radio: '1',
+          checkedW: true,
+          checkedZ: false,
+          isview: false,
+
+          tabId: 0,
           dataset:[],
           selected:[],
+          showBox:false,
           infoData:{
             rewardMax:0.00,
             balance:0.00,
@@ -130,11 +177,39 @@
         searchTime
       },
       mounted(){
-
         this.getPaymentList()
 
       },
       methods:{
+        // checkedW(){
+        //   if(this.checkedW == true){
+        //     this.checkedZ = false
+        //   }else{
+        //     this.checkedZ = true
+        //   }
+        // },
+
+        checked(type){
+          this.checkedW = false
+          this.checkedZ = false
+          switch (type){
+
+            case 'check1':
+              if(this.radio === 1){
+                this.checkedZ = true
+              }else{
+                this.checkedW = true
+              }
+              break;
+            case 'check2':
+              if(this.radio ===2){
+                this.checkedW = true
+              }else{
+                this.checkedZ = true
+              }
+              break;
+          }
+        },
         getPaymentList(){
           return postFindSOPayment(this.senDataList).then(res =>{
             this.dataset = res.list
@@ -167,16 +242,10 @@
 </script>
 
 <style lang="scss">
-  ul,li{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .orderManageClass-lll{
+
+  .orderManageClass-lll-tpCoupon{
     background: rgb(242,242,242);
-    h4{
-      margin: 40px 0 15px 40px;
-    }
+
     .el-header {
       padding: 0 0 ;
       background-color: #fff;
@@ -186,30 +255,70 @@
       .headerClass{
         display: inline-block;
         padding: 25px 0 40px 40px;
-        ul{
-          display: flex;
-          li:first-of-type{
-            background: rgb(250,214,107);
-            font-size: 36px;
-            color: #333333;
-            padding: 58px 60px 57px 70px;
-            font-weight: 600;
+        .headerTop{
+          h4{
+            margin: 40px 0 15px 0;
           }
-          li:nth-of-type(2){
-            background: rgb(249,197,43);
-            font-size: 26px;
-            color: #666;
-            padding: 58px 60px 57px 70px;
-          }
-          li:nth-of-type(3){
-            background: rgb(249,197,43);
-            font-size: 26px;
-            color: #666;
-            padding: 58px 60px 57px 70px;
-            span{
-              color: #3b99f0;
+          ul{
+            li{
+              float: left;
+              padding:15px 70px 15px 70px;
+              border: 1px solid #dddddd;
+              background: #f2f2f2;
+              margin-right: 50px;
+              font-size: 14px;
+              cursor: pointer;
+              p:first-of-type{
+                color: #333333;
+              }
+              p:last-of-type{
+                color: #ff300d;
+              }
+            }
+            li:last-of-type{
+              margin-right: 0;
+              padding:25px 36px 28px 25px;
+              cursor: help;
+            }
+            .active{
+              background-color: #ffffff;
+              border: solid 2px #2fb301;
+              p:first-of-type{
+                color: #2fb301;
+              }
+              p:last-of-type{
+                color: #2fb301;
+              }
             }
           }
+        }
+        .headerFoot{
+          h4{
+            margin: 40px 0 14px 0;
+          }
+         .wetclass{
+           .el-radio__label{
+             padding-left: 35px;
+             position: relative;
+           }
+           span.spanClass{
+             position: relative;
+             .svg-icon{
+               position: absolute;
+               top: -15px;
+               left: -38px;
+               width: 45px;
+               height: 45px;
+             }
+
+           }
+           img{
+             position: absolute;
+             top: 27px;
+             left: 27px;
+             display: block;
+           }
+         }
         }
       }
 
@@ -220,6 +329,9 @@
       margin:0 10px 10px 10px;
       padding: 0 0 ;
       .mainClass{
+        h4{
+          margin: 60px 0 15px 40px;
+        }
         .accountBtn{
           margin: 40px 40px 10px 40px;
           ul{

@@ -164,7 +164,7 @@
     methods:{
       getPaymentList(){
         return postFindSOPayment(this.senDataList).then(res =>{
-          this.dataset = res.list
+          this.dataset = res.data.list
         }).catch(err => {
           this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
         })

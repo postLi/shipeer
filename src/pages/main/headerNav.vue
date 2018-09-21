@@ -45,7 +45,7 @@
 
 <script>
   import VueJsCookie from 'vue-js-cookie'
-  import {getUser,validLoginServicePhone} from '@/api/login'
+  import {getUser,validLoginServicePhone,deleteToken} from '@/api/login'
   import {setUserInfo,getUserInfo,removeUserInfo,getServerPhone} from '@/utils/auth'
     export default {
         data(){
@@ -73,21 +73,17 @@
           this.$router.push({path: '/manageCenter'})
         },
         laygot(){
-          this.$router.push({path: '/'})
-          VueJsCookie.remove('28kytoken')
-          VueJsCookie.remove('28kyuPhone')
-          removeUserInfo()
+          return deleteToken().then(res =>{
+              this.$router.push({path: '/'})
+              // VueJsCookie.remove('28kytoken')
+              // VueJsCookie.remove('28kyuPhone')
+              // removeUserInfo()
+
+          }).catch(err => {
+            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
+          })
+
         }
-        // getServerPhone(){
-        //   return validLoginServicePhone().then(res=>{
-        //     if(res.status ===200){
-        //       this.serverPhone = res.data.value
-        //     }else{
-        //       this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-        //     }
-        //   }).catch(err => {
-        //   })
-        // },
       }
     }
 </script>

@@ -31,12 +31,12 @@
             </ul>
             <ul>
               <li>
-               <div class="liClass">
+               <div class="liClass" >
 
                  <img src="../../assets/main/fahuor.png" alt="">
                  <p>账户余额</p>
                  <p>¥{{infoData.balance}}</p>
-                 <p>（充值特惠，去充值）</p>
+                 <p @click="gotoToPayCoupon">（充值特惠，去充值）</p>
                </div>
 
               </li>
@@ -98,7 +98,7 @@
                   fixed
                   sortable
                   prop="orderSerial"
-                  width="250"
+                  width="280"
                   label="交易流水号">
                 </el-table-column>
                 <el-table-column
@@ -126,14 +126,14 @@
                     fixed
                     sortable
                     prop="totalAmount"
-                    width="250"
+                    width="260"
                     label="金额">
                   </el-table-column>
                   <el-table-column
                     fixed
                     sortable
                     prop="payTime"
-                    width="277"
+                    width="290"
                     label="交易时间">
                   </el-table-column>
               </el-table>
@@ -154,6 +154,7 @@
     export default {
       data(){
         return{
+
           dataset:[],
           selected:[],
           infoData:{
@@ -194,36 +195,31 @@
         getWallet(){
 
           return postFindMywallet(this.userInfoData.userToken).then(res =>{
-            if(res.status===200){
               this.infoData.balance = res.mywallet.mywallet
-            }
-            else{
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-            }
-
+          }).catch(err => {
+            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getRewardInfo(){
           return postFindAflcReward(this.senData).then(res => {
             this.infoData.rewardMax = res.list[0].rewardMax
-
           }).catch(err => {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getCouponCountInfo(){
           return getCouponCount().then(res => {
-            if(res.status===200){
               this.infoData.nums = res.data
-            }
-            else{
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-            }
+
+          }).catch(err => {
+            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getPaymentList(){
           return postFindSOPayment(this.senDataList).then(res =>{
-            this.dataset = res.list
+            this.dataset = res.data.list
+          }).catch(err => {
+            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         // getUserInfo(){
@@ -254,6 +250,9 @@
         },
         gotoCoupon(){
           this.$router.push({path: '/coupon'})
+        },
+        gotoToPayCoupon(){
+          this.$router.push({path: '/toPayCoupon'})
         },
         gotoCouponList(){
           this.$router.push({path: '/couponList'})
@@ -346,15 +345,17 @@
               p:first-of-type{
                 color: #fff;
                 font-size: 16px;
-                margin-bottom: -10px;
+
+                padding-top: 20px;
               }
               p:nth-of-type(2){
                 color: #fff;
                 font-size: 36px;
                 letter-spacing: 1px;
+                padding-top: 20px;
               }
               p:nth-of-type(3){
-                margin-top: -30px;
+
                 padding-bottom: 60px;
                 color:rgb(228,236,11);
                 font-size: 12px;
@@ -406,7 +407,6 @@
       }
 
     }
-    
     .el-main {
       background-color: #fff;
       color: #333;

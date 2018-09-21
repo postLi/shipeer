@@ -2,7 +2,7 @@
 	<div class="driver-lll">
     <Search @change="getSearchParam"></Search>
     <div class="add-coll">
-      <el-button type="success" plain size="mini" @click="addColl">添加收藏司机</el-button>
+      <el-button type="success" plain size="mini" @click="addCollDriver">添加收藏司机</el-button>
     </div>
     <div class="info-table">
        <el-table
@@ -85,7 +85,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page.sync="currentPage2"
+
           :page-sizes="[100, 200, 300, 400]"
           :page-size="100"
           layout="sizes, prev, pager, next"
@@ -93,25 +93,97 @@
         </el-pagination>
       </div>
     </div>
- </div>
+    <el-dialog
+      title="收藏司机"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center>
+      <el-form :model="dialogFn" ref="dialog" :rules="rules">
+        <el-form-item label="手机号" prop="driverMobile">
+          <el-input placeholder="请输入手机号" :maxlength="11" v-model="dialogFn.driverMobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onSubForm('dialog')">保 存</el-button>
+         <el-button @click="centerDialogVisible = false">取 消</el-button>
+
+  </span>
+    </el-dialog>
+
+  </div>
 </template>
 
 <script>
    import Search from './components/search'
+   import {postDriverList,postDriver} from '@/api/concentrateAxios/myDriver'
+   import {REGEX} from '../../utils/valiRegex'
  export default{
      data(){
        return {
+         centerDialogVisible : false,
          currentPage3: 5,
-         dataset:[]
+         dataset:[],
+         dialogFn:{
+           driverMobile:''
+         },
+         senDataList:{
+           currentPage:1,
+           pageSize:5,
+           vo:{
+
+           }
+         },
+         rules:{
+           driverMobile:[
+             {message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
+           ]
+         }
 
      }
    },
    components:{
      Search
    },
+   mounted(){
+    this.getPaymentList()
+   },
    methods:{
-     getSearchParam(obj){
+     onSubForm(dialog){
+       this.$refs[dialog].validate(valid => {
+         if (valid) {
+           this.centerDialogVisible = false
+           return postDriver(this.dialogFn.driverMobile).then(res => {
+             this.$message.success('收藏成功~');
+             this.centerDialogVisible = false
+             this.fetchAllList()
 
+           }).catch(err => {
+             this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
+           })
+         }else{
+           return false
+         }
+       })
+
+   },
+     addCollDriver(){
+      this.centerDialogVisible = true
+      // return postDriver
+    },
+     getPaymentList(){
+       return postDriverList(this.senDataList).then(res =>{
+         // console.log(res);
+         this.dataset = res.data.list
+       }).catch(err => {
+         this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+       })
+     },
+     fetchAllList(){
+       this.getPaymentList()
+     },
+     getSearchParam(obj){
+       this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
+       this.fetchAllList()
      },
      handleSizeChange(val) {
        console.log(`每页 ${val} 条`);
@@ -122,9 +194,7 @@
      handleClick(row) {
        console.log(row);
      },
-     addColl(){
-       this.$message('添加收藏司机');
-     },
+
      getDbClick(){
 
      },
@@ -141,7 +211,7 @@
 
 <style lang="scss">
  .driver-lll{
-   padding-top: 10px;
+   margin: 10px;
    .info-table{
      /*display: flex;*/
      padding-top: 20px;

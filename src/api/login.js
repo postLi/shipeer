@@ -71,6 +71,49 @@ export function getUser(mobile) {
   return Axios.get('/aflc-common/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)
 }
 
+//http://192.168.1.78:7010/uaa/oauth/token?access_token=3b6cde08-1bb6-481d-8e7d-99a653325451
+// export function deleteToken() {
+//   return Axios.delete('/uaa/oauth/token')
+// }
+
+// export function deleteToken(username, password, orgid) {
+//   var grant_type = 'password'
+//   var scope = 'webApp'
+//   /*   return fetch.post('/uaa/oauth/token', {
+//       username,
+//       password,
+//       grant_type,
+//       orgid
+//       // scope,
+//     }, {
+//       headers: {
+//         // 'content-type': 'application/x-www-form-urlencoded',
+//         'authorization': 'Basic d2ViQXBwOndlYkFwcA=='
+//       }
+//     }) */
+//   const form = new FormData()
+//   form.append('username', username)
+//   form.append('password', password)
+//   form.append('grant_type', grant_type)
+//   return Axios.request({
+//     url: '/uaa/oauth/token',
+//     method: 'delete',
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//       'authorization': 'Basic d2ViQXBwOndlYkFwcA=='
+//     },
+//     data: form
+//   })
+//
+// }
+export function deleteToken() {
+  return Axios.delete('/uaa/oauth/token', {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded',
+      'authorization': 'Basic d2ViQXBwOndlYkFwcA=='
+    }
+  })
+}
 // export function testApi(){
 //   return Axios.get('/sdfsdfsdf')
 // }
