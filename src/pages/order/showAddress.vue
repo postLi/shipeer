@@ -106,6 +106,7 @@
       },
       methods:{
         selectAddress(item){
+          console.log(item)
           this.$emit("selectAddress", item);
         },
         close(){
