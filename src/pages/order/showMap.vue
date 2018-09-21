@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="dialogVisible = false">
+      <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="ok()">
       <div  class="map-content" ref="allmap"></div>
     </div>
   </div>
@@ -62,6 +62,11 @@
       methods:{
           ok(){
             this.dialogVisible = !this.dialogVisible;
+            if(this.dialogVisible === false){
+              // console.log(this.data)
+              // this.data.map.destroy( );
+              // this.data.map = null
+            }
           },
         getMapStatus(map){
 
@@ -73,7 +78,6 @@
 
       },
       destroyed(){
-          console.log(4444)
       }
     }
 </script>

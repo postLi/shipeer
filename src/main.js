@@ -22,7 +22,7 @@ Axios.defaults.headers.post['Content-Type'] = 'application/json';
 Vue.prototype.$localStorage = localStorage;
 const url = '/api';
 
-// Axios.defaults.baseURL = url ;
+// Axios.defaults.baseURL = "http://192.168.1.78:7010" ;
 
 // request拦截器
 Axios.interceptors.request.use(config => {
@@ -47,6 +47,11 @@ Axios.interceptors.request.use(config => {
     config.params['access_token'] = token
     // console.log(config.url, config.params)
   }
+
+  if(localStorage.get("28ky-userdata")){
+    config.headers['user_token'] = localStorage.get("28ky-userdata").userToken
+  }
+
   if (config.url.indexOf('http://') === -1) {
      config.url = '/api' + config.url
   }

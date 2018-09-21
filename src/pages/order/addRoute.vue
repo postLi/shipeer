@@ -5,41 +5,18 @@
   <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="window = false">
   </div>
 
-  <div class="add-route-item">
-  <div class="window-title-left">提货地</div>
-  <div class="item-base-flex flex_a margin_t_10">
-  <img src="../../assets/main/menpaih.png" alt="">
-  <input class="my-input margin_l_10" placeholder="地址" v-model="addRoute.from.address"/>
-  </div>
-
-  <div class="flex_r margin_t_10">
-  <div class="flex_1 item-base-flex flex_a margin_r_10">
-  <img src="../../assets/main/menpaih.png" alt="">
-  <input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="addRoute.from.floor"/>
-  </div>
-
-  <div class="flex_1 item-base-flex flex_a margin_r_10">
-  <img src="../../assets/main/fahuor.png" alt="">
-  <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="addRoute.from.name"/>
-  </div>
-
-  <div class="flex_1 item-base-flex flex_a">
-  <img src="../../assets/main/nav_phone.png" alt="">
-  <input class="my-input margin_l_10" placeholder="联系电话（必填）" v-model="addRoute.from.tel"/>
-  </div>
-  </div>
-  </div>
-
   <div class="add-route-item ">
-    <div v-for="(item,index) in addRoute.to" :key="index" class="margin_b_10">
+    <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
         <div class="flex_sb">
-         <span class="window-title-left">目的地</span>
-          <el-button v-if="index === 0" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination()">新增目的地</el-button>
-          <el-button v-if="index !== 0" class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
+         <span v-if="index === 0" class="window-title-left">提货地</span>
+          <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left">途经地</span>
+          <span v-if="index + 1 === addRoute.length" class="window-title-left">目的地</span>
+          <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
+          <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
         </div>
       <div class="item-base-flex flex_a margin_t_10">
-        <img src="../../assets/main/menpaih.png" alt="">
-       <input class="my-input margin_l_10" placeholder="地址" v-model="item.address"/>
+        <img src="../../assets/main/tihuod.png" alt="">
+       <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
       </div>
       <div class="flex_r margin_t_10">
         <div class="flex_1 item-base-flex flex_a margin_r_10">
@@ -58,37 +35,107 @@
     </div>
   </div>
     <div class="flex">
-      <el-button class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="">保 存</el-button>
+      <el-button class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="save()">保 存</el-button>
       <el-button plain class=" f_w" style="background-color: white;width: 105px;color: #999999;border-color: #979797" size="small" @click="window = false">取 消</el-button>
     </div>
   </div>
 </template>
 
 <script>
+  import { getApi ,postApi} from "@/api/api.js";
     export default {
         name: "addRoute",
       data(){
           return{
             window:false,
-            addRoute:{//新增线路
-              from:{address:'',tel:'',name:'',floor:''},
-              to:[{address:'',tel:'',name:'',floor:''}]
-            },
+              addRoute:[
+                {
+                  tel:'',
+                  name:'',
+                  floor:'',
+                  cityCode: "",//城市编码（格式440100）
+                  origin: "",//详细地址
+                  originCoordinate: "",//地点坐标(小的在前)
+                  originName: "",//地点名称
+                  provinceCityArea: "",//省市区（格式:广东省广州市天河区）
+                  shipperSort: 0
+                },
+                {
+                tel:'',
+                name:'',
+                floor:'',
+                cityCode: "",
+                origin: "",
+                originCoordinate: "",
+                originName: "",
+                provinceCityArea: "",
+                shipperSort: 1
+              }]
+
           }
       },
       methods:{
+        save(){
+        let parm =  {
+            "aflcShipperLineDtos": this.addRoute,
+            "shipperLineName": new Date() * 1
+          };
+          postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine' ,parm).then((res)=>{
+            if(res){
+              this.$emit("addRoute", "addRoute");
+              this.$message.success('操作成功');
+              this.window = false;
+            }
+          });
+        },
         showWindow(){
           this.window = !this.window;
         },
-        delDestination(i){
-          this.addRoute.to.splice(i,1)
+        toLoadUI(item,i){
+          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
+            let poiPicker = new PoiPicker({
+              input: this.$refs[i][0]
+            });
+            this.toPoiPickerReady(item,poiPicker);
+          });
         },
-        addDestination(){
-          if(this.addRoute.to.length >=10){
+        toPoiPickerReady(item,poiPicker) {
+          window.poiPicker = poiPicker;
+          poiPicker.on('poiPicked', (poiResult)=> {
+            console.log(poiResult)
+            if(poiResult.item.location === undefined){
+              this.$message.warning("没有获取到地址");
+              return
+            }
+            item.origin = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
+            item.cityCode = poiResult.item.adcode;
+            item.originCoordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
+            item.originName = poiResult.item.name;
+            item.provinceCityArea = poiResult.item.district;
+          });
+        },
+        delDestination(i){
+          this.addRoute.splice(i,1);
+          this.addRoute.forEach((item ,i)=>{
+            item.shipperSort = i
+          })
+        },
+        addDestination(i){
+          if(this.addRoute.length >=10){
             this.$message.warning('最多只能添加十条目的地');
             return
           }
-          this.addRoute.to.push({address:'',tel:'',name:'',floor:''})
+          this.addRoute.push({
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: i
+            })
 
         },
       }
