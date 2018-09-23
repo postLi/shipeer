@@ -1,16 +1,16 @@
 <template>
     <div class="height_100 flex_r">
-      <div class="address-margin flex_1 b_c_w o_f" >
-        <div class="padding_20">
+      <div class="margin_10 flex_1 b_c_w o_f flex_f" ref="getTableWH">
+        <div class="padding_20" ref="getTop">
           <header class="flex_a f_f">
             <div class="flex_a m-r">
               <span class="window-title-left">地址类型：</span>
               <el-select v-model="addressId" placeholder="请选择" size="small" class="address-width" clearable>
                 <el-option
                   v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
@@ -21,122 +21,299 @@
             </div>
             <div class="flex_a m-r">
               <span class="window-title-left">联系人：</span>
-              <el-input v-model="name" placeholder="请输入联系人" size="small" class="address-width "></el-input>
+              <el-input v-model="contacts" placeholder="请输入联系人" size="small" class="address-width "></el-input>
             </div>
             <div class="flex_a m-r">
               <span class="window-title-left">联系电话：</span>
-              <el-input v-model="tel" placeholder="请输入联系电话" size="small" class="address-width "></el-input>
+              <el-input v-model="contactsPhone" placeholder="请输入联系电话" size="small" class="address-width "></el-input>
             </div>
 
             <div class="flex_a">
               <el-button size="small" type="success" icon="el-icon-search" @click="search()" style="background-color: #2fb301;">查询</el-button>
-              <el-button size="small"  plain icon="el-icon-refresh" style="	background-color: #dcdcdc;border: solid 1px #dcdfe6;color: white" @click="reset(index)">重置</el-button>
+              <el-button size="small"  plain icon="el-icon-refresh" style="	background-color: #dcdcdc;border: solid 1px #dcdfe6;color: white" @click="reset()">重置</el-button>
             </div>
           </header>
 
-          <el-button class="m-15" size="small" type="success" icon="el-icon-search" @click="search()" style="background-color: #2fb301;">新增目的地</el-button>
+          <el-button class="m-15" size="small" type="success" icon="el-icon-search" @click="openWindow()" style="background-color: #2fb301;">新增目的地</el-button>
         </div>
 
-        <el-table class="myTable"
-          :data="tableData"
-          height="250"
-          border
-          style="width: calc(100% - 10px)">
-          <el-table-column prop="date" label="序号" label-class-name="table_head" header-align="center" align="center" width="100">
-            <template slot-scope="scope">
-              {{scope.$index + 1 }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="name" label="地址类型" label-class-name="table_head" header-align="center" align="center"  min-width="100"></el-table-column>
-          <el-table-column prop="address" label="城市" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
-          <el-table-column prop="address" label="地址" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
 
-          <el-table-column prop="address" label="详细地址" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
+          <el-table class="myTable flex_1" :data="tableData" border :height="heightComputer" :style="{'width': getBodyWidth + 'px'}">
+            <el-table-column prop="date" label="序号" label-class-name="table_head" header-align="center" align="center" width="80">
+              <template slot-scope="scope">
+                {{scope.$index + 1 }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="type" label="地址类型" label-class-name="table_head" header-align="center" align="center"  width="100">
+              <template slot-scope="scope" >
+                <div v-if="scope.row.type === 1">提货地址</div>
+                <div v-if="scope.row.type === 0">收货地址</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="cityCode" label="城市" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
+            <el-table-column prop="provinceCityArea" label="地址" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
 
-          <el-table-column prop="address" label="门牌号" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
+            <el-table-column prop="address" label="详细地址" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
 
-          <el-table-column prop="address" label="联系人" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
+            <el-table-column prop="floorHousenum" label="门牌号" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
 
-          <el-table-column prop="address" label="联系电话" label-class-name="table_head" header-align="center" align="center"  width="200"></el-table-column>
-          <el-table-column prop="address" label="操作" label-class-name="table_head" header-align="center" align="center">
-            <template slot-scope="scope">
-              <el-button type="text"  @click="" style="text-decoration: underline;color: #1890ff;">编辑</el-button>
-              <el-button type="text"  @click="" style="text-decoration: underline;color: #1890ff;">删除</el-button>
-            </template>
-          </el-table-column>
+            <el-table-column prop="contacts" label="联系人" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
 
-        </el-table>
+            <el-table-column prop="contactsPhone" label="联系电话" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
+            <el-table-column prop="address" label="操作" label-class-name="table_head" header-align="center" align="center" width="140"  fixed="right">
+              <template slot-scope="scope" >
+                <el-button type="text"  @click="edit(item)" style="text-decoration: underline;color: #1890ff;">编辑</el-button>
+                <el-button type="text"  @click="del(item.id)" style="text-decoration: underline;color: #1890ff;">删除</el-button>
+              </template>
+            </el-table-column>
+
+          </el-table>
 
 
 
-
+        <footer ref="footer">
+          <my-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></my-pagination>
+        </footer>
       </div>
+      <el-dialog
+        :title="name +'常用地址'"
+        :visible.sync="window"
+        width="600px"
+        :before-close="handleClose">
+
+        <el-button size="small" @click="requestClick(item.id)" v-for="(item,index) in options" :key="item.id"
+                   :style="{'background-color':(item.id === type)?'#1890ff':'#f2f2f2','color':(item.id === form.type)?'white':'black'}">
+          {{item.name}}
+        </el-button>
+
+        <address-item :data="form" :type="type"></address-item>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="window = false">取 消</el-button>
+    <el-button type="primary" @click="save()">保 存</el-button>
+  </span>
+      </el-dialog>
+
 
     </div>
 </template>
 
 <script>
+  import {REGEX} from '@/utils/valiRegex.js'
+  import { getApi ,postApi} from "@/api/api.js";
+  import addressItem from "@/components/addressItem"
+  import myPagination from "@/components/myPagination"
+  import {mapGetters, mapActions} from 'vuex'
     export default {
         name: "addressManage",
+      components:{addressItem,myPagination},
+      computed:{
+        ...mapGetters(['getBodyWidth',]),
+        heightComputer: function() {
+            return this.height  - this.topHeight - this.footer;
+        },
+      },
       data(){
           return{
-            tableData: [{
-              date: '2016-05-03',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-02',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-04',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-01',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-08',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-06',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }, {
-              date: '2016-05-07',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄'
-            }],
-            tel:'',
+            window:false,
             name:'',
+            type:'',//区分货主id（弹窗）
+            p: { page: 1, size: 20, total: 0 },
+            height:0,
+            topHeight:0,
+            footer:0,
+            tableData: [],
+            form:{
+              address: "",//详细地址
+              cityCode: "",//城市编码（格式440100）
+              contacts: "",//联系人
+              contactsPhone: "",//联系电话
+              coordinate: "",//发货地坐标
+              floorHousenum: "",//楼层及门牌号
+              provinceCityArea: "",//省市区（格式:广东省广州市天河区）
+              summary: "",//地点简称
+              type: '',//区分货主(1为发货人，0为收货人)
+
+            },
+            contactsPhone:'',
+            contacts:'',
             address:'',
-            addressId:'',
+            addressId:'',//区分货主id（搜索）
             options: [{
-              value: 1,
-              label: '提货地址'
+              id: 1,
+              name: '提货地址'
             }, {
-              value: 2,
-              label: '收货地址'
+              id: 0,
+              name: '收货地址'
             }],
           }
       },
       methods:{
+        getPage(page) {
+          this.tableData = [];
+          this.p.page = page;
+          this.getList(this.p);
+        },
+        getPageSize(size) {
+          this.p.size = size;
+          this.getList(this.p);
+        },
+        del(id){
+          this.$confirm('此操作将删除选择的数据, 是否确定删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            postApi('/aflc-uc/aflcShipperContactsApi/deleteContactsList',[id]).then(() => {
+              this.$message.info('删除成功');
+              this.getList();
+            })
+
+          })
+        },
+        edit(item){
+          this.name= "编辑";
+          this.window = !this.window;
+          this.form = item;
+          if(this.window === true){
+            this.loadUI()
+          }else {
+
+          }
+        },
+        save(){
+          if(this.type === ''){
+            this.$message.warning("请选择提货或收货地址");
+            return
+          }
+          if(this.form.coordinate === ''){
+            this.$message.warning("没有获取到坐标点，保存失败");
+            return
+          }
+          if(this.type === 1){
+            if(this.form.contactsPhone === ''){
+              this.$message.warning("手机号码必填");
+            }else {
+              if(!REGEX.MOBILE.test(this.form.contactsPhone)){
+                this.$message.warning("手机号码格式错误");
+                return
+              }
+            }
+          }else{
+            if(!REGEX.MOBILE.test(this.form.contactsPhone) && this.form.contactsPhone !== ''){
+              this.$message.warning("手机号码格式错误");
+              return
+            }
+          }
+
+          this.form.type = this.type;
+          if(this.form.id){
+            postApi('/aflc-uc/aflcShipperContactsApi/updateContactsList',this.form).then((res)=>{
+              if(res !== ''){
+                this.$message.success("修改成功");
+                this.window = false;
+                this.getList();
+              }
+            });
+          }else {
+            postApi('/aflc-uc/aflcShipperContactsApi/addContactsList',this.form).then((res)=>{
+              if(res !== ''){
+                this.$message.success("新增成功");
+                this.window = false;
+                this.getList();
+              }
+            });
+          }
+        },
+        requestClick(id){
+          this.type = id;
+        },
+        handleClose(){
+
+        },
+        loadUI(){
+          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
+            let poiPicker = new PoiPicker({
+              input: 'pickerInput'
+            });
+            this.poiPickerReady(poiPicker);
+          });
+        },
+        poiPickerReady(poiPicker) {
+          window.poiPicker = poiPicker;
+          poiPicker.on('poiPicked', (poiResult)=> {
+            console.log(poiResult)
+            if(poiResult.item.location === undefined){
+              this.$message.warning("没有获取到地址");
+              return
+            }
+            this.form.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
+            this.form.cityCode = poiResult.item.adcode;
+            this.form.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
+            this.form.provinceCityArea = poiResult.item.district;
+            this.form.summary = poiResult.item.name;
+            this.form.type = this.type;
+          });
+        },
+        openWindow(){
+          this.name= "新增";
+          this.window = true
+
+          this.form ={
+            address: "",
+            cityCode: "",
+            contacts: "",
+            contactsPhone: "",
+            coordinate: "",
+            floorHousenum: "",
+            provinceCityArea: "",
+            summary: "",
+            type: '',
+          };
+          if(this.window === true){
+            this.loadUI()
+          }else {
+
+          }
+        },
         search(){
 
         },
         reset(){
 
+        },
+        getList(){
+          //收发货人地址列表
+          let formData = new FormData();
+          formData.append("currentPage",1);
+          formData.append("pageSize",20);
+          formData.append("type",this.type);
+          postApi('/aflc-uc/aflcShipperContactsApi/getContactsList',formData).then((res)=>{
+            this.tableData = res.list;
+          });
         }
+      },
+      created(){
+          this.getList();
+
+      },
+
+      mounted(){
+        this.$nextTick(()=>{
+          this.topHeight =  this.$refs.getTop.clientHeight;
+          this.height = this.$refs.getTableWH.clientHeight;
+          this.footer = this.$refs.footer.clientHeight;
+        })
+        window.addEventListener("resize", ()=> {
+          this.topHeight =  this.$refs.getTop.clientHeight;
+          this.height = this.$refs.getTableWH.clientHeight;
+          this.footer = this.$refs.footer.clientHeight;
+
+        });
       }
     }
 </script>
 
 <style scoped>
-  .address-margin{
-    margin: 10px 0 10px 10px;
-  }
   .address-width{
     width: 150px;
   }

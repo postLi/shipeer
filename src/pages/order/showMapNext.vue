@@ -183,7 +183,7 @@
   }
 
   .top-item-h{
-    height: 28px;
+    height: 29px;
     border-bottom: 1px solid white;
   }
   .b-b{

@@ -3,43 +3,46 @@
       <div class="header-left flex">
         <img src="../../assets/main/jiank_logo.png" alt="">
       </div>
-      <div class="header-right flex_ce flex_1">
-        <div class="header-right-context flex_a height_100">
-          <div class=" flex_a header-phone">
-            <img src="../../assets/main/nav_phone.png" alt="">
-            <span class="font margin_l_10 phoneHover">手机版</span>
-            <img src="../../assets/login/code.png" alt="" class="phone-img">
+      <div class="margin_10 flex_r flex_1">
+        <div class="header-right flex_ce flex_1">
+          <div class="header-right-context flex_a height_100">
+            <div class=" flex_a header-phone">
+              <img src="../../assets/main/nav_phone.png" alt="">
+              <span class="font margin_l_10 phoneHover">手机版</span>
+              <img src="../../assets/login/code.png" alt="" class="phone-img">
             </div>
-          <div class="divide"></div>
-          <div class="font">客服电话：{{serverPhone}}</div>
-          <div class="divide"></div>
-          <!--<div class="font">张三丰</div>-->
-          <div class="font useClass">
-            <el-popover
-              ref="popoveruser"
-              placement="top-start"
-              width="200"
-              trigger="hover"
-              class="user-center"
+            <div class="divide"></div>
+            <div class="font">客服电话：{{serverPhone}}</div>
+            <div class="divide"></div>
+            <!--<div class="font">张三丰</div>-->
+            <div class="font useClass">
+              <el-popover
+                ref="popoveruser"
+                placement="top-start"
+                width="200"
+                trigger="hover"
+                class="user-center"
 
               >
-              <el-row :span="2" >
-                <el-col ><span @click="gotoManageC">管理中心</span></el-col>
-              </el-row>
-              <el-row>
-                <el-col>修改密码</el-col>
-              </el-row>
-              <el-row>
-                <el-col><span @click="laygot">退出登录</span></el-col>
-              </el-row>
-            </el-popover>
-            <div class="avatar-wrapper" v-popover:popoveruser>
-              <img class="user-avatar" :src="userInfoData.shipperCardFile?userInfoData.shipperCardFile:'../../assets/role.png'">
-              <span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span>
+                <el-row :span="2" >
+                  <el-col ><span @click="gotoManageC">管理中心</span></el-col>
+                </el-row>
+                <el-row>
+                  <el-col>修改密码</el-col>
+                </el-row>
+                <el-row>
+                  <el-col><span @click="laygot">退出登录</span></el-col>
+                </el-row>
+              </el-popover>
+              <div class="avatar-wrapper" v-popover:popoveruser>
+                <img class="user-avatar" :src="userInfoData.shipperCardFile?userInfoData.shipperCardFile:'../../assets/role.png'">
+                <span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
 </template>
 
@@ -47,6 +50,7 @@
   import VueJsCookie from 'vue-js-cookie'
   import {getUser,validLoginServicePhone,deleteToken} from '@/api/login'
   import {setUserInfo,getUserInfo,removeUserInfo,getServerPhone} from '@/utils/auth'
+  import {mapGetters, mapActions} from 'vuex'
     export default {
         data(){
           return{
@@ -57,6 +61,12 @@
           }
         },
       mounted(){
+          let w = document.querySelector(".header-right").clientWidth;
+          this.setBodyWidth(w);
+          window.addEventListener("resize", ()=> {
+            let w = document.querySelector(".header-right").clientWidth;
+            this.setBodyWidth(w);
+          });
           return getUser(this.uPhone).then(res=>{
             if(res.status===200){
               this.userInfoData = res.data
@@ -69,6 +79,7 @@
         // }
       },
       methods:{
+        ...mapActions(['setBodyWidth']),
         gotoManageC(){
           this.$router.push({path: '/manageCenter'})
         },

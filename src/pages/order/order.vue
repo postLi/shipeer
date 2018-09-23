@@ -91,7 +91,7 @@
           </div>
           <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
           <show-map :data="item" :ref="index"></show-map>
-          <show-address :showAddress="item" :ref="index" :type="0" @selectAddress="(data)=>{
+          <show-address :showAddress="item" :ref="index" :type="(index ===0)?1:0" @selectAddress="(data)=>{
               return getSelectAddress1(data,item)
           }"></show-address>
         </div>
@@ -165,7 +165,7 @@
 
         <div class="item-base margin_t_10 flex_a margin_r_50">
           <img src="../../assets/main/nav_phone.png" alt="">
-          <input class="my-input margin_l_10" placeholder="收货联系人电话（选填）" v-model="item.contactsPhone"/>
+          <input class="my-input margin_l_10" :placeholder="(index === 0)?'收货联系人电话（必填）':'收货联系人电话（选填）'" v-model="item.contactsPhone"/>
         </div>
       </div>
     </div>
@@ -698,32 +698,25 @@
             "usedCarType": "string"
           }
           console.log(parm)
-          // this.nextSuccess = true;
-          // setTimeout( ()=> {
-          //
-          //   this.mapNext =new BMap.Map(this.$refs.childClickNext.$refs.allMapNext, {enableMapClick:false});
-          //   // this.mapNext.centerAndZoom(this.form.to._centerPoint, 14);
-          //   this.mapNext.enableScrollWheelZoom(true);
-          //
-          //   let driving = new BMap.DrivingRoute(this.mapNext, {
-          //     renderOptions:{map: this.mapNext, autoViewport: true,},
-          //     onSearchComplete: (res)=>{
-          //       if (driving.getStatus() != BMAP_STATUS_SUCCESS){
-          //         return ;
-          //       }
-          //       let plan = res.getPlan(0);
-          //       // this.getDuration = (plan.getDuration(false)/60).toFixed(0)
-          //       this.getDuration = plan.getDuration(true)
-          //     },
-          //   });
-          //   driving.search(this.form.from._centerPoint, this.form.to._centerPoint);
-          //   let starIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
-          //   let endIcon = new BMap.Icon('./static/ti.png',new BMap.Size(32,56),{anchor: new BMap.Size(16, 53)});
-          //   driving.setMarkersSetCallback((res)=>{
-          //     res[0].marker.setIcon(starIcon);
-          //     res[1].marker.setIcon(endIcon);
-          //   })
-          // },200)
+          this.nextSuccess = true;
+          var map = new AMap.Map(this.$refs.childClickNext.$refs.allMapNext, {});
+          var truckOptions = {
+            map: map,
+            // policy:1,
+            size:1,
+            //city:'',
+            //panel:'panel'
+          };
+          var driving = new AMap.TruckDriving(truckOptions);
+          var path = [];
+          this.form.to.forEach((item)=>{
+            path.push({lnglat:item.originCoordinate.split(',').reverse()});
+          });
+          driving.search(path,function(status, result) {
+            console.log(status)
+            console.log(result)
+          });
+
         },
         selectCar(id){
           this.form.carId = id;
@@ -749,8 +742,7 @@
             // console.log(item.mapTo.getCenter())
             item.originCoordinate = [item.mapTo.getCenter().lat,item.mapTo.getCenter().lng].join(',')
           }else {
-            let list = item.originCoordinate.split(',');
-            centerPoint = [list[1] *1,list[0] *1];
+            centerPoint = item.originCoordinate.split(',').reverse();
             item.mapTo.setCenter(centerPoint)
           }
               AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) =>{
