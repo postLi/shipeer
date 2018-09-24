@@ -1,5 +1,5 @@
 <template>
-  <div class="p_r ">
+  <div class="p_r margin_10 height_100 b_c_w o_f">
     <div class="width_100 height_100" ref="allMapNext"></div>
     <div class="order flex_f">
       <div class="title flex_sb">
@@ -14,8 +14,8 @@
             <span class="order-value">2018-12-20 09:45</span>
           </div>
           <div class="flex_1"><span class="order-key">起步价（小面包车）：</span><span class="order-value">¥45元</span></div>
-          <!--<div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{getDuration}}</span>分钟</span></div>-->
-          <div class="flex_1"><span class="order-value">全程预计需要{{getDuration}}</span></div>
+          <!--<div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span>分钟</span></div>-->
+          <div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span></span></div>
         </div>
 
         <div class="flex_a margin_t_10">
@@ -89,14 +89,51 @@
           return{
             radio:1,
             payTypeId:1,
-            payTypeList:[{id:1,name:'马上付款'},{id:2,name:'装货时付款'},{id:3,name:'收货时付款'}]
+            payTypeList:[{id:1,name:'马上付款'},{id:2,name:'装货时付款'},{id:3,name:'收货时付款'}],
+            form:[],
+            time:''
           }
       },
       methods:{
         selectPay(id){
           this.payTypeId = id;
         }
-      }
+      },
+      mounted(){
+        this.form = this.$localStorage.get("formDown");
+        let map = new AMap.Map(this.$refs.allMapNext, {});
+        let truckOptions = {
+          map: map,
+          // policy:1,
+          size:1,
+          //city:'',
+          //panel:'panel'
+        };
+        let driving = new AMap.TruckDriving(truckOptions);
+        let path = [];
+        this.form.to.forEach((item)=>{
+          path.push({lnglat:item.originCoordinate.split(',').reverse()});
+        });
+        driving.search(path,(status, result) =>{
+          console.log(result.routes[0].time)
+
+
+          let leftTime = result.routes[0].time;
+          let d = parseInt(leftTime / 3600 / 24);
+          let h = parseInt((leftTime / 3600) % 24);
+          let m = parseInt((leftTime / 60) % 60);
+          let s = parseInt(leftTime % 60);
+          if(d === 0 && h === 0){
+            this.time = `${m}分${s}秒`;
+
+          } else if(d === 0){
+            this.time = `${h}小时${m}分${s}秒`;
+          } else {
+            this.time = `${d}天${h}小时${m}分${s}秒`;
+          }
+
+        });
+      },
     }
 </script>
 

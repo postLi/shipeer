@@ -1,355 +1,357 @@
 <template>
   <div class="height_100 flex_r">
-    <div v-show="!nextSuccess" class="margin_10 flex_1 b_c_w o_f" >
-  <div class="tip">
-    <span class="title">小提示</span>
-    <span class="title1">（<span>*</span>号为必填项）</span>
-  </div>
+    <div class="margin_10 flex_1 b_c_w o_f" >
+      <div class="tip">
+        <span class="title">小提示</span>
+        <span class="title1">（<span>*</span>号为必填项）</span>
+      </div>
 
-  <div class="item-margin item-1 flex_r">
-    <div class="item-l"><span class="f_r">*</span>选择城市：</div>
-    <el-cascader placeholder="请选择城市" size="small"
-    :props="defaultProps"
-    :options="cityList"
-    v-model="form.code"
-    :show-all-levels="false"
-    filterable
-    @change="getPriceByArea">
-    </el-cascader>
+      <div class="item-margin item-1 flex_r">
+        <div class="item-l"><span class="f_r">*</span>选择城市：</div>
+        <el-cascader placeholder="请选择城市" size="small"
+        :props="defaultProps"
+        :options="cityList"
+        v-model="form.code"
+        :show-all-levels="false"
+        filterable
+        @change="getPriceByArea">
+        </el-cascader>
 
-    <div class="item-1-2">
-      <span>选择用车时间：</span>
-      <el-date-picker
-        prefix-icon="el-icon-date"
-        style="width: 250px"
-        size="small"
-        v-model="form.date"
-        type="date"
-        :picker-options="pickerOptions1"
-        value-format="timestamp"
-        placeholder="选择日期"
-      @change="changeDate"
-      >
-      </el-date-picker>
-    </div>
+        <div class="item-1-2">
+          <span>选择用车时间：</span>
+          <el-date-picker
+            prefix-icon="el-icon-date"
+            style="width: 250px"
+            size="small"
+            v-model="form.date"
+            type="date"
+            :picker-options="pickerOptions1"
+            value-format="timestamp"
+            placeholder="选择日期"
+          @change="changeDate"
+          >
+          </el-date-picker>
+        </div>
 
-    <div  class="item-1-3">
-      <el-select v-model="form.time" placeholder="选择时间" size="small" style="width: 121px">
-        <el-option
-          v-for="item in timeList"
-          :key="item.time"
-          :label="item.timeShow"
-          :value="item.time">
-        </el-option>
-      </el-select>
-    </div>
+        <div  class="item-1-3">
+          <el-select v-model="form.time" placeholder="选择时间" size="small" style="width: 121px">
+            <el-option
+              v-for="item in timeList"
+              :key="item.time"
+              :label="item.timeShow"
+              :value="item.time">
+            </el-option>
+          </el-select>
+        </div>
 
-  </div>
+      </div>
 
-  <div class="item-margin item-2 flex_r">
-    <div class="item-l"><span class="f_r">*</span>选择车型：</div>
-    <div class="flex_ae">
-      <div class="p_r flex" style="width: 208px" v-for="(item,index) in carList" :key="item.carType" >
-        <img @mouseover="selectHover(item.list[0])" @mouseout="outHover(item.list[0])" style="height: 60px" class="pointer" :src="item.list[0].servicePic" alt="" @click="selectCar(item.list[0].carTypeCode)" :style="{'filter':(form.carId === item.list[0].carTypeCode)?'opacity(100%)': 'opacity(50%)'}">
-        <div class="img-mark" v-show="item.list[0].show">
-          <div class="margin_t_10 flex_a">
-            <span class="left">载重</span>
-            <span>{{item.list[0].capacityTon}}吨</span>
-          </div>
-          <div class="margin_t_10 flex_a">
-            <span  class="left">长宽高</span>
-            <span>{{item.list[0].carLength}}*{{item.list[0].carWidth}}*{{item.list[0].carHeight}}米</span>
-          </div>
-          <div class="margin_t_10 flex_a">
-            <span  class="left">载货体积</span>
-            <span>{{item.list[0].capacitySquare}}方</span>
+      <div class="item-margin item-2 flex_r">
+      <div class="item-l"><span class="f_r">*</span>选择车型：</div>
+      <div class="flex_ae">
+        <div class="p_r flex" style="width: 208px" v-for="(item,index) in form.carList" :key="item.carType" >
+          <img @mouseover="selectHover(item.list[0])" @mouseout="outHover(item.list[0])" style="height: 60px" class="pointer" :src="item.list[0].servicePic" alt="" @click="selectCar(item.list[0].carTypeCode)" :style="{'filter':(form.carId === item.list[0].carTypeCode)?'opacity(100%)': 'opacity(50%)'}">
+          <div class="img-mark" v-show="item.list[0].show">
+            <div class="margin_t_10 flex_a">
+              <span class="left">载重</span>
+              <span>{{item.list[0].capacityTon}}吨</span>
+            </div>
+            <div class="margin_t_10 flex_a">
+              <span  class="left">长宽高</span>
+              <span>{{item.list[0].carLength}}*{{item.list[0].carWidth}}*{{item.list[0].carHeight}}米</span>
+            </div>
+            <div class="margin_t_10 flex_a">
+              <span  class="left">载货体积</span>
+              <span>{{item.list[0].capacitySquare}}方</span>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
 
-  </div>
 
+      <div class="item-margin item-3 flex_r">
+        <div class="item-l">特殊规格(选填)：</div>
+        <el-button size="small" @click="specClick(item.code)" v-for="(item,index) in specList" :key="item.id" :style="{'background-color':(item.code === form.specCode)?'#1890ff':'#f2f2f2','color':(item.code === form.specCode)?'white':'black'}">{{item.name}}</el-button>
+      </div>
 
-  <div class="item-margin item-3 flex_r">
-    <div class="item-l">特殊规格(选填)：</div>
-    <el-button size="small" @click="specClick(item.code)" v-for="(item,index) in specList" :key="item.id" :style="{'background-color':(item.code === form.specCode)?'#1890ff':'#f2f2f2','color':(item.code === form.specCode)?'white':'black'}">{{item.name}}</el-button>
-  </div>
+    <!--提货地 目的地 -->
+      <div class="item-margin item-4 flex_r" v-for="(item,index) in form.to">
+      <div v-if="index === 0" class="item-l"><span class="f_r">*</span>提货地：</div>
+      <div  v-if="index > 0 && index + 1 !== form.to.length" class="item-l"><span class="f_r">*</span>途经地：</div>
+      <div  v-if="index + 1 ===  form.to.length"  class="item-l"><span class="f_r">*</span>目的地：</div>
+      <div>
+        <div class="flex">
+          <div class="item-4-1 flex_sb p_r">
+            <div class="flex_1 input flex_a" @click="showMap1(item,index)">
+              <img src="../../assets/main/tihuod.png" alt="">
+              <span>{{(item.origin === '')?'必填':item.origin}}</span>
 
-  <!--提货地 目的地 -->
-  <div class="item-margin item-4 flex_r" v-for="(item,index) in form.to">
-    <div v-if="index === 0" class="item-l"><span class="f_r">*</span>提货地：</div>
-    <div  v-if="index > 0 && index + 1 !== form.to.length" class="item-l"><span class="f_r">*</span>途经地：</div>
-    <div  v-if="index + 1 ===  form.to.length"  class="item-l"><span class="f_r">*</span>目的地：</div>
-    <div>
-      <div class="flex">
-        <div class="item-4-1 flex_sb p_r">
-          <div class="flex_1 input flex_a" @click="showMap1(item,index)">
-            <img src="../../assets/main/tihuod.png" alt="">
-            <span>{{(item.origin === '')?'必填':item.origin}}</span>
-
+            </div>
+            <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
+            <show-map :data="item" :ref="index"></show-map>
+            <show-address :showAddress="item" :ref="index" :type="(index ===0)?1:0" @selectAddress="(data)=>{
+                return getSelectAddress1(data,item)
+            }"></show-address>
           </div>
-          <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
-          <show-map :data="item" :ref="index"></show-map>
-          <show-address :showAddress="item" :ref="index" :type="(index ===0)?1:0" @selectAddress="(data)=>{
-              return getSelectAddress1(data,item)
-          }"></show-address>
-        </div>
 
-        <div class="p_r" v-if="index === 0">
-          <el-button size="small" style="background-color: #2fb301;color: white" @click="routeClick()">选择常用线路</el-button>
-          <!--弹窗-->
-          <div class="route-line flex_f" v-show="windowRoute">
-            <div class="title flex_sb margin_b_10">
-              <span class="window-title-left">选用常用路线</span>
-              <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="windowRoute = false">
-            </div>
-            <div class="search flex_sb">
-              <div class="search-body flex_a">
-                <div class="flex_1 height_100 search-left flex_a">
-                  <input type="text" v-model="search_route" class="my-input margin_l_10" placeholder="请输入关键字搜索">
+          <div class="p_r" v-if="index === 0">
+            <el-button size="small" style="background-color: #2fb301;color: white" @click="routeClick()">选择常用线路</el-button>
+            <!--弹窗-->
+            <div class="route-line flex_f" v-show="windowRoute">
+              <div class="title flex_sb margin_b_10">
+                <span class="window-title-left">选用常用路线</span>
+                <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="windowRoute = false">
+              </div>
+              <div class="search flex_sb">
+                <div class="search-body flex_a">
+                  <div class="flex_1 height_100 search-left flex_a">
+                    <input type="text" v-model="search_route" class="my-input margin_l_10" placeholder="请输入关键字搜索">
+                  </div>
+                  <div class="search-right height_100 flex pointer">搜索</div>
                 </div>
-                <div class="search-right height_100 flex pointer">搜索</div>
-              </div>
-              <div class="p_r">
-                <el-button size="small" @click="$refs.show.showWindow()" type="primary">新增常用路线</el-button>
-                <!--新增常用路线-->
-                <add-route ref="show" @addRoute = "getAddRoute"></add-route>
-              </div>
-            </div>
-            <div class="flex_1 o_f" v-if="searchRouteList.length > 0">
-              <div class="route-item flex_f" v-for="(item,index) in searchRouteList" :key="item.id">
-                <div class=" route-item-body flex_1 flex_a" v-for="(item1,index1) in item" :key="item1.id">
-                  <div class="p_r height_100 route-item-body-left" v-if="index1 === 0">
-                    <div class="green-point"></div>
-                    <div class="green-point-line address-line"></div>
-                  </div>
-
-                  <div class="p_r height_100 route-item-body-left" v-if="index1 > 0 && index1 + 1 !== item.length">
-                    <div class="gray-point"></div>
-                    <div class="gray-point-up address-line"></div>
-                    <div class="gray-point-down address-line"></div>
-                  </div>
-
-                  <div class="p_r height_100 route-item-body-left" v-if="index1 !== 0 && index1 + 1 === item.length">
-                    <div class="red-point"></div>
-                    <div class="red-point-line address-line"></div>
-                  </div>
-                  <div>
-                    <div class="window-title-12">{{item1.name}}</div>
-                    <div class="window-title-10">{{item1.address}}</div>
-                  </div>
+                <div class="p_r">
+                  <el-button size="small" @click="$refs.show[0].showWindow()" type="primary">新增常用路线</el-button>
+                  <!--新增常用路线-->
+                  <add-route ref="show" @addRoute = "getAddRoute"></add-route>
                 </div>
               </div>
+              <div class="flex_1 o_f" v-if="searchRouteList.length > 0">
+                <div class="route-item flex_f" v-for="(item,index) in searchRouteList" :key="item.id">
+                  <div class=" route-item-body flex_1 flex_a" v-for="(item1,index1) in item" :key="item1.id">
+                    <div class="p_r height_100 route-item-body-left" v-if="index1 === 0">
+                      <div class="green-point"></div>
+                      <div class="green-point-line address-line"></div>
+                    </div>
+
+                    <div class="p_r height_100 route-item-body-left" v-if="index1 > 0 && index1 + 1 !== item.length">
+                      <div class="gray-point"></div>
+                      <div class="gray-point-up address-line"></div>
+                      <div class="gray-point-down address-line"></div>
+                    </div>
+
+                    <div class="p_r height_100 route-item-body-left" v-if="index1 !== 0 && index1 + 1 === item.length">
+                      <div class="red-point"></div>
+                      <div class="red-point-line address-line"></div>
+                    </div>
+                    <div>
+                      <div class="window-title-12">{{item1.name}}</div>
+                      <div class="window-title-10">{{item1.address}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="flex height_100 window-title-left">
+                还没有路线
+              </div>
+
             </div>
-            <div v-else class="flex height_100 window-title-left">
-              还没有路线
-            </div>
-
           </div>
-        </div>
 
-        <el-button size="small" v-if="index === 1" type="success" icon="el-icon-circle-plus" style="background-color: white;color: #2fb301" @click="addNewDestination(form.to.length)">新增目的地</el-button>
-        <el-button size="small" v-if="index > 1 " type="danger" icon="el-icon-remove" style="background-color: white;color: #ff300d" @click="delNewDestination(index)">删除目的地</el-button>
-      </div>
-      <div class="flex_r">
-        <div class="item-base margin_t_10 flex_a margin_r_50">
-          <img src="../../assets/main/menpaih.png" alt="">
-          <input class="my-input margin_l_10" placeholder="楼层及门牌号（选填）" v-model="item.floorHousenum"/>
+          <el-button size="small" v-if="index === 1" type="success" icon="el-icon-circle-plus" style="background-color: white;color: #2fb301" @click="addNewDestination(form.to.length)">新增目的地</el-button>
+          <el-button size="small" v-if="index > 1 " type="danger" icon="el-icon-remove" style="background-color: white;color: #ff300d" @click="delNewDestination(index)">删除目的地</el-button>
         </div>
+        <div class="flex_r">
+          <div class="item-base margin_t_10 flex_a margin_r_50">
+            <img src="../../assets/main/menpaih.png" alt="">
+            <input class="my-input margin_l_10" placeholder="楼层及门牌号（选填）" v-model="item.floorHousenum"/>
+          </div>
 
-        <div class="item-base margin_t_10 flex_a margin_r_50">
-          <img src="../../assets/main/fahuor.png" alt="">
-          <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.contacts"/>
-        </div>
+          <div class="item-base margin_t_10 flex_a margin_r_50">
+            <img src="../../assets/main/fahuor.png" alt="">
+            <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.contacts"/>
+          </div>
 
-        <div class="item-base margin_t_10 flex_a margin_r_50">
-          <img src="../../assets/main/nav_phone.png" alt="">
-          <input class="my-input margin_l_10" :placeholder="(index === 0)?'收货联系人电话（必填）':'收货联系人电话（选填）'" v-model="item.contactsPhone"/>
+          <div class="item-base margin_t_10 flex_a margin_r_50">
+            <img src="../../assets/main/nav_phone.png" alt="">
+            <input class="my-input margin_l_10" :placeholder="(index === 0)?'收货联系人电话（必填）':'收货联系人电话（选填）'" v-model="item.contactsPhone"/>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="item-margin item-5 flex_r">
-    <div class="item-l">货物名称：</div>
-    <div  class="item-5-1">
-      <!--<el-autocomplete style="width: 140px" size="small" v-model="form.goodsId" :fetch-suggestions="goodsSearch"-->
-        <!--placeholder="请输入货物" @select="handleSelect">-->
-        <!--<template slot-scope="{ item }">-->
-          <!--<div >{{ item.name }}</div>-->
-        <!--</template>-->
-      <!--</el-autocomplete>-->
-      <div class="p_r" style="width: 140px" >
-        <div class="select-drop flex_sb pointer" @click="goodsWindow = !goodsWindow">
-          <div class="flex_1 window-title-12 padding_l_10">{{(goodsName === '')?"（选填）":goodsName}}</div>
-          <i class="flex el-input__icon el-icon-arrow-down"></i>
-        </div>
-        <div class="small-window" style="width: 400px" v-if="goodsWindow">
-          <div class="f_f">
-            <el-button size="mini" @click="goodsClick({name:'',id:''})" style="background-color: #f2f2f2;color: black; margin: 0;">
-              不填
-            </el-button>
-              <el-button style="margin: 0 3px 3px 0" size="mini" @click="goodsClick(item)" v-for="(item,index) in goodsList" :key="item.id"
-                         :style="{'background-color':(item.id === form.goodsId)?'#1890ff':'#f2f2f2','color':(item.id === form.goodsId)?'white':'black'}">
-                {{item.name}}
-              </el-button>
-          </div>
-          <div class="flex_a margin_t_10">
-            <el-input
-              class="margin_r_10"
-              autosize
-              size="mini"
-              placeholder="手动输入货物名称"
-              v-model="inputGoods">
-            </el-input>
-            <el-button size="mini" @click="closeGoods()" type="success">
-              确实
-            </el-button>
-          </div>
-        </div>
-      </div>
-
-
-    </div>
-    <div class="item-5-1 flex_a">
-      <div class="p_r" >
-        <div class="select-drop flex_sb pointer" @click="wightWindow = !wightWindow">
-          <div class="flex_1 window-title-12 padding_l_10">{{(wightName === '不填' || wightName === '')?"（选填）":wightName}}</div>
-          <i class="flex el-input__icon el-icon-arrow-down"></i>
-        </div>
-        <div class="small-window" v-if="wightWindow">
-          <div class="f_f">
-            <el-button style="margin: 0 3px 3px 0" size="mini" @click="wightClick(item)" v-for="(item,index) in wightList" :key="item.id"
-                       :style="{'background-color':(item.id === form.wightId)?'#1890ff':'#f2f2f2','color':(item.id === form.wightId)?'white':'black'}">
-              {{item.name}}
-            </el-button>
-          </div>
-          <div class="flex_a margin_t_10">
-            <el-input
-              class="margin_r_10"
-              autosize
-              size="mini"
-              placeholder="手动输入重量（单位：吨）"
-              v-model="inputWight">
-            </el-input>
-            <el-button size="mini" @click="closeWight()" type="success">
-              确实
-            </el-button>
-          </div>
-        </div>
-      </div>
-      <span>吨</span>
-    </div>
-    <div  class="item-5-1 flex_a">
-      <div class="p_r" >
-        <div class="select-drop flex_sb pointer" @click="volumeWindow = !volumeWindow">
-          <div class="flex_1 window-title-12 padding_l_10">{{(volumeName === '不填' || volumeName === '')?"（选填）":volumeName}}</div>
-          <i class="flex el-input__icon el-icon-arrow-down"></i>
-        </div>
-        <div class="small-window" v-if="volumeWindow">
-          <div class="f_f">
-            <el-button style="margin: 0 3px 3px 0" size="mini" @click="volumeClick(item)" v-for="(item,index) in volumeList" :key="item.id"
-                       :style="{'background-color':(item.id === form.volumeId)?'#1890ff':'#f2f2f2','color':(item.id === form.volumeId)?'white':'black'}">
-              {{item.name}}
-            </el-button>
-          </div>
-          <div class="flex_a margin_t_10">
-            <el-input
-              class="margin_r_10"
-              autosize
-              size="mini"
-              placeholder="手动输入体积（单位：方）"
-              v-model="inputVolume">
-            </el-input>
-            <el-button size="mini" @click="closeVolume()" type="success">
-              确实
-            </el-button>
-          </div>
-        </div>
-      </div>
-      <span>方</span>
-    </div>
-  </div>
-
-  <div class="item-margin item-6 flex_r">
-    <div class="item-l">额外需求(选填)：</div>
-    <el-button size="small" @click="requestClick(item.extraId)" v-for="(item,index) in requestList" :key="item.extraId"
-               :style="{'background-color':(item.extraId === form.requestId)?'#1890ff':'#f2f2f2','color':(item.extraId === form.requestId)?'white':'black'}">
-      <span v-if="item.extraName ==='需要装卸'">{{item.extraName}}（与司机议价）</span>
-      <span v-else>{{item.extraName}}（免费）</span>
-    </el-button>
-  </div>
-
-  <div class="item-margin item-7 flex_r">
-    <div class="item-l">订单备注：</div>
-    <div class="item-7-1">
-      <div class="flex_a number">
-        <div class="a">{{form.remarks.length}}</div>
-        <div class="aa">/60</div>
-      </div>
-      <el-input
-        maxlength="60"
-        type="textarea"
-        autosize
-        placeholder="请输入货物类型、订单备注等"
-        :autosize="{ minRows: 2, maxRows: 4}"
-        v-model="form.remarks">
-      </el-input>
-    </div>
-  </div>
-
-  <div class="item-margin item-8 flex_r">
-    <div class="item-l"><span class="f_r">*</span>加小费：</div>
-    <div class="flex_a">
-      <div  class="margin_r_10">
-        <div class="p_r">
-          <div class="select-drop flex_sb pointer" @click="tipWindow = !tipWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(tipName === '')?"（选填）":tipName}}</div>
+      <div class="item-margin item-5 flex_r">
+      <div class="item-l">货物名称：</div>
+      <div  class="item-5-1">
+        <!--<el-autocomplete style="width: 140px" size="small" v-model="form.goodsId" :fetch-suggestions="goodsSearch"-->
+          <!--placeholder="请输入货物" @select="handleSelect">-->
+          <!--<template slot-scope="{ item }">-->
+            <!--<div >{{ item.name }}</div>-->
+          <!--</template>-->
+        <!--</el-autocomplete>-->
+        <div class="p_r" style="width: 140px" >
+          <div class="select-drop flex_sb pointer" @click="goodsWindow = !goodsWindow">
+            <div class="flex_1 window-title-12 padding_l_10">{{(goodsName === '')?"（选填）":goodsName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
-          <!--弹窗-->
-          <div class="small-window" v-if="tipWindow">
-            <div class="flex_sb">
-              <el-button size="mini" @click="tipClick({name:'',id:''})" style="background-color: #f2f2f2;color: black">
-                不加小费
-              </el-button>
-              <div>
-                <el-button size="mini" @click="tipClick(item)" v-for="(item,index) in tipList" :key="item.id"
-                           :style="{'background-color':(item.id === form.tipId)?'#1890ff':'#f2f2f2','color':(item.id === form.tipId)?'white':'black'}">
-                  {{item.name}}
-                </el-button>
-              </div>
+          <div class="small-window" style="width: 400px" v-if="goodsWindow">
+            <div class="f_f">
 
+
+              <my-button @click="goodsClick({name:'',id:''})" style="background-color: #f2f2f2;color: black; margin: 0;">
+                不填
+              </my-button>
+
+                <my-button style="margin: 0 3px 3px 0" size="mini" @click="goodsClick(item)" v-for="(item,index) in goodsList" :key="item.id"
+                           :style="{'background-color':(item.id === form.goodsId)?'#1890ff':'#f2f2f2','color':(item.id === form.goodsId)?'white':'black'}">
+                  {{item.name}}
+                </my-button>
             </div>
             <div class="flex_a margin_t_10">
               <el-input
                 class="margin_r_10"
                 autosize
                 size="mini"
-                placeholder="其他金额（最高200元）"
-                v-model="inputTip">
+                placeholder="手动输入货物名称"
+                v-model="inputGoods">
               </el-input>
-              <el-button size="mini" @click="closeTip()" type="success">
+              <el-button size="mini" @click="closeGoods()" type="success">
                 确实
               </el-button>
             </div>
           </div>
         </div>
+
+
       </div>
-      <el-checkbox v-model="form.tip">我的司机优先接单</el-checkbox>
+      <div class="item-5-1 flex_a">
+        <div class="p_r" >
+          <div class="select-drop flex_sb pointer" @click="wightWindow = !wightWindow">
+            <div class="flex_1 window-title-12 padding_l_10">{{(wightName === '不填' || wightName === '')?"（选填）":wightName}}</div>
+            <i class="flex el-input__icon el-icon-arrow-down"></i>
+          </div>
+          <div class="small-window" v-if="wightWindow">
+            <div class="f_f">
+              <my-button style="margin: 0 3px 3px 0" size="mini" @click="wightClick(item)" v-for="(item,index) in wightList" :key="item.id"
+                         :style="{'background-color':(item.id === form.wightId)?'#1890ff':'#f2f2f2','color':(item.id === form.wightId)?'white':'black'}">
+                {{item.name}}
+              </my-button>
+            </div>
+            <div class="flex_a margin_t_10">
+              <el-input
+                class="margin_r_10"
+                autosize
+                size="mini"
+                placeholder="手动输入重量（单位：吨）"
+                v-model="inputWight">
+              </el-input>
+              <el-button size="mini" @click="closeWight()" type="success">
+                确实
+              </el-button>
+            </div>
+          </div>
+        </div>
+        <span>吨</span>
+      </div>
+      <div  class="item-5-1 flex_a">
+        <div class="p_r" >
+          <div class="select-drop flex_sb pointer" @click="volumeWindow = !volumeWindow">
+            <div class="flex_1 window-title-12 padding_l_10">{{(volumeName === '不填' || volumeName === '')?"（选填）":volumeName}}</div>
+            <i class="flex el-input__icon el-icon-arrow-down"></i>
+          </div>
+          <div class="small-window" v-if="volumeWindow">
+            <div class="f_f">
+              <my-button style="margin: 0 3px 3px 0" size="mini" @click="volumeClick(item)" v-for="(item,index) in volumeList" :key="item.id"
+                         :style="{'background-color':(item.id === form.volumeId)?'#1890ff':'#f2f2f2','color':(item.id === form.volumeId)?'white':'black'}">
+                {{item.name}}
+              </my-button>
+            </div>
+            <div class="flex_a margin_t_10">
+              <el-input
+                class="margin_r_10"
+                autosize
+                size="mini"
+                placeholder="手动输入体积（单位：方）"
+                v-model="inputVolume">
+              </el-input>
+              <el-button size="mini" @click="closeVolume()" type="success">
+                确实
+              </el-button>
+            </div>
+          </div>
+        </div>
+        <span>方</span>
+      </div>
+    </div>
+
+      <div class="item-margin item-6 flex_r">
+      <div class="item-l">额外需求(选填)：</div>
+      <el-button size="small" @click="requestClick(item.extraId)" v-for="(item,index) in requestList" :key="item.extraId"
+                 :style="{'background-color':(item.extraId === form.requestId)?'#1890ff':'#f2f2f2','color':(item.extraId === form.requestId)?'white':'black'}">
+        <span v-if="item.extraName ==='需要装卸'">{{item.extraName}}（与司机议价）</span>
+        <span v-else>{{item.extraName}}（免费）</span>
+      </el-button>
+    </div>
+
+      <div class="item-margin item-7 flex_r">
+      <div class="item-l">订单备注：</div>
+      <div class="item-7-1">
+        <div class="flex_a number">
+          <div class="a">{{form.remarks.length}}</div>
+          <div class="aa">/60</div>
+        </div>
+        <el-input
+          maxlength="60"
+          type="textarea"
+          autosize
+          placeholder="请输入货物类型、订单备注等"
+          :autosize="{ minRows: 2, maxRows: 4}"
+          v-model="form.remarks">
+        </el-input>
+      </div>
+    </div>
+
+      <div class="item-margin item-8 flex_r">
+      <div class="item-l"><span class="f_r">*</span>加小费：</div>
+      <div class="flex_a">
+        <div  class="margin_r_10">
+          <div class="p_r">
+            <div class="select-drop flex_sb pointer" @click="tipWindow = !tipWindow">
+              <div class="flex_1 window-title-12 padding_l_10">{{(tipName === '')?"（选填）":tipName}}</div>
+              <i class="flex el-input__icon el-icon-arrow-down"></i>
+            </div>
+            <!--弹窗-->
+            <div class="small-window" v-if="tipWindow">
+              <div class="flex_sb">
+                <my-button size="mini" @click="tipClick({name:'',id:''})" style="background-color: #f2f2f2;color: black">
+                  不加小费
+                </my-button>
+                <div>
+                  <my-button size="mini" @click="tipClick(item)" v-for="(item,index) in tipList" :key="item.id"
+                             :style="{'background-color':(item.id === form.tipId)?'#1890ff':'#f2f2f2','color':(item.id === form.tipId)?'white':'black'}">
+                    {{item.name}}
+                  </my-button>
+                </div>
+
+              </div>
+              <div class="flex_a margin_t_10">
+                <el-input
+                  class="margin_r_10"
+                  autosize
+                  size="mini"
+                  placeholder="其他金额（最高200元）"
+                  v-model="inputTip">
+                </el-input>
+                <el-button size="mini" @click="closeTip()" type="success">
+                  确实
+                </el-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-checkbox v-model="form.tip">我的司机优先接单</el-checkbox>
+
+      </div>
+    </div>
+
+      <div class="item-margin flex_r">
+        <div class="item-l"></div>
+        <el-button class=" f_w" style="background-color: #2fb301;width: 140px;height: 46px" type="success" @click="next()">下一步</el-button>
+      </div>
 
     </div>
-  </div>
 
-  <div class="item-margin flex_r">
-    <div class="item-l"></div>
-    <el-button class=" f_w" style="background-color: #2fb301;width: 140px;height: 46px" type="success" @click="next()">下一步</el-button>
-  </div>
-
-</div>
-
-    <show-map-next class="margin_10 flex_1 b_c_w o_f" v-show="nextSuccess" ref="childClickNext" :getDuration="getDuration"></show-map-next>
   </div>
 
 </template>
@@ -357,6 +359,7 @@
 <script>
   import VueJsCookie from 'vue-js-cookie'
   import myDialog from '../../components/myDialog'
+  import myButton from '../../components/myButton'
   import showMap from './showMap.vue'
   import showMapNext from './showMapNext'
   import addRoute from './addRoute'
@@ -378,17 +381,17 @@
             }
             },
           tipWindow:false,
-          nextSuccess:false,//下一步
           windowRoute:false,//选择线路弹窗
           search_route:'',
           specList:[],//车辆规格
           requestList:[],//额外需求
-          carList:[],//车辆列表
+
           searchRouteList:[],//路线列表
 
           mapNext:null,
           timeList:[],//时间列表
           form:{//主页表单
+            carList:[],//车辆列表
             code:[],//城市code
             date:'',//选择日期
             time:'',//选择的时间
@@ -605,7 +608,7 @@
               res[0].list.forEach((item)=>{
                 item.list[0].show = false;
               });
-              this.carList = res[0].list;
+              this.form.carList = res[0].list;
               getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res[0].serviceCode}`).then((res1)=>{
                 this.requestList = res1;
               })
@@ -645,13 +648,21 @@
         next(){
           console.log(this.form)
           let priceId,priceType;
-          this.carList.forEach((item)=>{
-            if(item.carType === this.form.carId){
-              priceId = item.list[0].id;
-              priceType = item.list[0].priceType;
-            }
+          // this.form.carList.forEach((item)=>{
+          //   if(item.carType === this.form.carId){
+          //     priceId = item.list[0].id;
+          //     priceType = item.list[0].priceType;
+          //   }
+          //
+          // })
 
-          })
+          this.form.to.forEach((item)=>{
+            delete item.mapTo;
+          });
+
+          this.$localStorage.set("formDown",this.form);
+
+
 
           let parm = {
             aflcPriceDto: {
@@ -698,25 +709,9 @@
             "usedCarType": "string"
           }
           console.log(parm)
-          this.nextSuccess = true;
-          var map = new AMap.Map(this.$refs.childClickNext.$refs.allMapNext, {});
-          var truckOptions = {
-            map: map,
-            // policy:1,
-            size:1,
-            //city:'',
-            //panel:'panel'
-          };
-          var driving = new AMap.TruckDriving(truckOptions);
-          var path = [];
-          this.form.to.forEach((item)=>{
-            path.push({lnglat:item.originCoordinate.split(',').reverse()});
-          });
-          driving.search(path,function(status, result) {
-            console.log(status)
-            console.log(result)
-          });
+          this.$localStorage.set("parmDown",parm);
 
+          this.$router.push('/order/showMapNext');
         },
         selectCar(id){
           this.form.carId = id;
@@ -828,7 +823,7 @@
       },
 
       components: {
-        myDialog,showMap,showMapNext,addRoute,showAddress
+        myDialog,showMap,showMapNext,addRoute,showAddress,myButton
       },
       mounted(){
         this.createMap();

@@ -8,6 +8,7 @@ import InSingle from '@/pages/orderRouter/inSingle.vue'
 import AlOrder from '@/pages/orderRouter/alOrder.vue'
 import GetPickUp from '@/pages/orderRouter/getPickUp.vue'
 import Order from '@/pages/order/order.vue'
+import ShowMapNext from '@/pages/order/showMapNext.vue'
 import MyDriver from '@/pages/myDriver/index.vue'
 import ManageCenter from '@/pages/manageCenter/index.vue'
 import ManageAllRecod from '@/pages/manageCenter/allRecod.vue'
@@ -36,6 +37,11 @@ export default new Router({
           path: '/order',
           name: 'Order',
           component: Order,
+        },
+        {
+          path: '/order/showMapNext',
+          name: 'ShowMapNext',
+          component: ShowMapNext,
         },
         {
           path: '/myDriver',

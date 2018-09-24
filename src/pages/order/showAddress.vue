@@ -97,11 +97,7 @@
           this.name= "编辑";
           this.window = !this.window;
           this.form = item;
-          if(this.window === true){
-            this.loadUI()
-          }else {
 
-          }
         },
         del(id){
           this.$confirm('此操作将删除选择的数据, 是否确定删除?', '提示', {
@@ -156,22 +152,7 @@
             });
           }
         },
-         poiPickerReady(poiPicker) {
-          window.poiPicker = poiPicker;
-          poiPicker.on('poiPicked', (poiResult)=> {
-            console.log(poiResult)
-            if(poiResult.item.location === undefined){
-              this.$message.warning("没有获取到地址");
-              return
-            }
-            this.form.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
-            this.form.cityCode = poiResult.item.adcode;
-            this.form.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-            this.form.provinceCityArea = poiResult.item.district;
-            this.form.summary = poiResult.item.name;
-            this.form.type = this.type;
-          });
-        },
+
         openWindow(){
           this.name= "新增";
           this.window = !this.window;
@@ -186,20 +167,9 @@
             summary: "",
             type: '',
           };
-          if(this.window === true){
-            this.loadUI()
-          }else {
 
-          }
         },
-        loadUI(){
-          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
-            let poiPicker = new PoiPicker({
-              input: 'pickerInput'
-            });
-            this.poiPickerReady(poiPicker);
-          });
-        },
+
         getList(){
           //收发货人地址列表
           let formData = new FormData();

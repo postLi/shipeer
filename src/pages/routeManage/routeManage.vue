@@ -76,17 +76,48 @@
       </footer>
     </div>
     <el-dialog
-      :title="name +'常用地址'"
+      :title="name +'常用路线'"
       :visible.sync="window"
       width="600px"
       :before-close="handleClose">
+      <div class="add-route-item ">
+        <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
+          <div class="flex_sb">
+            <span v-if="index === 0" class="window-title-left">提货地</span>
+            <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left">途经地</span>
+            <span v-if="index + 1 === addRoute.length" class="window-title-left">目的地</span>
+            <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
+            <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
+          </div>
 
-      <el-button size="small" @click="requestClick(item.id)" v-for="(item,index) in options" :key="item.id"
-                 :style="{'background-color':(item.id === type)?'#1890ff':'#f2f2f2','color':(item.id === form.type)?'white':'black'}">
-        {{item.name}}
-      </el-button>
+          <div class="item-base-flex flex_a margin_t_10">
+            <img src="../../assets/main/tihuod.png" alt="">
+            <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
+          </div>
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 item-base-flex flex_a margin_r_10">
+              <img src="../../assets/main/menpaih.png" alt="">
+              <input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>
+            </div>
+            <div class="flex_1 item-base-flex flex_a margin_r_10">
+              <img src="../../assets/main/fahuor.png" alt="">
+              <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>
+            </div>
+            <div class="flex_1 item-base-flex flex_a">
+              <img src="../../assets/main/nav_phone.png" alt="">
+              <input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>
+            </div>
+          </div>
+          <!--<route-item :address="form.origin"-->
+                        <!--:floorHousenum="form.floor" @inputFloorHousenum="value => { form.floor = value }"-->
+                        <!--:contacts="form.name"  @inputContacts="value => { form.name = value }"-->
+                        <!--:contactsPhone="form.tel"  @inputContactsPhone="value => { form.tel = value }"-->
+                        <!--:index="index" :ref="index"></route-item>-->
+        </div>
+      </div>
 
-      <address-item :data="form" :type="type"></address-item>
+
+
       <span slot="footer" class="dialog-footer">
     <el-button @click="window = false">取 消</el-button>
     <el-button type="primary" @click="save()">保 存</el-button>
@@ -100,12 +131,12 @@
 <script>
   import {REGEX} from '@/utils/valiRegex.js'
   import { getApi ,postApi} from "@/api/api.js";
-  import addressItem from "@/components/addressItem"
+  import routeItem from "@/components/routeItem"
   import myPagination from "@/components/myPagination"
   import {mapGetters, mapActions} from 'vuex'
     export default {
         name: "routeManage",
-      components:{addressItem,myPagination},
+      components:{routeItem,myPagination},
       computed:{
         ...mapGetters(['getBodyWidth',]),
         heightComputer: function() {
@@ -122,6 +153,29 @@
           topHeight:0,
           footer:0,
           tableData: [],
+          addRoute:[
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",//城市编码（格式440100）
+              origin: "",//详细地址
+              originCoordinate: "",//地点坐标(小的在前)
+              originName: "",//地点名称
+              provinceCityArea: "",//省市区（格式:广东省广州市天河区）
+              shipperSort: 0
+            },
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: 1
+            }],
           form:{
             address: "",//详细地址
             cityCode: "",//城市编码（格式440100）
@@ -148,6 +202,30 @@
         }
       },
       methods:{
+        delDestination(i){
+          this.addRoute.splice(i,1);
+          this.addRoute.forEach((item ,i)=>{
+            item.shipperSort = i
+          })
+        },
+        addDestination(i){
+          if(this.addRoute.length >=10){
+            this.$message.warning('最多只能添加十条目的地');
+            return
+          }
+          this.addRoute.push({
+            tel:'',
+            name:'',
+            floor:'',
+            cityCode: "",
+            origin: "",
+            originCoordinate: "",
+            originName: "",
+            provinceCityArea: "",
+            shipperSort: i
+          })
+
+        },
         getPage(page) {
           this.tableData = [];
           this.p.page = page;
@@ -163,7 +241,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            postApi('/aflc-uc/aflcShipperContactsApi/deleteContactsList',[id]).then(() => {
+            postApi('/aflc-uc/aflcShipperLineApi/deleteAflcShipperLine',[id]).then(() => {
               this.$message.info('删除成功');
               this.getList();
             })
@@ -206,8 +284,15 @@
           }
 
           this.form.type = this.type;
+
+
+          let parm =  {
+            "aflcShipperLineDtos": this.addRoute,
+            "shipperLineName": new Date() * 1
+          };
+
           if(this.form.id){
-            postApi('/aflc-uc/aflcShipperContactsApi/updateContactsList',this.form).then((res)=>{
+            postApi('/aflc-uc/aflcShipperLineApi/updateAflcShipperLine',this.form).then((res)=>{
               if(res !== ''){
                 this.$message.success("修改成功");
                 this.window = false;
@@ -215,7 +300,7 @@
               }
             });
           }else {
-            postApi('/aflc-uc/aflcShipperContactsApi/addContactsList',this.form).then((res)=>{
+            postApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine',this.form).then((res)=>{
               if(res !== ''){
                 this.$message.success("新增成功");
                 this.window = false;
@@ -233,7 +318,7 @@
         loadUI(){
           AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
             let poiPicker = new PoiPicker({
-              input: 'pickerInput'
+              input: this.$refs[i][0]
             });
             this.poiPickerReady(poiPicker);
           });
@@ -282,12 +367,7 @@
 
         },
         getList(){
-          //收发货人地址列表
-          let formData = new FormData();
-          formData.append("currentPage",1);
-          formData.append("pageSize",20);
-          formData.append("type",this.type);
-          postApi('/aflc-uc/aflcShipperContactsApi/getContactsList',formData).then((res)=>{
+          postApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
             this.tableData = res.list;
           });
         }
@@ -314,7 +394,15 @@
 </script>
 
 <style scoped>
-
+  .item-base-flex{
+    height: 31px;
+    border-radius: 2px;
+    border: solid 1px #dcdfe6;
+    box-sizing: border-box;
+  img{
+    margin-left: 3px;
+  }
+  }
   .address-width{
     width: 150px;
   }
