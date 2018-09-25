@@ -87,6 +87,7 @@
       methods:{
         selectAddress(item){
           console.log(item)
+          this.showAddress.show = false;
           this.$emit("selectAddress", item);
         },
         close(){
