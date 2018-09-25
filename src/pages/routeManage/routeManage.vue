@@ -79,7 +79,7 @@
       :title="name +'常用路线'"
       :visible.sync="window"
       width="600px"
-      :before-close="handleClose">
+      :close="handleClose">
       <div class="add-route-item ">
         <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
           <div class="flex_sb">

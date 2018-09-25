@@ -92,7 +92,7 @@
             <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
             <show-map :data="item" :ref="index"></show-map>
             <show-address :showAddress="item" :ref="index" :type="(index ===0)?1:0" @selectAddress="(data)=>{
-                return getSelectAddress1(data,item)
+                return getSelectAddress1(item,data)
             }"></show-address>
           </div>
 
@@ -119,27 +119,7 @@
               </div>
               <div class="flex_1 o_f" v-if="searchRouteList.length > 0">
                 <div class="route-item flex_f" v-for="(item,index) in searchRouteList" :key="item.id">
-                  <div class=" route-item-body flex_1 flex_a" v-for="(item1,index1) in item" :key="item1.id">
-                    <div class="p_r height_100 route-item-body-left" v-if="index1 === 0">
-                      <div class="green-point"></div>
-                      <div class="green-point-line address-line"></div>
-                    </div>
-
-                    <div class="p_r height_100 route-item-body-left" v-if="index1 > 0 && index1 + 1 !== item.length">
-                      <div class="gray-point"></div>
-                      <div class="gray-point-up address-line"></div>
-                      <div class="gray-point-down address-line"></div>
-                    </div>
-
-                    <div class="p_r height_100 route-item-body-left" v-if="index1 !== 0 && index1 + 1 === item.length">
-                      <div class="red-point"></div>
-                      <div class="red-point-line address-line"></div>
-                    </div>
-                    <div>
-                      <div class="window-title-12">{{item1.name}}</div>
-                      <div class="window-title-10">{{item1.address}}</div>
-                    </div>
-                  </div>
+                  <route-line :data="item" from="order"></route-line>
                 </div>
               </div>
               <div v-else class="flex height_100 window-title-left">
@@ -160,12 +140,12 @@
 
           <div class="item-base margin_t_10 flex_a margin_r_50">
             <img src="../../assets/main/fahuor.png" alt="">
-            <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.contacts"/>
+            <input class="my-input margin_l_10" :placeholder="(index === 0)?'发货联系人（选填）':'收货联系人（选填）'" v-model="item.consignee"/>
           </div>
 
           <div class="item-base margin_t_10 flex_a margin_r_50">
             <img src="../../assets/main/nav_phone.png" alt="">
-            <input class="my-input margin_l_10" :placeholder="(index === 0)?'收货联系人电话（必填）':'收货联系人电话（选填）'" v-model="item.contactsPhone"/>
+            <input class="my-input margin_l_10" :placeholder="(index === 0)?'发货联系人电话（必填）':'收货联系人电话（选填）'" v-model="item.consigneeMobile"/>
           </div>
         </div>
       </div>
@@ -182,12 +162,11 @@
         <!--</el-autocomplete>-->
         <div class="p_r" style="width: 140px" >
           <div class="select-drop flex_sb pointer" @click="goodsWindow = !goodsWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(goodsName === '')?"（选填）":goodsName}}</div>
+            <div class="flex_1 window-title-12 padding_l_10">{{(form.goodsName === '')?"（选填）":form.goodsName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" style="width: 400px" v-if="goodsWindow">
             <div class="f_f">
-
 
               <my-button @click="goodsClick({name:'',id:''})" style="background-color: #f2f2f2;color: black; margin: 0;">
                 不填
@@ -218,7 +197,7 @@
       <div class="item-5-1 flex_a">
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="wightWindow = !wightWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(wightName === '不填' || wightName === '')?"（选填）":wightName}}</div>
+            <div class="flex_1 window-title-12 padding_l_10">{{(form.wightName === '不填' || form.wightName === '')?"（选填）":form.wightName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="wightWindow">
@@ -247,7 +226,7 @@
       <div  class="item-5-1 flex_a">
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="volumeWindow = !volumeWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(volumeName === '不填' || volumeName === '')?"（选填）":volumeName}}</div>
+            <div class="flex_1 window-title-12 padding_l_10">{{(form.volumeName === '不填' || form.volumeName === '')?"（选填）":form.volumeName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="volumeWindow">
@@ -288,7 +267,7 @@
       <div class="item-l">订单备注：</div>
       <div class="item-7-1">
         <div class="flex_a number">
-          <div class="a">{{form.remarks.length}}</div>
+          <div class="a">{{form.remark.length}}</div>
           <div class="aa">/60</div>
         </div>
         <el-input
@@ -297,7 +276,7 @@
           autosize
           placeholder="请输入货物类型、订单备注等"
           :autosize="{ minRows: 2, maxRows: 4}"
-          v-model="form.remarks">
+          v-model="form.remark">
         </el-input>
       </div>
     </div>
@@ -308,7 +287,7 @@
         <div  class="margin_r_10">
           <div class="p_r">
             <div class="select-drop flex_sb pointer" @click="tipWindow = !tipWindow">
-              <div class="flex_1 window-title-12 padding_l_10">{{(tipName === '')?"（选填）":tipName}}</div>
+              <div class="flex_1 window-title-12 padding_l_10">{{(form.tipName === '')?"（选填）":form.tipName}}</div>
               <i class="flex el-input__icon el-icon-arrow-down"></i>
             </div>
             <!--弹窗-->
@@ -318,7 +297,7 @@
                   不加小费
                 </my-button>
                 <div>
-                  <my-button size="mini" @click="tipClick(item)" v-for="(item,index) in tipList" :key="item.id"
+                  <my-button style="margin: 0 3px 3px 0;" size="mini" @click="tipClick(item)" v-for="(item,index) in tipList" :key="item.id"
                              :style="{'background-color':(item.id === form.tipId)?'#1890ff':'#f2f2f2','color':(item.id === form.tipId)?'white':'black'}">
                     {{item.name}}
                   </my-button>
@@ -340,7 +319,7 @@
             </div>
           </div>
         </div>
-        <el-checkbox v-model="form.tip">我的司机优先接单</el-checkbox>
+        <el-checkbox v-model="form.isFirst">我的司机优先接单</el-checkbox>
 
       </div>
     </div>
@@ -364,10 +343,14 @@
   import showMapNext from './showMapNext'
   import addRoute from './addRoute'
   import showAddress from './showAddress'
+  import routeLine from './routeLine.vue'
   import { getApi ,postApi} from "@/api/api.js";
   import {REGEX} from '@/utils/valiRegex.js'
     export default {
-        name: "order",
+      name: "order",
+      components: {
+        myDialog,showMap,showMapNext,addRoute,showAddress,myButton,routeLine
+      },
       data() {
         return {
           defaultProps: {
@@ -380,7 +363,6 @@
               return time.getTime()  + 3600 * 1000 * 24 < Date.now();
             }
             },
-          tipWindow:false,
           windowRoute:false,//选择线路弹窗
           search_route:'',
           specList:[],//车辆规格
@@ -400,50 +382,56 @@
             specCode:'',//车辆规格Code
             requestId:'',//额外需求id
             goodsId:'',//货物id
+            goodsName:'',
             wightId:'',//重量id
+            wightName:'',
             volumeId:'',//体积id
+            volumeName:'',
             tipId:'',//小费id
+            tipName:'',//小费名
+            isFirst:false,//我的司机优先接单
             to:[{
               consignee: "",//收货人姓名
               consigneeMobile: "",//收货人电话
-              isSms: "",//是否短信通知(1为是，0为否)
+              isSms: 0,//是否短信通知(1为是，0为否)
               origin: "",//地点名称详细地址
               originCoordinate: "",//地点坐标(格式22.5253951835,114.0988813763纬度经度)
               originName: "",//地点名称
               provinceCityArea: "",//省市区（格式:广东省广州市天河区）
               shipperSort: 0,//线路排序号
-                checked:false,show:false,mapTo:null,loadOne:true,zoom:14
+                show:false,mapTo:null,loadOne:true,zoom:14
             },
               {
                 consignee: "",
                 consigneeMobile: "",
-                isSms: "",
+                isSms: 0,
                 origin: "",
                 originCoordinate: "",
                 originName: "",
                 provinceCityArea: "",
                 shipperSort: 1,
-              checked:false,show:false,mapTo:null,loadOne:true,zoom:14}
+                show:false,mapTo:null,loadOne:true,zoom:14}
               ],
-            remarks:''
+            remark:''//给司机捎句话
           },
           getDuration:'',//起终时间
           distAddress:0,//主页选择目的地index
           cityList:[],//城市列表
+
           tipList:'',//小费列表
-          tipName:'',//小费名
+          tipWindow:false,
           inputTip:'',//手动输入小费
+
           goodsList:[],//货物列表
           goodsWindow:false,
-          goodsName:'',
           inputGoods:'',
+
           wightList:[],//重量列表
           wightWindow:false,
-          wightName:'',
           inputWight:'',
+
           volumeList:[],//体积列表
           volumeWindow:false,
-          volumeName:'',
           inputVolume:'',
         }
       },
@@ -460,7 +448,7 @@
           },
         volumeClick(item){
           this.form.volumeId = item.id;
-          this.volumeName = item.name;
+          this.form.volumeName = item.name;
           this.inputVolume = '';
           this.volumeWindow = false;
         },
@@ -470,16 +458,16 @@
               this.$message.warning("必须是数字");
               return
             }
-            this.volumeName = this.inputVolume;
+            this.form.volumeName = this.inputVolume;
           } else {
-            this.volumeName = '';
+            this.form.volumeName = '';
           }
           this.form.volumeId = '';
           this.volumeWindow = false;
         },
         wightClick(item){
           this.form.wightId = item.id;
-          this.wightName = item.name;
+          this.form.wightName = item.name;
           this.inputWight = '';
           this.wightWindow = false;
         },
@@ -489,24 +477,24 @@
               this.$message.warning("必须是数字");
               return
             }
-            this.wightName = this.inputWight;
+            this.form.wightName = this.inputWight;
           } else {
-            this.wightName = '';
+            this.form.wightName = '';
           }
           this.form.wightId = '';
           this.wightWindow = false;
         },
         goodsClick(item){
           this.form.goodsId = item.id;
-          this.goodsName = item.name;
+          this.form.goodsName = item.name;
           this.inputGoods = '';
           this.goodsWindow = false;
         },
         closeGoods(){
           if(this.inputGoods !== ''){
-            this.goodsName = this.inputGoods;
+            this.form.goodsName = this.inputGoods;
           } else {
-            this.goodsName = '';
+            this.form.goodsName = '';
           }
           this.form.goodsId = '';
           this.goodsWindow = false;
@@ -518,33 +506,33 @@
               return
             }
             if((this.inputTip * 1) > 200){
-              this.tipName = 200;
+              this.form.tipName = 200;
               this.inputTip = 200;
             } else {
-              this.tipName = this.inputTip;
+              this.form.tipName = this.inputTip;
             }
           } else {
-            this.tipName = '';
+            this.form.tipName = '';
           }
           this.form.tipId = '';
           this.tipWindow = false;
         },
         tipClick(item){
           this.form.tipId = item.id;
-          this.tipName = item.name;
+          this.form.tipName = item.name;
           this.inputTip = '';
           this.tipWindow = false;
         },
-        getSelectAddress1(data,item){
-          item.address = data.address;
-          item.cityCode = data.cityCode;
-          item.contacts = data.contacts;
-          item.contactsPhone = data.contactsPhone;
-          item.coordinate = data.coordinate;
-          item.floorHousenum = data.floorHousenum;
+        getSelectAddress1(item,data){
+          //item.floorHousenum = data.floorHousenum;
+          // item.cityCode = data.cityCode;
+          item.consignee = data.contacts;
+          item.consigneeMobile = data.contactsPhone;
+          item.origin = data.address;
+          item.originCoordinate = data.coordinate;
+          item.originName = data.summary;
           item.provinceCityArea = data.provinceCityArea;
-          item.summary = data.summary;
-          item.type = data.type;
+          //item.type = data.type;
         },
 
         goodsSearch(queryString, cb){
@@ -636,81 +624,40 @@
           this.form.to.push({
             consignee: "",
             consigneeMobile: "",
-            isSms: "",
+            isSms: 0,
             origin: "",
             originCoordinate: "",
             originName: "",
             provinceCityArea: "",
             shipperSort: i,
-            checked:false,show:false,mapTo:'',loadOne:true,zoom:14,})
+            show:false,mapTo:'',loadOne:true,zoom:14,})
         },
 
         next(){
-          console.log(this.form)
-          let priceId,priceType;
-          // this.form.carList.forEach((item)=>{
-          //   if(item.carType === this.form.carId){
-          //     priceId = item.list[0].id;
-          //     priceType = item.list[0].priceType;
-          //   }
-          //
-          // })
-
+          if(this.form.time === ''){
+            this.$message.warning('时间必须选择');
+            return
+          }
+          if(this.form.to[0].consigneeMobile === ''){
+            this.$message.warning('发货人电话必填');
+            return
+          }else {
+            if(!REGEX.MOBILE.test(this.form.to[0].consigneeMobile)){
+              this.$message.warning("手机号码格式错误");
+              return
+            }
+          }
+          let check = this.form.to.some((item)=>{
+            return item.origin === ''
+          });
+          if(check){
+            this.$message.warning('收发货地址必填');
+            return
+          }
           this.form.to.forEach((item)=>{
             delete item.mapTo;
           });
-
           this.$localStorage.set("formDown",this.form);
-
-
-
-          let parm = {
-            aflcPriceDto: {
-              priceId: priceId,
-              priceType: priceType,
-              spec: this.form.specCode
-            },
-            belongCity: this.form.code[1],
-            "couponId": "string",
-            "distance": 0,
-            extraPrice: 0,
-            extraPriceCode: "",
-            "extraServiceDtoList": [
-              {
-                "extraId": "string",
-                "remark": "string"
-              }
-            ],
-            "goodsName": "string",
-            "goodsVolume": "string",
-            "goodsWeight": "string",
-            "ip": "string",
-            "isFirst": "string",
-            "orderFrom": "string",
-            "orderPrice": 0,
-            "preferentialAmountId": "string",
-            "remark": "string",
-            "serviceCode": "string",
-            "shipperId": "string",
-            "shipperLineDtoList": [
-              {
-                "consignee": "string",
-                "consigneeMobile": "string",
-                "isSms": "string",
-                "origin": "string",
-                "originCoordinate": "string",
-                "originName": "string",
-                "provinceCityArea": "string",
-                "shipperSort": 0
-              }
-            ],
-            "totalAmount": 0,
-            "useCarTime": "2018-09-21T09:24:33.197Z",
-            "usedCarType": "string"
-          }
-          console.log(parm)
-          this.$localStorage.set("parmDown",parm);
-
           this.$router.push('/order/showMapNext');
         },
         selectCar(id){
@@ -723,72 +670,7 @@
           this.form.requestId = id;
         },
         showMap1(item,i){
-          let centerPoint;
           this.$refs[i][0].ok();
-            // if(item.loadOne === true){
-            //   item.loadOne = false;
-
-          item.mapTo = new AMap.Map(this.$refs[i][0].$refs.allmap, {
-            zoom: 14,
-            scrollWheel: true,
-            // center: centerPoint
-          });
-          if(item.originCoordinate === ""){
-            // console.log(item.mapTo.getCenter())
-            item.originCoordinate = [item.mapTo.getCenter().lat,item.mapTo.getCenter().lng].join(',')
-          }else {
-            centerPoint = item.originCoordinate.split(',').reverse();
-            item.mapTo.setCenter(centerPoint)
-          }
-              AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) =>{
-
-
-                var positionPicker = new PositionPicker({
-                  mode: 'dragMap',
-                  map: item.mapTo,
-                  iconStyle: {
-                    url: './static/ti.png',
-                    ancher: [16, 56],
-                    size: [32,56]
-                  }
-                });
-                AMap.service('AMap.Geocoder',() =>{
-                  let geocoder = new AMap.Geocoder({});
-                  geocoder.getAddress(centerPoint, (status, result) =>{
-                    if (status === 'complete' && result.info === 'OK') {
-                      console.log(result)
-                    }
-                  });
-                  item.mapTo.on("zoomchange",(e)=>{
-                    console.log( item.mapTo.getCenter())
-                    let centerPoint = [item.mapTo.getCenter().lng,item.mapTo.getCenter().lat];
-
-                  })
-                  item.mapTo.on("moveend",(e)=>{
-                    console.log( item.mapTo.getCenter())
-                    let centerPoint = [item.mapTo.getCenter().lng,item.mapTo.getCenter().lat];
-                    geocoder.getAddress(centerPoint, (status, result) =>{
-                      if (status === 'complete' && result.info === 'OK') {
-                        console.log(result);
-
-                      }
-                    });
-                  });
-
-                })
-                positionPicker.on('success', (positionResult)=> {
-                  console.log(positionResult)
-                  item.originCoordinate = [positionResult.position.lat,positionResult.position.lng].join(',');
-                  item.origin = positionResult.address;
-                });
-                positionPicker.on('fail', (positionResult)=> {
-                });
-                positionPicker.start();
-              });
-            // }
-
-            // this.$refs[i][0].getMapStatus();
-
         },
         createMap(){
           var citysearch = new AMap.CitySearch();
@@ -822,9 +704,6 @@
         },
       },
 
-      components: {
-        myDialog,showMap,showMapNext,addRoute,showAddress,myButton
-      },
       mounted(){
         this.createMap();
 
@@ -1040,12 +919,6 @@
     }
     .route-item{
       /*height: 119px;*/
-      .route-item-body{
-        height: 40px;
-        .route-item-body-left{
-          width: 47px;
-        }
-      }
     }
   }
   .add-route{
@@ -1084,54 +957,4 @@
     z-index: 200;
   }
 
-  .green-point{
-    width: 10px;height: 10px;border-radius: 40px;background-color: green;
-    position: absolute;top: 50%;left: 50%;
-    transform: translate(-50%,-50%)
-  }
-  .green-point-line{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, 34%);
-  }
-
-
-  .red-point{
-    width: 10px;height: 10px;border-radius: 40px;background-color: red;
-    position: absolute;top: 50%;left: 50%;
-    transform: translate(-50%,-50%)
-  }
-
-  .red-point-line{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -132%);
-  }
-
-  .gray-point{
-    width: 6px;height: 6px;border-radius: 40px;background-color: #999999;
-    position: absolute;top: 50%;left: 50%;
-    transform: translate(-50%,-50%)
-  }
-  .gray-point-up{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -132%);
-  }
-  .gray-point-down{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, 34%);
-  }
-
-  .address-line {
-    width: 2px;
-    height: 18px;
-    border-radius: 2px;
-    background-color: #979797;
-  }
 </style>

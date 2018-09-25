@@ -11,9 +11,9 @@
         <div class="flex_a">
           <div class="flex_1">
             <span class="order-key">用车时间：</span>
-            <span class="order-value">2018-12-20 09:45</span>
+            <span class="order-value">{{parm.useCarTime}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">起步价（小面包车）：</span><span class="order-value">¥45元</span></div>
+          <div class="flex_1"><span class="order-key">起步价（{{carTypeName}}）：</span><span class="order-value">¥{{price}}元</span></div>
           <!--<div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span>分钟</span></div>-->
           <div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span></span></div>
         </div>
@@ -21,20 +21,25 @@
         <div class="flex_a margin_t_10">
           <div class="flex_1">
             <span class="order-key">所需车型：</span>
-            <span class="order-value">小面包车</span>
+            <span class="order-value">{{carTypeName}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">超里程费（9公里）：</span><span class="order-value">¥32.4元</span></div>
+          <div class="flex_1"><span class="order-key">超里程费（{{kmPrice}}公里）：</span><span class="order-value">¥{{outstripPrice}}元</span></div>
           <div class="flex_1"></div>
         </div>
         <div class="margin_t_10 order-key">若产生高速费、停车费和搬运费,根据实际费用由用户支付 若涉及逾时等候费,请按照收费标准支付</div>
 
         <div class="order-route">
 
+
+
+          <route-line :data="parm.shipperLineDtoList" from="showMapNext"></route-line>
+
+
         </div>
 
         <div class="flex_ae total">
           <div class="order-value">总计：</div>
-          <div>¥77.4元</div>
+          <div>¥{{parm.totalAmount}}元</div>
           <div class="order-value margin_l_10">(已减免0元)</div>
           <div class="margin_l_10">收费标准</div>
         </div>
@@ -72,6 +77,10 @@
 
         </div>
 
+        <div class="flex margin_20">
+          <el-button class=" f_w" style="background-color: #2fb301;width: 140px;height: 46px;font-size: 16px;" type="success" @click="pay()">去支付</el-button>
+        </div>
+
       </div>
 
 
@@ -82,25 +91,93 @@
 </template>
 
 <script>
+  import { getApi ,postApi} from "@/api/api.js";
+  import routeLine from './routeLine.vue'
     export default {
       name: "showMapNext",
       props:["getDuration"],
+      components:{routeLine},
       data(){
           return{
             radio:1,
             payTypeId:1,
             payTypeList:[{id:1,name:'马上付款'},{id:2,name:'装货时付款'},{id:3,name:'收货时付款'}],
             form:[],
-            time:''
+            parm:{},
+            carItem:{},
+            time:'',
+            carTypeName:'',
+            price:0,//标准起步价(元)
+            kmPrice:0,//标准起步价(公里)
+            outstripPrice:0,//超里程费
           }
       },
       methods:{
+        pay(){
+          if(this.parm.distance < 0.1){
+            this.$message.warning("距离必须大于0.1公里");
+            return
+          }
+          postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
+            console.log(res)
+            if(res !== ''){
+            }
+          });
+        },
         selectPay(id){
           this.payTypeId = id;
         }
       },
       mounted(){
         this.form = this.$localStorage.get("formDown");
+
+        let priceId,priceType,serivceCode,carType;
+        this.form.carList.forEach((item)=>{
+          if(item.carType === this.form.carId){
+            this.carItem = item;
+            priceId = item.list[0].id;
+            priceType = item.list[0].priceType;
+            serivceCode = item.list[0].serivceCode;
+            carType = item.carType;
+            this.carTypeName = item.carTypeName
+          }
+        });
+        console.log(this.form)
+        this.parm = {
+          aflcPriceDto: {
+            priceId: priceId,//定价id
+            priceType: priceType,//定价类型 1标准定价 2区域定价
+            spec: this.form.specCode//车辆规格
+          },
+          belongCity: this.form.code[1],//订单所属区域(定位的城市id)
+          "couponId": "string",//优惠券id
+          distance: 0,//实际总距离(地图计算)
+          extraPrice: this.form.tipName,//附加小费
+          extraPriceCode: this.form.tipId,//附加小费编码
+          extraServiceDtoList: [
+            {
+              extraId: this.form.requestId,//额外服务id
+              "remark": "string"//额外服务描述
+            }
+          ],
+          goodsName: this.form.goodsName,//货物名称
+          goodsVolume: this.form.wightName,//货物体积（方）
+          goodsWeight: this.form.volumeName,//货物重量（吨）
+          ip: "",//客户端ip地址(app端不用传)
+          isFirst: (this.form.isFirst)?1:0 ,//我的司机优先接单(1为true，0为false)
+          orderFrom: "web",//订单来源(ios,android)
+          orderPrice: 0,//订单原价格(未减优惠券，优惠金的金额)(地图计算)
+          "preferentialAmountId": "string",//优惠金id
+          remark: this.form.remark,//给司机捎句话
+          serviceCode: serivceCode,//服务分类（同城，省际,零担）
+          shipperId:  this.$localStorage.get("28ky-userdata").shipperId,//货主id(app端不用传)
+          shipperLineDtoList: this.form.to,//路线列表
+          totalAmount: 0,//总价格(地图计算)
+          useCarTime: new Date(this.form.time).format("yyyy-MM-dd hh:mm:ss"),//用车时间(yyyy-MM-dd HH:mm:ss)
+          usedCarType: carType//用车类型（车辆类型）
+        };
+
+        let coordinate = this.parm.shipperLineDtoList;
         let map = new AMap.Map(this.$refs.allMapNext, {});
         let truckOptions = {
           map: map,
@@ -111,12 +188,28 @@
         };
         let driving = new AMap.TruckDriving(truckOptions);
         let path = [];
-        this.form.to.forEach((item)=>{
+        coordinate.forEach((item)=>{
+          item.origin = `${item.origin} ${(item.floorHousenum)?item.floorHousenum:''}`;//楼层与祥细地址拼接
           path.push({lnglat:item.originCoordinate.split(',').reverse()});
         });
         driving.search(path,(status, result) =>{
-          console.log(result.routes[0].time)
+          this.parm.distance = result.routes[0].distance/1000;
+          this.price =  this.carItem.list[0].price;
+          this.kmPrice =  this.carItem.list[0].kmPrice;
+          let outstripPrice =  this.carItem.list[0].outstripPrice;
 
+          console.log('超里程费' + outstripPrice)
+          console.log('距离' +this.parm.distance)
+
+          if(this.parm.distance - this.kmPrice > 0){
+            let distance = this.parm.distance - this.kmPrice;
+            this.outstripPrice = distance.toFixed(0) * outstripPrice;
+            this.parm.orderPrice =  this.price + this.outstripPrice;
+          }else {
+            this.parm.orderPrice =  this.price;
+          }
+          this.parm.totalAmount = this.parm.orderPrice + this.parm.extraPrice * 1;
+          console.log(this.parm)
 
           let leftTime = result.routes[0].time;
           let d = parseInt(leftTime / 3600 / 24);
@@ -176,6 +269,7 @@
   .order-route{
     width: 467px;
     height: 119px;
+    overflow: auto;
   }
   .total{
     :nth-of-type(2){

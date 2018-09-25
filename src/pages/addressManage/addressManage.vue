@@ -79,8 +79,7 @@
       :title="name +'常用地址'"
       :visible.sync="window"
       width="600px"
-      :before-close="handleClose">
-
+      :close="handleClose">
       <el-button size="small" @click="requestClick(item.id)" v-for="(item,index) in options" :key="item.id"
                  :style="{'background-color':(item.id === type)?'#1890ff':'#f2f2f2','color':(item.id === form.type)?'white':'black'}">
         {{item.name}}
@@ -132,7 +131,6 @@
           provinceCityArea: "",//省市区（格式:广东省广州市天河区）
           summary: "",//地点简称
           type: '',//区分货主(1为发货人，0为收货人)
-
         },
         contactsPhone:'',
         contacts:'',
