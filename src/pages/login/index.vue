@@ -258,7 +258,7 @@
         if (this.tabId === 0) {
           this.$refs['userLogin'].validate(valid => {
             if (valid) {
-              this.loading = true
+              // this.loading = true
               login(this.userData.userPhone + '|aflc-2', this.userData.userPassword).then((data) => {
                 if (data) {
                   VueJsCookie.set('28kytoken', data.access_token)
@@ -266,7 +266,7 @@
                   // 跳转到首页
                   // console.log(data)
                   this.$router.push({path: '/order'})
-                  this.loading = false
+                  // this.loading = false
                 }else{
                   this.$message({
                     message: '您的账号或者密码有误~',

@@ -1,15 +1,15 @@
 <template>
-    <div class="orderManageClass-lll" v-loading="loading">
+    <div class="orderManageClass-lll-couList" v-loading="loading">
       <el-container>
         <el-header>
           <div class="headerClass">
-            <el-form>
+            <el-form :model="senData">
               <el-form-item label="">
-                <el-input placeholder="请输入优惠券码"></el-input>
+                <el-input placeholder="请输入优惠券码" v-model="senData.couponNum"></el-input>
               </el-form-item>
             </el-form>
             <div class="btnClass">
-              <el-button type="success">兑换</el-button>
+              <el-button type="success" @click="onsubmit()">兑换</el-button>
             </div>
           </div>
         </el-header>
@@ -17,178 +17,328 @@
           <div class="mainClass">
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="可用" name="first">
-                <div class="info-table">
-                  <el-table
-                    ref="multipleTable"
-                    :data="dataset"
-                    border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-                    :default-sort = "{prop: 'id', order: 'ascending'}"
-                    style="width: 100%">
+                <div class="tab_info">
+                  <div class="info-table">
+                    <!--<el-table ref="multipleTable" @row-dblclick="getDbClick" :data="usersArr" border @row-click="clickDetails" @selection-change="getSelection" height="100%" tooltip-effect="dark" :key="tablekey" style="width:100%;" :default-sort="{prop: 'id', order: 'ascending'}" stripe>-->
 
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="id"
-                      label="序号"
-                      width="128">
-                      <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="orderSerial"
-                      width="300"
-                      label="交易流水号">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="incomeExpendTypeName"
-                      width="300"
-                      label="交易方式">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="payWayName"
-                      width="300"
-                      label="金额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="tradeTypeName"
-                      width="300"
-                      label="充值后余额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="totalAmount"
-                      width="300"
-                      label="订单完成时间">
-                    </el-table-column>
-                  </el-table>
+                    <el-table
+                      ref="multipleTable"
+                      :data="datasetOne"
+                      border
+                      @row-dblclick="getDbClick"
+                      @row-click="clickDetails"
+                      @selection-change="getSelection"
+
+                      tooltip-effect="dark"
+                      :default-sort = "{prop: 'id', order: 'ascending'}"
+                      style="width: 100%"
+                      stripe>
+
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="id"
+                        label="序号"
+                        width="80">
+                        <template slot-scope="scope">{{ ((senDataListO.currentPage - 1)*senDataListO.pageSize) + scope.$index + 1 }}</template>
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="orderSerial"
+                        width="150"
+                        label="优惠券">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponName"
+                        width="150"
+                        label="名称">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponTypeName"
+                        width="150"
+                        label="类型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="deduction"
+                        width="150"
+                        label="满减金额">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="SatisfyTheCondition"
+                        width="150"
+                        label="满减条件">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="discount"
+                        width="150"
+                        label="折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="maximumDeduction"
+                        width="150"
+                        label="最高折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="serivceCode"
+                        width="130"
+                        label="适用服务">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="useCarType"
+                        width="130"
+                        label="限定车型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="expiryDate"
+                        width="130"
+                        label="有效期">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="areaName"
+                        width="130"
+                        label="使用区域">
+                      </el-table-column>
+
+                    </el-table>
+                  </div>
                 </div>
+
               </el-tab-pane>
               <el-tab-pane label="已使用" name="second">
-                <div class="info-table">
-                  <el-table
-                    ref="multipleTable"
-                    :data="dataset"
-                    border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-                    :default-sort = "{prop: 'id', order: 'ascending'}"
-                    style="width: 100%">
+                <div class="tab_info">
+                  <div class="info-table">
+                    <el-table
+                      ref="multipleTable"
+                      :data="datasetSecond"
+                      border
+                      @row-dblclick="getDbClick"
+                      @row-click="clickDetails"
+                      @selection-change="getSelection"
 
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="id"
-                      label="序号"
-                      width="128">
-                      <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="orderSerial"
-                      width="300"
-                      label="交易流水号">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="incomeExpendTypeName"
-                      width="300"
-                      label="交易方式">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="payWayName"
-                      width="300"
-                      label="金额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="tradeTypeName"
-                      width="300"
-                      label="充值后余额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="totalAmount"
-                      width="300"
-                      label="订单完成时间">
-                    </el-table-column>
-                  </el-table>
+                      tooltip-effect="dark"
+                      :default-sort = "{prop: 'id', order: 'ascending'}"
+                      style="width: 100%"
+                      stripe>
+
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="id"
+                        label="序号"
+                        width="80">
+                        <template slot-scope="scope">{{ ((senDataListS.currentPage - 1)*senDataListS.pageSize) + scope.$index + 1 }}</template>
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="orderSerial"
+                        width="150"
+                        label="优惠券">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponName"
+                        width="150"
+                        label="名称">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponTypeName"
+                        width="150"
+                        label="类型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="deduction"
+                        width="150"
+                        label="满减金额">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="SatisfyTheCondition"
+                        width="150"
+                        label="满减条件">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="discount"
+                        width="150"
+                        label="折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="maximumDeduction"
+                        width="150"
+                        label="最高折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="serivceCode"
+                        width="130"
+                        label="适用服务">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="useCarType"
+                        width="130"
+                        label="限定车型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="expiryDate"
+                        width="130"
+                        label="有效期">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="areaName"
+                        width="130"
+                        label="使用区域">
+                      </el-table-column>
+
+                    </el-table>
+
+                  </div>
                 </div>
+
               </el-tab-pane>
               <el-tab-pane label="已过期" name="third">
-                <div class="info-table">
-                  <el-table
-                    ref="multipleTable"
-                    :data="dataset"
-                    border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-                    :default-sort = "{prop: 'id', order: 'ascending'}"
-                    style="width: 100%">
+                <div class="tab_info">
+                  <div class="info-table">
+                    <el-table
+                      ref="multipleTable"
+                      :data="datasetThird"
+                      border
+                      @row-dblclick="getDbClick"
+                      @row-click="clickDetails"
+                      @selection-change="getSelection"
 
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="id"
-                      label="序号"
-                      width="128">
-                      <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="orderSerial"
-                      width="300"
-                      label="交易流水号">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="incomeExpendTypeName"
-                      width="300"
-                      label="交易方式">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="payWayName"
-                      width="300"
-                      label="金额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="tradeTypeName"
-                      width="300"
-                      label="充值后余额">
-                    </el-table-column>
-                    <el-table-column
-                      fixed
-                      sortable
-                      prop="totalAmount"
-                      width="300"
-                      label="订单完成时间">
-                    </el-table-column>
-                  </el-table>
+                      tooltip-effect="dark"
+                      :default-sort = "{prop: 'id', order: 'ascending'}"
+                      style="width: 100%"
+                      stripe>
+
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="id"
+                        label="序号"
+                        width="80">
+                        <template slot-scope="scope">{{ ((senDataListThird.currentPage - 1)*senDataListThird.pageSize) + scope.$index + 1 }}</template>
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="orderSerial"
+                        width="150"
+                        label="优惠券">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponName"
+                        width="150"
+                        label="名称">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="couponTypeName"
+                        width="150"
+                        label="类型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="deduction"
+                        width="150"
+                        label="满减金额">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="SatisfyTheCondition"
+                        width="150"
+                        label="满减条件">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="discount"
+                        width="150"
+                        label="折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="maximumDeduction"
+                        width="150"
+                        label="最高折扣">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="serivceCode"
+                        width="130"
+                        label="适用服务">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="useCarType"
+                        width="130"
+                        label="限定车型">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="expiryDate"
+                        width="130"
+                        label="有效期">
+                      </el-table-column>
+                      <el-table-column
+                        fixed
+                        sortable
+                        prop="areaName"
+                        width="130"
+                        label="使用区域">
+                      </el-table-column>
+
+                    </el-table>
+                  </div>
                 </div>
+
               </el-tab-pane>
 
             </el-tabs>
@@ -201,7 +351,7 @@
 
 <script>
 
-  import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
+  import {postAflcCouponUse,postExchange} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
 
@@ -209,37 +359,36 @@
       data(){
         return{
           activeName: 'first',
-          dataset:[],
+          datasetOne:[],
+          datasetSecond:[],
+          datasetThird:[],
           selected:[],
-          infoData:{
-            rewardMax:0.00,
-            balance:0.00,
-            nums:0
-          },
           userInfoData:getUserInfo(),
           loading:false,
           senData:{
-            currentPage:100,
-            pageSize:1,
+            couponNum:''
+          },
+          senDataListO:{
+            currentPage:1,
+            pageSize:10,
             vo:{
-
+              couponStatus:'AF046401'
             }
           },
-          senDataList:{
+          senDataListS:{
             currentPage:1,
-            pageSize:5,
+            pageSize:10,
             vo:{
-              carInfo:'',
-              incomeExpendType:'',
-              tradeEndTime:'',
-              tradeStartTime:'',
-              // "accountId": "string",
-              // "carInfo": "string",
-              // "incomeExpendType": "string",
-              // "tradeEndTime": "2018-09-20T07:05:11.259Z",
-              // "tradeStartTime": "2018-09-20T07:05:11.259Z"
+              couponStatus:'AF046403'
             }
-          }
+          },
+          senDataListThird:{
+            currentPage:1,
+            pageSize:10,
+            vo:{
+              couponStatus:'AF046404'
+            }
+          },
         }
       },
       components:{
@@ -247,23 +396,55 @@
       },
       mounted(){
 
-        this.getPaymentList()
+        this.fetchAllList()
 
       },
       methods:{
-        getPaymentList(){
-          return postFindSOPayment(this.senDataList).then(res =>{
-            this.dataset = res.list
+        onsubmit(){
+          return postExchange(this.senData.couponNum).then(res =>{
+            this.fetchAllList()
+            // console.log(res,);
+            // this.dataset = res.list
+          }).catch(err => {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          })
+        },
+        getPaymentListO(){
+          return postAflcCouponUse(this.senDataListO).then(res =>{
+            if(res.status === 200){
+              this.datasetOne = res.data.list
+              console.log(this.datasetOne,'重庆区');
+            }else{
+
+            }
+          }).catch(err => {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          })
+        },
+        getPaymentListS(){
+          return postAflcCouponUse(this.senDataListS).then(res =>{
+            if(res.status === 200){
+              this.datasetSecond = res.data.list
+            }else{
+            }
+          }).catch(err => {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          })
+        },
+        getPaymentListT(){
+          return postAflcCouponUse(this.senDataListThird).then(res =>{
+            if(res.status === 200){
+              this.datasetThird = res.data.list
+            }else{
+            }
           }).catch(err => {
             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
         },
         fetchAllList(){
-          this.getPaymentList()
-        },
-        getSearchParam(obj){
-          this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
-          this.fetchAllList()
+          this.getPaymentListO()
+          this.getPaymentListS()
+          this.getPaymentListT()
         },
 
         getDbClick(){
@@ -286,14 +467,10 @@
 </script>
 
 <style lang="scss">
-  ul,li{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .orderManageClass-lll{
-    background: rgb(242,242,242);
 
+  .orderManageClass-lll-couList{
+    background: rgb(242,242,242);
+    margin-right: 10px;
     .el-header {
       padding: 0 0 ;
       background-color: #fff;
@@ -309,31 +486,40 @@
 
       }
 
+
     }
     .el-main {
       background-color: #fff;
       color: #333;
-      margin:0 10px 10px 10px;
+      /*margin:0 10px 10px 10px;*/
       padding: 0 0 ;
       .mainClass{
-
-        .info-table{
-          margin: 0 40px 10px 40px;
+        .el-tabs__nav-scroll{
+          margin-left: 40px;
+        }
+        .tab_info{
           height: 100%;
           -ms-flex-positive: 1;
           flex-grow: 1;
-          .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
-            background-color: #fafafa;
-          }
-          .el-table th>.cell{
-            text-align: center;
-            color: #333;
+          margin: 0 40px 10px 40px;
+          .info-table{
+            /*margin: 0 40px 10px 40px;*/
+            width: 100%;
+            height: calc(100% - 38px);
+            .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
+              background-color: #fafafa;
+            }
+            .el-table th>.cell{
+              text-align: center;
+              color: #333;
 
-          }
-          .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
-            text-align: center;
+            }
+            .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+              text-align: center;
+            }
           }
         }
+
       }
     }
   }

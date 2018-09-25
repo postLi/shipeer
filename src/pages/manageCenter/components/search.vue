@@ -43,14 +43,14 @@
     data() {
       return {
         searchCreatTime: [+new Date() - 60 * 24 * 60 * 60 * 1000, +new Date()],
+        pickerOptions2: {
+        shortcuts: pickerOptions2
+      },
         searchForm: {
           carInfo: '',
           incomeExpendType: '',
           tradeEndTime: '',
           tradeStartTime: '',
-        },
-        pickerOptions2: {
-          shortcuts: pickerOptions2
         }
       }
     },

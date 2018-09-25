@@ -125,7 +125,7 @@
 
 <script>
 
-  import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
+  import {getSysDictByCodesGet} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
 
@@ -170,7 +170,8 @@
               // "tradeEndTime": "2018-09-20T07:05:11.259Z",
               // "tradeStartTime": "2018-09-20T07:05:11.259Z"
             }
-          }
+          },
+          sendAF011:'AF011'
         }
       },
       components:{
@@ -211,8 +212,9 @@
           }
         },
         getPaymentList(){
-          return postFindSOPayment(this.senDataList).then(res =>{
-            this.dataset = res.list
+          return getSysDictByCodesGet(this.sendAF011).then(res =>{
+            console.log(res)
+            // this.dataset = res.list
           }).catch(err => {
             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })

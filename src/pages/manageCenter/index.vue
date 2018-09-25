@@ -196,15 +196,11 @@
 
           return postFindMywallet(this.userInfoData.userToken).then(res =>{
               this.infoData.balance = res.mywallet.mywallet
-          }).catch(err => {
-            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getRewardInfo(){
           return postFindAflcReward(this.senData).then(res => {
             this.infoData.rewardMax = res.list[0].rewardMax
-          }).catch(err => {
-            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getCouponCountInfo(){

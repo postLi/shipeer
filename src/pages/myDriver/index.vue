@@ -1,5 +1,5 @@
 <template>
-	<div class="driver-lll">
+	<div class="driver-lll" >
     <Search @change="getSearchParam"></Search>
     <div class="add-coll">
       <el-button type="success" plain size="mini" @click="addCollDriver">添加收藏司机</el-button>
@@ -120,6 +120,7 @@
  export default{
      data(){
        return {
+         // loading : false,
          centerDialogVisible : false,
          currentPage3: 5,
          dataset:[],
@@ -151,7 +152,6 @@
      onSubForm(dialog){
        this.$refs[dialog].validate(valid => {
          if (valid) {
-           this.centerDialogVisible = false
            return postDriver(this.dialogFn.driverMobile).then(res => {
              this.$message.success('收藏成功~');
              this.centerDialogVisible = false
@@ -223,6 +223,19 @@
          color: #333;
        }
      }
+   }
+   .el-dialog__wrapper{
+     .el-dialog{
+       margin-top: 30vh;
+       .el-dialog__body{
+         .el-form{
+           .el-form-item{
+             display: flex;
+           }
+         }
+       }
+     }
+
    }
    .page{
      padding-top: 20px;

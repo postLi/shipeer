@@ -2,8 +2,23 @@
 	<div class="search-form">
     <el-form ref="form" :model="searchForm" label-width="80px">
       <el-form-item label="用车日期">
-        <el-input v-model="searchForm.name"></el-input>
+        <div class="block">
+          <el-date-picker
+            v-model="searchCreatTime"
+            type="daterange"
+            align="right"
+            :picker-options="pickerOptions2"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            unlink-panels
+          >
+          </el-date-picker>
+        </div>
+        <!--<el-input v-model="searchForm.name"></el-input>-->
       </el-form-item>
+      <!--<el-form-item label="用车日期">-->
+        <!--<el-input v-model="searchForm.name"></el-input>-->
+      <!--</el-form-item>-->
       <el-form-item label="提货地">
         <el-input v-model="searchForm.name"></el-input>
       </el-form-item>
@@ -24,20 +39,36 @@
 </template>
 
 <script>
+  import {parseTime, pickerOptions2} from '@/utils/'
   export default {
     data(){
       return {
-        searchForm:{
-          name:'123'
+        searchCreatTime: [+new Date() - 60 * 24 * 60 * 60 * 1000, +new Date()],
+        pickerOptions2: {
+          shortcuts: pickerOptions2
+        },
+        searchForm: {
+          carInfo: '',
+          incomeExpendType: '',
+          tradeEndTime: '',
+          tradeStartTime: '',
         }
       }
     },
     methods:{
-      onSubmit(){
+      onSubmit() {
+        this.searchForm.tradeStartTime = this.searchCreatTime ? parseTime(this.searchCreatTime[0], '{y}-{m}-{d} ') + '00:00:00' : ''
+        this.searchForm.tradeEndTime = this.searchCreatTime ? parseTime(this.searchCreatTime[1], '{y}-{m}-{d} ') + '23:59:59' : ''
         this.$emit('change', this.searchForm)
       },
-      clearForm(){
-
+      clearForm() {
+        this.searchForm = {
+          carInfo: '',
+          incomeExpendType: '',
+          tradeEndTime: '',
+          tradeStartTime: '',
+        }
+        this.searchCreatTime = [+new Date() - 60 * 24 * 60 * 60 * 1000, +new Date()]
       }
     }
   }
@@ -47,6 +78,7 @@
 .search-form{
 
   display: flex;
+
   .el-form{
     display: flex;
     .el-form-item{
@@ -57,7 +89,7 @@
 
   }
   .search-btn{
-    display: flex;
+    /*display: flex;*/
     padding-left: 50px;
     .el-button{
       height: 40px;
