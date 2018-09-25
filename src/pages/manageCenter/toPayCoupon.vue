@@ -5,32 +5,34 @@
           <div class="headerClass">
             <div class="headerTop">
               <h4>充值金额：</h4>
-              <ul class="clearfix">
-                <li @click="tabId=0" :class="[tabId === 0 ? 'active' : 'unatctiv']">
-                  <p>300元</p>
-                  <p>赠送60</p>
-                </li>
-                <li @click="tabId=1" :class="[tabId === 1 ? 'active' : 'unatctiv']">
-                  <p>500元</p>
-                  <p>赠送100</p>
-                </li>
-                <li @click="tabId=2" :class="[tabId === 2 ? 'active' : 'unatctiv']">
-                  <p>300元</p>
-                  <p>赠送60</p>
-                </li>
-                <li @click="tabId=3" :class="[tabId === 3 ? 'active' : 'unatctiv']">
-                  <p>500元</p>
-                  <p>赠送100</p>
-                </li>
-                <li @click="tabId=4" :class="[tabId === 4 ? 'active' : 'unatctiv']">
-                  <p>300元</p>
-                  <p>赠送60</p>
-                </li>
-                <li>
-                  必须为10的倍数
-                  <!--<p>必须为10的倍数</p>-->
-                  <!--<p></p>-->
-                </li>
+              <ul class="clearfix" >
+                <template v-for="(item,index) in dataset">
+                  <li @click="tabId=index" :class="[tabId === index ? 'active' : 'unatctiv']">
+                    <p>{{item.name}}元</p>
+                    <p>赠送60</p>
+                  </li>
+                </template>
+                <!--<li @click="tabId=1" :class="[tabId === 1 ? 'active' : 'unatctiv']">-->
+                  <!--<p>500元</p>-->
+                  <!--<p>赠送100</p>-->
+                <!--</li>-->
+                <!--<li @click="tabId=2" :class="[tabId === 2 ? 'active' : 'unatctiv']">-->
+                  <!--<p>300元</p>-->
+                  <!--<p>赠送60</p>-->
+                <!--</li>-->
+                <!--<li @click="tabId=3" :class="[tabId === 3 ? 'active' : 'unatctiv']">-->
+                  <!--<p>500元</p>-->
+                  <!--<p>赠送100</p>-->
+                <!--</li>-->
+                <!--<li @click="tabId=4" :class="[tabId === 4 ? 'active' : 'unatctiv']">-->
+                  <!--<p>300元</p>-->
+                  <!--<p>赠送60</p>-->
+                <!--</li>-->
+                <!--<li>-->
+                  <!--必须为10的倍数-->
+                  <!--&lt;!&ndash;<p>必须为10的倍数</p>&ndash;&gt;-->
+                  <!--&lt;!&ndash;<p></p>&ndash;&gt;-->
+                <!--</li>-->
               </ul>
             </div>
             <div class="headerFoot">
@@ -213,8 +215,9 @@
         },
         getPaymentList(){
           return getSysDictByCodesGet(this.sendAF011).then(res =>{
-            console.log(res)
-            this.dataset = res.AF011
+
+            this.dataset = res.data.AF011
+            console.log(this.dataset)
           }).catch(err => {
             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
