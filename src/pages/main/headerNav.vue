@@ -85,10 +85,11 @@
         },
         laygot(){
           return deleteToken().then(res =>{
-              this.$router.push({path: '/'})
-              // VueJsCookie.remove('28kytoken')
-              // VueJsCookie.remove('28kyuPhone')
-              // removeUserInfo()
+
+              VueJsCookie.remove('28kytoken')
+              VueJsCookie.remove('28kyuPhone')
+              removeUserInfo()
+            this.$router.push({path: '/'})
 
           }).catch(err => {
             this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
