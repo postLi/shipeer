@@ -14,6 +14,9 @@
           <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
           <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
         </div>
+
+
+
       <div class="item-base-flex flex_a margin_t_10">
         <img src="../../assets/main/tihuod.png" alt="">
        <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
@@ -32,6 +35,16 @@
           <input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>
         </div>
       </div>
+
+
+      <!--<route-item :address="form.origin"-->
+                    <!--:floorHousenum="form.floor" @inputFloorHousenum="value => { form.floor = value }"-->
+                    <!--:contacts="form.name"  @inputContacts="value => { form.name = value }"-->
+                    <!--:contactsPhone="form.tel"  @inputContactsPhone="value => { form.tel = value }"-->
+                    <!--:index="index"></route-item>-->
+
+
+
     </div>
   </div>
     <div class="flex">
@@ -43,8 +56,10 @@
 
 <script>
   import { getApi ,postApi} from "@/api/api.js";
+  import routeItem from "@/components/routeItem"
     export default {
         name: "addRoute",
+      components:{routeItem},
       data(){
           return{
             window:false,

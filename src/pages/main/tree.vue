@@ -64,19 +64,16 @@
       test(item) {
         if(item.router !== ''){
           this.recurFirst(this.dataOrg);
-        }
-        if(item.router !== ''){
-
-            this.$router.push(item.router);
-
+          this.$router.push(item.router);
         }
         item.show = !item.show;
         this.data.forEach((child_item)=>{
+          //let path = `/${this.$route.path.split("/")[1]}`;
+          //let router = `/${child_item.router.split("/")[1]}`;
           if(this.$route.path === child_item.router){
             this.$set(child_item, "selected", true);
           }
         });
-
       },
       beforeEnter: function (el) {
         el.style.height = '0';
@@ -121,7 +118,6 @@
 
     },
     created() {
-
     },
     mounted() {
     },

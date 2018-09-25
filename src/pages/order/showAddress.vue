@@ -23,30 +23,8 @@
             <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="close()">
           </div>
 
-          <div class="add-route-item">
-            <div class="window-title-left">提货地</div>
-            <div class="item-base-flex flex_a margin_t_10">
-              <img src="../../assets/main/tihuod.png" alt="">
-              <input id="pickerInput" class="my-input margin_l_10" style="height: 32px" placeholder="地址" v-model="form.address"/>
-            </div>
+          <address-item :data="form" :type="type"></address-item>
 
-            <div class="flex_r margin_t_10">
-              <div class="flex_1 item-base-flex flex_a margin_r_10">
-                <img src="../../assets/main/menpaih.png" alt="">
-                <input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="form.floorHousenum"/>
-              </div>
-
-              <div class="flex_1 item-base-flex flex_a margin_r_10">
-                <img src="../../assets/main/fahuor.png" alt="">
-                <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="form.contacts"/>
-              </div>
-
-              <div class="flex_1 item-base-flex flex_a">
-                <img src="../../assets/main/nav_phone.png" alt="">
-                <input class="my-input margin_l_10" :placeholder="(type === 1)?'联系电话（必填）':'联系电话（选填）'" v-model="form.contactsPhone"/>
-              </div>
-            </div>
-          </div>
           <div class="flex margin_t_10">
             <el-button class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="save()">保 存</el-button>
             <el-button plain class=" f_w" style="background-color: white;width: 105px;color: #999999;border-color: #979797" size="small" @click="close()">取 消</el-button>
@@ -76,12 +54,14 @@
 </template>
 
 <script>
+  import addressItem from "@/components/addressItem"
   import { getApi ,postApi} from "@/api/api.js";
   import VueJsCookie from 'vue-js-cookie'
   import {REGEX} from '@/utils/valiRegex.js'
     export default {
       name: "showAddress",
       props:["showAddress","type"],
+      components:{addressItem},
       watch:{
       },
       data(){
@@ -106,6 +86,7 @@
       },
       methods:{
         selectAddress(item){
+          console.log(item)
           this.$emit("selectAddress", item);
         },
         close(){
@@ -116,11 +97,7 @@
           this.name= "编辑";
           this.window = !this.window;
           this.form = item;
-          if(this.window === true){
-            this.loadUI()
-          }else {
 
-          }
         },
         del(id){
           this.$confirm('此操作将删除选择的数据, 是否确定删除?', '提示', {
@@ -175,22 +152,7 @@
             });
           }
         },
-         poiPickerReady(poiPicker) {
-          window.poiPicker = poiPicker;
-          poiPicker.on('poiPicked', (poiResult)=> {
-            console.log(poiResult)
-            if(poiResult.item.location === undefined){
-              this.$message.warning("没有获取到地址");
-              return
-            }
-            this.form.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
-            this.form.cityCode = poiResult.item.adcode;
-            this.form.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-            this.form.provinceCityArea = poiResult.item.district;
-            this.form.summary = poiResult.item.name;
-            this.form.type = this.type;
-          });
-        },
+
         openWindow(){
           this.name= "新增";
           this.window = !this.window;
@@ -205,20 +167,9 @@
             summary: "",
             type: '',
           };
-          if(this.window === true){
-            this.loadUI()
-          }else {
 
-          }
         },
-        loadUI(){
-          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
-            let poiPicker = new PoiPicker({
-              input: 'pickerInput'
-            });
-            this.poiPickerReady(poiPicker);
-          });
-        },
+
         getList(){
           //收发货人地址列表
           let formData = new FormData();
@@ -248,15 +199,6 @@
     padding: 10px 20px;
     .add-route-item{
       margin-top: 20px;
-    }
-  }
-  .item-base-flex{
-    height: 31px;
-    border-radius: 2px;
-    border: solid 1px #dcdfe6;
-    box-sizing: border-box;
-    img{
-      margin-left: 3px;
     }
   }
 

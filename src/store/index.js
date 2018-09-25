@@ -7,12 +7,16 @@ Vue.use(vuex);
 
 const state = {
   token:'',
-  userData:{}
+  userData:{},
+  bodyWidth:''//右边内容宽度
 };
 
 const actions = {
   tokenGet({commit}, value){
     commit('tokenGet',value);
+  },
+  setBodyWidth({commit}, value){
+    commit('setBodyWidth',value);
   },
 };
 
@@ -22,6 +26,9 @@ const getters = {
   },
   getUserInfo(state){
     return state.userData
+  },
+  getBodyWidth(state){
+    return state.bodyWidth
   }
 };
 
@@ -31,8 +38,10 @@ const mutations = {
   },
   setUserInfo(state,value){
     state.userData = value
+  },
+  setBodyWidth(state,value){
+    state.bodyWidth = value
   }
-
 
 };
 

@@ -10,7 +10,7 @@
             autosize
             placeholder="提货详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
             :autosize="{ minRows: 2, maxRows: 4}"
-            v-model="data.address">
+            v-model="data.origin">
           </el-input>
           <el-input
             style="width: 220px"
@@ -63,9 +63,8 @@
           ok(){
             this.dialogVisible = !this.dialogVisible;
             if(this.dialogVisible === false){
-              // console.log(this.data)
               // this.data.map.destroy( );
-              // this.data.map = null
+              this.data.map = null
             }
           },
         getMapStatus(map){
