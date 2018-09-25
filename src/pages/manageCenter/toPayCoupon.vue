@@ -214,7 +214,7 @@
         getPaymentList(){
           return getSysDictByCodesGet(this.sendAF011).then(res =>{
             console.log(res)
-            // this.dataset = res.list
+            this.dataset = res.AF011
           }).catch(err => {
             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
