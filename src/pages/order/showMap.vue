@@ -46,7 +46,7 @@
       </div>
 
       <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="close()">
-      <div  class="map-content" ref="allmap"></div>
+      <div class="map-content" ref="allmap"></div>
     </div>
   </div>
 </template>
@@ -98,8 +98,8 @@
           this.parm.contactsPhone = this.data.consigneeMobile;
           this.parm.floorHousenum = this.data.floorHousenum;
           if(this.checked){
-            postApi('/aflc-uc/aflcShipperContactsApi/addContactsList',this.parm).then((res)=>{
-              if(res !== ''){
+            postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.parm).then((res)=>{
+              if(res !== '' || res !== null){
                 this.$message.success("新增成功");
               }
             });
@@ -143,7 +143,7 @@
                 this.data.provinceCityArea =  `${positionResult.regeocode.addressComponent.province}${positionResult.regeocode.addressComponent.city}${positionResult.regeocode.addressComponent.district}`
                 this.parm  ={
                   address: positionResult.address,//详细地址
-                  cityCode: positionResult.regeocode.addressComponent.adcode,//城市编码（格式440100）
+                  cityCode: positionResult.regeocode.addressComponent.city,//城市编码（格式440100）
                   contacts: this.data.consignee,//联系人
                   contactsPhone: this.data.consigneeMobile,//联系电话
                   coordinate: [positionResult.position.lat,positionResult.position.lng].join(','),//发货地坐标

@@ -21,20 +21,20 @@
         <img src="../../assets/main/tihuod.png" alt="">
        <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
       </div>
-      <div class="flex_r margin_t_10">
-        <div class="flex_1 item-base-flex flex_a margin_r_10">
-          <img src="../../assets/main/menpaih.png" alt="">
-          <input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>
-        </div>
-        <div class="flex_1 item-base-flex flex_a margin_r_10">
-         <img src="../../assets/main/fahuor.png" alt="">
-          <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>
-        </div>
-        <div class="flex_1 item-base-flex flex_a">
-          <img src="../../assets/main/nav_phone.png" alt="">
-          <input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>
-        </div>
-      </div>
+      <!--<div class="flex_r margin_t_10">-->
+        <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
+          <!--<img src="../../assets/main/menpaih.png" alt="">-->
+          <!--<input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>-->
+        <!--</div>-->
+        <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
+         <!--<img src="../../assets/main/fahuor.png" alt="">-->
+          <!--<input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>-->
+        <!--</div>-->
+        <!--<div class="flex_1 item-base-flex flex_a">-->
+          <!--<img src="../../assets/main/nav_phone.png" alt="">-->
+          <!--<input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>-->
+        <!--</div>-->
+      <!--</div>-->
 
 
       <!--<route-item :address="form.origin"-->
@@ -91,6 +91,15 @@
       },
       methods:{
         save(){
+          let check =  this.addRoute.some((item)=>{
+            return item.originCoordinate === ''
+          });
+
+          if(check){
+            this.$message.warning('收发货地址没有获取到坐标点');
+            return
+          }
+
         let parm =  {
             "aflcShipperLineDtos": this.addRoute,
             "shipperLineName": new Date() * 1
@@ -105,6 +114,29 @@
         },
         showWindow(){
           this.window = !this.window;
+          this.addRoute = [
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: 0
+            },
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: 1
+            }]
         },
         toLoadUI(item,i){
           AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
@@ -122,11 +154,19 @@
               this.$message.warning("没有获取到地址");
               return
             }
-            item.origin = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
-            item.cityCode = poiResult.item.adcode;
-            item.originCoordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-            item.originName = poiResult.item.name;
-            item.provinceCityArea = poiResult.item.district;
+
+            let geocoder = new AMap.Geocoder({});
+            geocoder.getAddress([poiResult.item.location.lng,poiResult.item.location.lat], (status, result) =>{
+              if (status === 'complete' && result.info === 'OK') {
+                console.log(result)
+                this.$set(item,'origin',result.regeocode.formattedAddress);
+                this.$set(item,'cityCode',result.regeocode.addressComponent.adcode);
+                this.$set(item,'originCoordinate',`${poiResult.item.location.lat},${poiResult.item.location.lng}`);
+                this.$set(item,'originName',poiResult.item.name);
+                this.$set(item,'provinceCityArea',`${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`);
+              }
+            });
+
           });
         },
         delDestination(i){

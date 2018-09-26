@@ -7,10 +7,10 @@
     <div class="search flex_sb">
       <div class="search-body flex_a">
         <div class="flex_1 height_100 search-left flex_a">
-          <input type="text" v-model="search_address" class="my-input margin_l_10" placeholder="请输入关键字搜索">
+          <input type="text" v-model="queryKeyword" class="my-input margin_l_10" placeholder="请输入关键字搜索">
         </div>
 
-        <div class="search-right height_100 flex pointer">
+        <div class="search-right height_100 flex pointer" @click="getList()">
           搜索
         </div>
 
@@ -42,7 +42,7 @@
             <div>{{item.contacts}} {{item.contactsPhone}}</div>
           </div>
           <div class="height_100 flex_a address-item-right margin_r_10">
-            <div class="edit pointer" @click="edit(item)">编辑</div>
+            <div class="edit pointer" @click="edit(item.id)">编辑</div>
             <div class="del pointer" @click="del(item.id)">删除</div>
           </div>
         </div>
@@ -55,7 +55,7 @@
 
 <script>
   import addressItem from "@/components/addressItem"
-  import { getApi ,postApi} from "@/api/api.js";
+  import { getApi ,postApi,deleteApi,putApi} from "@/api/api.js";
   import VueJsCookie from 'vue-js-cookie'
   import {REGEX} from '@/utils/valiRegex.js'
     export default {
@@ -67,7 +67,7 @@
       data(){
         return{
           name:'',
-          search_address:'',
+          queryKeyword:'',
           window:false,
           addressList:[],
           form:{
@@ -94,10 +94,12 @@
           this.window = false;
           this.getList();
         },
-        edit(item){
+        edit(id){
           this.name= "编辑";
           this.window = !this.window;
-          this.form = item;
+          getApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/${id}`).then((res)=>{
+            this.form = res;
+          });
 
         },
         del(id){
@@ -106,7 +108,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            postApi('/aflc-uc/aflcShipperContactsApi/deleteContactsList',[id]).then(() => {
+            deleteApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/delete/${id}`).then(() => {
                 this.$message.info('删除成功');
                 this.getList();
             })
@@ -136,16 +138,16 @@
 
 
           if(this.form.id){
-            postApi('/aflc-uc/aflcShipperContactsApi/updateContactsList',this.form).then((res)=>{
-              if(res !== ''){
+            putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
+              if(res !== '' || res !== null){
                 this.$message.success("修改成功");
                 this.window = false;
                 this.getList();
               }
             });
           }else {
-            postApi('/aflc-uc/aflcShipperContactsApi/addContactsList',this.form).then((res)=>{
-              if(res !== ''){
+            postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
+              if(res !== '' || res !== null){
                 this.$message.success("新增成功");
                 this.window = false;
                 this.getList();
@@ -173,11 +175,15 @@
 
         getList(){
           //收发货人地址列表
-          let formData = new FormData();
-          formData.append("currentPage",1);
-          formData.append("pageSize",1000);
-          formData.append("type",this.type);
-          postApi('/aflc-uc/aflcShipperContactsApi/getContactsList',formData).then((res)=>{
+          let parm = {
+            currentPage: 1,
+            pageSize: 1000,
+            vo: {
+              type:this.type, //类型（0：常用发货人，1：常用收货人）
+              queryKeyword:this.queryKeyword,
+            }
+          };
+          postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/list',parm).then((res)=>{
             this.addressList = res.list;
           });
         }
