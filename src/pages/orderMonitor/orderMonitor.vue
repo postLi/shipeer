@@ -1,11 +1,14 @@
 <template>
-  <div style="position: relative;width: 100%;height: 100%">
+  <div class="topLayer">
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
         <button id="displayAll" class="btn" style="margin-right:5px;">显示全部车辆</button>
         <button id="displayMarker" class="btn">移动到中心点</button>
       </div>
+    </div>
+    <div class="orderBox">
+
     </div>
   </div>
 </template>
@@ -249,13 +252,29 @@
 </script>
 
 <style scoped>
+  .orderBox {
+    position: absolute;
+    right: 10px;
+    top: 75px;
+    width: 396px;
+    height: 523px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+  }
+
+  .topLayer {
+    position: relative;
+    width: 100%;
+    min-width: 900px;
+    height: 100%
+  }
+
   #monitor_map {
     position: relative;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    min-width: 900px;
   }
 
   .ctl {
