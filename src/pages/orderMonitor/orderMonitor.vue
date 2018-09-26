@@ -1,5 +1,13 @@
 <template>
-  <div id="monitor_map"></div>
+  <div style="position: relative;width: 100%;height: 100%">
+    <div id="monitor_map"></div>
+    <div style="position: absolute;left: 0;top:0">
+      <div class="ctl">
+        <button id="displayAll" class="btn" style="margin-right:5px;">显示全部车辆</button>
+        <button id="displayMarker" class="btn">移动到中心点</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -229,8 +237,39 @@
 
 <style scoped>
   #monitor_map {
+    position: relative;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     min-width: 900px;
+  }
+
+  .ctl {
+    position: relative;
+    display: block;
+    padding: 10px;
+    left: 100px;
+    top: 10px;
+  }
+
+  .btn {
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    background-color: transparent;
+    background-image: none;
+    color: rgb(37, 165, 247);
+    line-height: 1.5;
+    -webkit-appearance: button;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    border-image: initial;
+    border-color: rgb(37, 165, 247);
+    padding: 0.25rem 0.5rem;
   }
 </style>
