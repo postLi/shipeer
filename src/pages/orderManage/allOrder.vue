@@ -1,6 +1,6 @@
 <template>
-  <div class="table-lll">
-    <Search @change="getSearchParam"></Search>
+  <div class="table-lll" ref="getTableWH">
+    <Search @change="getSearchParam" ref="getTop"></Search>
     <div class="info-table">
       <el-table
         ref="multipleTable"
@@ -12,13 +12,11 @@
         @selection-change="getSelection"
         tooltip-effect="dark"
         :default-sort = "{prop: 'id', order: 'ascending'}"
-        style="width: 100%">
-        <el-table-column
-          fixed
-          sortable
-          type="selection"
-          width="50">
-        </el-table-column>
+        :style="{'width': getBodyWidth + 'px'}"
+
+
+      >
+        <!--:height="heightComputer"-->
         <el-table-column
           fixed
           sortable
@@ -30,7 +28,7 @@
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
+          prop="orderSerial"
           width="150"
           label="订单号">
         </el-table-column>
@@ -44,8 +42,8 @@
         <el-table-column
           fixed
           sortable
-          prop="carSpec"
-          width="120"
+          prop="carType"
+          width="110"
           label="需求车型">
         </el-table-column>
         <el-table-column
@@ -65,29 +63,36 @@
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
-          width="120"
+          prop="payStatus"
+          width="110"
+          label="订单状态">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="parentStatus"
+          width="110"
           label="付款状态">
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="abnormalNo"
-          width="120"
+          width="110"
           label="提货地">
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="abnormalNo"
-          width="120"
+          width="110"
           label="目的地">
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="carNumber"
-          width="120"
+          width="110"
           label="车牌号">
         </el-table-column>
         <el-table-column
@@ -100,7 +105,7 @@
         <el-table-column
           fixed
           sortable
-          prop="driverMobile"
+          prop="mobile"
           width="130"
           label="司机联系电话">
         </el-table-column>
@@ -117,13 +122,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="page">
+    <div class="page" ref="footer">
       <div class="block">
         <!--<span class="demonstration">调整每页显示条数</span>-->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page.sync="currentPage2"
+
           :page-sizes="[100, 200, 300, 400]"
           :page-size="100"
           layout="sizes, prev, pager, next"
@@ -137,9 +142,13 @@
 <script>
   import Search from './components/search'
   import {postMyOrderList} from '@/api/concentrateAxios/orderManage'
+  import {mapGetters, mapActions} from 'vuex'
   export default{
     data(){
       return {
+        height:0,
+        topHeight:0,
+        footer:0,
         currentPage3: 5,
         dataset:[
 
@@ -147,26 +156,38 @@
         senDataList:{
           currentPage:1,
           pageSize:5,
-          vo:{
-
-          }
+          status:''
         }
 
       }
+    },
+    computed:{
+      ...mapGetters(['getBodyWidth',]),
+      heightComputer: function() {
+        return this.height  - this.topHeight - this.footer;
+      },
     },
     components:{
       Search
     },
     mounted(){
       this.getPaymentList()
+      this.$nextTick(()=>{
+        this.topHeight =  this.$refs.getTop.clientHeight;
+        this.height = this.$refs.getTableWH.clientHeight;
+        this.footer = this.$refs.footer.clientHeight;
+      })
+      window.addEventListener("resize", ()=> {
+        this.topHeight =  this.$refs.getTop.clientHeight;
+        this.height = this.$refs.getTableWH.clientHeight;
+        this.footer = this.$refs.footer.clientHeight;
+
+      });
     },
     methods:{
       getPaymentList(){
-        return postMyOrderList(this.senDataList).then(res =>{
-          console.log(res,'列表')
-          this.dataset = res.list
-        }).catch(err => {
-          this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+        return postMyOrderList(this.senDataList.currentPage,this.senDataList.pageSize,this.senDataList.status).then(res =>{
+          this.dataset = res.data.list
         })
       },
       fetchAllList(){
@@ -183,11 +204,13 @@
         console.log(`当前页: ${val}`);
       },
       handleClick(row) {
-        this.$router.push({path: '/orderRouter/payFoy'})
-        console.log(row);
+        this.$router.push({path: '/orderRouter/evaluateDriver'})
+        // this.$router.push({path: '/orderRouter/payFoy'})
+        // console.log(row);
       },
       handleClick1(row) {
-        this.$router.push({path: '/orderRouter/getPickUp'})
+        this.$router.push({path: '/orderRouter/unloadOrder'})
+        // this.$router.push({path: '/orderRouter/getPickUp'})
         console.log(row);
       },
       addColl(){
@@ -201,7 +224,8 @@
       },
       getSelection(selection){
         this.selected = selection
-      }
+      },
+
     }
 
   }

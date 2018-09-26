@@ -5,29 +5,14 @@
           <div class="headerClass">
             <div class="headerTop">
               <h4>充值金额：</h4>
-              <ul class="clearfix" >
-                <template v-for="(item,index) in dataset">
-                  <li @click="tabId=index" :class="[tabId === index ? 'active' : 'unatctiv']">
-                    <p>{{item.name}}元</p>
-                    <p>赠送60</p>
+              <ul class="clearfix">
+                <template  v-for="(item,index) in datasetList">
+                  <li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">
+                    <p>{{item.name}}</p>
+                    <p>赠送{{item.value.slice(-3) * item.name.substr(0,item.name.length-1)}}</p>
                   </li>
+
                 </template>
-                <!--<li @click="tabId=1" :class="[tabId === 1 ? 'active' : 'unatctiv']">-->
-                  <!--<p>500元</p>-->
-                  <!--<p>赠送100</p>-->
-                <!--</li>-->
-                <!--<li @click="tabId=2" :class="[tabId === 2 ? 'active' : 'unatctiv']">-->
-                  <!--<p>300元</p>-->
-                  <!--<p>赠送60</p>-->
-                <!--</li>-->
-                <!--<li @click="tabId=3" :class="[tabId === 3 ? 'active' : 'unatctiv']">-->
-                  <!--<p>500元</p>-->
-                  <!--<p>赠送100</p>-->
-                <!--</li>-->
-                <!--<li @click="tabId=4" :class="[tabId === 4 ? 'active' : 'unatctiv']">-->
-                  <!--<p>300元</p>-->
-                  <!--<p>赠送60</p>-->
-                <!--</li>-->
                 <!--<li>-->
                   <!--必须为10的倍数-->
                   <!--&lt;!&ndash;<p>必须为10的倍数</p>&ndash;&gt;-->
@@ -37,19 +22,77 @@
             </div>
             <div class="headerFoot">
               <h4>支付方式：</h4>
-              <el-radio v-model="radio" label="1" class="wetclass" @change="checked('check1')">
-                <span class="spanClass">
+              <ul >
+                <li @click="changPfId=0" :class="[changPfId === 0 ? 'active' : 'unatctiv']" >
+                  <span class="spanClass">
                   <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
-                </span>
-                微信支付
-                <img src="../../assets/role.png" alt="" v-if="checkedW">
-              </el-radio >
-              <el-radio v-model="radio" label="2" class="wetclass" @change="checked('check2')">
-                <span class="spanClass"><icon-svg iconClass="lll02zfb" class="svg"></icon-svg></span>
-                支付宝
-                <img src="../../assets/main/fahuor.png" alt="" v-if="checkedZ">
-              </el-radio >
+                  </span>
+                  <span class="titleP">微信支付</span>
+                </li>
+                <li @click="changPfId=1" :class="[changPfId === 1 ? 'active' : 'unatctiv']">
+                  <span class="spanClass"><icon-svg iconClass="lll02zfb" class="svg"></icon-svg></span>
+                  <span class="titleP">支付宝</span>
+                </li>
+              </ul>
+              <div class="btn">
+                <el-button type="success" @click="onSubmit">充值</el-button>
+                <span>（支付3000元，到账<i>3300</i>元）</span>
+              </div>
             </div>
+          </div>
+
+          <div class="openDialogw" >
+            <el-dialog
+              title="微信支付"
+              :visible.sync="centerDialogVisible"
+              width="30%"
+              center>
+              <div class="content">
+                <div class="contLeft">
+                  <p>充值金额（元）</p>
+                  <p>{{changeItem.name}}</p>
+                  <img :src="pfimg" alt="">
+                  <!--<img src="../../assets/login/code.png" alt="">-->
+                  <p>二维码有效时长为2个小时<br>
+                    请尽快支付</p>
+                </div>
+                <div class="contRight">
+                  <img src="../../assets/myorder/lll-iPhone X.png" alt="">
+                  <img src="../../assets/myorder/saoyisao.png" alt="">
+                  <p>请使用微信扫一扫</p>
+                </div>
+              </div>
+              <!--<span slot="footer" class="dialog-footer">-->
+    <!--<el-button @click="centerDialogVisible = false">取 消</el-button>-->
+    <!--<el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>-->
+  <!--</span>-->
+            </el-dialog>
+          </div>
+          <div class="openDialogz" >
+            <el-dialog
+              title="支付宝支付"
+              :visible.sync="centerDialogVisiblezfb"
+              width="30%"
+              center>
+              <div class="content">
+                <div class="contLeft">
+                  <p>充值金额（元）</p>
+                  <p>{{changeItem.name}}</p>
+                  <img src="../../assets/login/code.png" alt="">
+                  <p>二维码有效时长为2个小时<br>
+                    请尽快支付</p>
+                </div>
+                <div class="contRight">
+                  <img src="../../assets/myorder/iPhoneXzhifub.png" alt="">
+                  <img src="../../assets/myorder/zhifub_saoyisao.png" alt="">
+                  <p>请使用支付宝扫一扫</p>
+                </div>
+              </div>
+              <!--<span slot="footer" class="dialog-footer">-->
+    <!--<el-button @click="centerDialogVisiblezfb = false">取 消</el-button>-->
+    <!--<el-button type="primary" @click="centerDialogVisiblezfb = false">确 定</el-button>-->
+  <!--</span>-->
+            </el-dialog>
           </div>
         </el-header>
         <el-main>
@@ -127,13 +170,17 @@
 
 <script>
 
-  import {getSysDictByCodesGet} from '@/api/concentrateAxios/manageCenter'
+  import {getSysDictByCodesGet,postCreateAflcRecharge,postScanPay,postTradeQuery} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
 
     export default {
       data(){
         return{
+          centerDialogVisible: false,
+          centerDialogVisiblezfb: false,
+          strVal:'',
+          changeRed:0,
           isPfrecord:true,
           radio: '1',
           checkedW: true,
@@ -141,8 +188,12 @@
           isview: false,
 
           tabId: 0,
+          changPfId: 0,
+          // changPfId:false,
           dataset:[],
+          datasetList:[],
           selected:[],
+          changeItem:'',
           showBox:false,
           infoData:{
             rewardMax:0.00,
@@ -152,11 +203,15 @@
           userInfoData:getUserInfo(),
           loading:false,
           senData:{
-            currentPage:100,
-            pageSize:1,
-            vo:{
-
-            }
+            "accountId": "",
+            "giveSum": 0,
+            "mobile": "",
+            "name": "",
+            "rechargeChannel": "",
+            "rechargeCode": "",
+            "rechargeSum": 0,
+            "rechargeWay": "",
+            "userType": ""
           },
           senDataList:{
             currentPage:1,
@@ -173,24 +228,67 @@
               // "tradeStartTime": "2018-09-20T07:05:11.259Z"
             }
           },
+          pfimg:'',
           sendAF011:'AF011'
         }
+      },
+
+      computed:{
+
       },
       components:{
         searchTime
       },
       mounted(){
-        this.getPaymentList()
-
+        this.getPayment()
+       this.senData={
+          "accountId": this.userInfoData.shipperId,
+            "giveSum": 0,
+            "mobile":  this.userInfoData.mobile,
+            "name":  this.userInfoData.mobile,
+            "rechargeChannel": 1,
+            "rechargeCode": "",
+            "rechargeSum": 0,
+            "rechargeWay": 1,
+            "userType": 1
+        }
+      },
+      watch:{
+        centerDialogVisiblezfb(n){
+          if(!n){
+            clearTimeout(this.timer)
+          }
+        },
+        centerDialogVisible(n){
+          if(!n){
+            clearTimeout(this.timer)
+          }
+        }
       },
       methods:{
-        // checkedW(){
-        //   if(this.checkedW == true){
-        //     this.checkedZ = false
-        //   }else{
-        //     this.checkedZ = true
-        //   }
-        // },
+
+        onSubmit(){
+          this.centerDialogVisible = false
+          this.centerDialogVisiblezfb = false
+          if(this.changPfId === 0){
+            this.centerDialogVisible = true
+            this.getCreateAflcRecharg()
+
+          }else if(this.changPfId === 1){
+            this.centerDialogVisiblezfb = true
+            this.getCreateAflcRechargzfb()
+          }
+        },
+        changeActive(item,index){
+          this.tabId = index
+          if(this.tabId === 0){
+
+            this.changeItem = this.datasetList[0]
+          }else{
+            this.changeItem = item
+          }
+
+        },
 
         checked(type){
           this.checkedW = false
@@ -213,23 +311,117 @@
               break;
           }
         },
+        getCreateAflcRecharg(){
+          this.fnSenData()
+
+          return postCreateAflcRecharge(this.senData).then(res =>{
+            // console.log(res);
+            let data = {
+              "payChannel": "wx"
+            }
+            if(res.status === 200){
+              let rid = res.data
+              return postScanPay(res.data,data).then(res =>{
+                var fr=new FileReader();
+                fr.readAsDataURL(res);
+                fr.onload=(e)=>{
+                  this.pfimg=e.target.result;
+                  // 轮询请求结果
+                  // return postTradeQuery
+                  this.getPayResult(rid,'wx')
+                }
+
+              })
+            }else{
+              // this.$message.info('')
+            }
+
+          })
+        },
+        getCreateAflcRechargzfb(){
+          this.fnSenData()
+          return postCreateAflcRecharge(this.senData).then(res =>{
+            let data = {
+              "payChannel": "ali"
+            }
+            if(res.status === 200){
+              let rid = res.data
+              return postScanPay(res.data,data).then(res =>{
+                var fr=new FileReader();
+                fr.readAsDataURL(res);
+                fr.onload=(e)=>{
+                  this.pfimg=e.target.result;
+                  // 轮询请求结果
+                  this.getPayResult(rid,'ali')
+                }
+
+              })
+            }else{
+              // this.$message.info('')
+            }
+
+          })
+        },
+        getPayResult(rid,type){
+          clearTimeout(this.timer)
+          this.timer = setTimeout(() => {
+            postTradeQuery(rid,type).then(res=>{
+              if(res.status === 200){
+                // 支付成功
+                this.$message.success('支付成功')
+              } else {
+                // 支付失败
+                this.getPayResult(rid,type)
+              }
+
+            }).catch(err=>{
+              // 支付失败
+              this.getPayResult(rid,type)
+            })
+          }, 3000)
+        },
+        getPayment(){
+          return getSysDictByCodesGet(this.sendAF011).then(res =>{
+            if(res.status === 200){
+              this.datasetList = res.data.AF011
+            }else{
+              // this.$message.info('')
+            }
+
+          }).catch(err => {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          })
+        },
         getPaymentList(){
           return getSysDictByCodesGet(this.sendAF011).then(res =>{
+            if(res.status === 200){
+              this.dataset = res.data.AF011
+            }else{
+             // this.$message.info('')
+            }
 
-            this.dataset = res.data.AF011
-            console.log(this.dataset)
           }).catch(err => {
             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
         },
         fetchAllList(){
-          this.getPaymentList()
+          // this.getPaymentList()
         },
         getSearchParam(obj){
           this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
           this.fetchAllList()
         },
-
+        fnSenData(){
+          if(this.tabId === 0){
+            this.changeItem = Object.assign(this.datasetList[0])
+            this.senData.rechargeCode = this.changeItem.code
+            this.senData.rechargeSum = this.changeItem.name.substr(0,this.changeItem.name.length-1)
+          }else{
+            this.changeItem = Object.assign(this.changeItem)
+            this.senData.rechargeCode = this.changeItem.code
+            this.senData.rechargeSum = this.changeItem.name.substr(0,this.changeItem.name.length-1)
+          }
+        },
         getDbClick(){
 
         },
@@ -301,30 +493,104 @@
           h4{
             margin: 40px 0 14px 0;
           }
-         .wetclass{
-           .el-radio__label{
-             padding-left: 35px;
-             position: relative;
-           }
-           span.spanClass{
-             position: relative;
-             .svg-icon{
-               position: absolute;
-               top: -15px;
-               left: -38px;
-               width: 45px;
-               height: 45px;
-             }
+          ul{
+            float: left;
+            margin-left: 28px;
+            .active{
+              background: url("../../assets/myorder/lll_selected.png") no-repeat;
+            }
+            .unatctiv{
 
-           }
-           img{
-             position: absolute;
-             top: 27px;
-             left: 27px;
-             display: block;
-           }
-         }
+            }
+            li{
+              cursor: pointer;
+              display: inline-block;
+              border: 1px solid #dddddd;
+              padding: 13px 15px 15px 0px;
+              border-radius: 6px ;
+              span.spanClass{
+                position: relative;
+                .svg-icon{
+                  position: absolute;
+                  top: -15px;
+                  left: 15px;
+                  width: 45px;
+                  height: 45px;
+                }
+
+              }
+              .titleP{
+                padding-left: 60px;
+                font-size: 14px;
+                color: #333333;
+              }
+
+            }
+            li:first-of-type{
+              padding: 13px 4px 14px 0px;
+            }
+            li:last-of-type{
+              padding: 13px 18px 14px 0px;
+              margin-left: 30px;
+            }
+          }
+        .btn{
+          float: left;
+          margin-left: 90px;
+          span:first-of-type{
+            margin-left: 10px;
+            i{
+              font-style: normal;
+              color:#ff300d;
+            }
+          }
+          /*text-align: right;*/
+          /*display: inline-block;*/
         }
+        }
+
+      }
+      .openDialogw,.openDialogz{
+        .el-dialog__body{
+          .content{
+            .contLeft{
+              float: left;
+              margin: 40px 100px 120px 50px;
+              text-align: center;
+              p:first-of-type{
+                font-size: 12px;
+                color: #333333;
+              }
+              p:nth-of-type(2){
+                font-size: 16px;
+                color: #ff300d;
+                padding-top: 5px;
+              }
+              p:last-of-type{
+                font-size: 12px;
+                color: #333333;
+                padding-top: 10px;
+              }
+              img{
+                width: 154px;
+                height: 154px;
+              }
+            }
+            .contRight{
+              position: relative;
+              text-align: center;
+              img:nth-of-type(2){
+                position: absolute;
+                top: 50px;
+                left: 270px;
+                width: 100px;
+                height: 100px;
+              }
+              /*float: right;*/
+            }
+          }
+        }
+
       }
 
     }

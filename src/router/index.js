@@ -4,6 +4,8 @@ import Main from '@/pages/main/main.vue'
 import Login from '@/pages/login/index.vue'
 import Register from '@/pages/register/index.vue'
 import PayFor from '@/pages/orderRouter/payFoy.vue'
+import EvaluateDriver from '@/pages/orderRouter/evaluateDriver.vue'
+import UnloadOrder from '@/pages/orderRouter/unloadOrder.vue'
 import InSingle from '@/pages/orderRouter/inSingle.vue'
 import AlOrder from '@/pages/orderRouter/alOrder.vue'
 import GetPickUp from '@/pages/orderRouter/getPickUp.vue'
@@ -76,6 +78,12 @@ export default new Router({
             },
 
           ],
+        },
+        {
+          path: '/orderRouter/unloadOrder', component: UnloadOrder,name:'UnloadOrder'
+        },
+        {
+          path: '/orderRouter/evaluateDriver', component: EvaluateDriver,name:'EvaluateDriver'
         },
         {
           path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'

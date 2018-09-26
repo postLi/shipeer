@@ -1,11 +1,11 @@
 <template>
-    <div class="orderManageClass-lll" v-loading="loading">
+    <div class="orderManageClass-lll-cou" v-loading="loading">
       <el-container>
         <el-header>
           <div class="headerClass">
             <ul>
               <li>在线交易优惠金</li>
-              <li>余额：888.88元</li>
+              <li>奖励上限：888.88元</li>
               <li>累计减免：<span>1888.88</span>元</li>
             </ul>
           </div>
@@ -30,7 +30,9 @@
                 @row-click="clickDetails"
                 @selection-change="getSelection"
                 :default-sort = "{prop: 'id', order: 'ascending'}"
-                style="width: 100%">
+                style="width: 100%"
+
+              >
 
                 <el-table-column
                   fixed
@@ -43,38 +45,53 @@
                 <el-table-column
                   fixed
                   sortable
-                  prop="orderSerial"
+                  prop="id"
                   width="300"
-                  label="交易流水号">
+                  label="订单编号">
                 </el-table-column>
                 <el-table-column
                   fixed
                   sortable
-                  prop="incomeExpendTypeName"
+                  prop="serivceCode"
                   width="300"
-                  label="交易方式">
+                  label="服务类型">
                 </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="payWayName"
+                    prop="carType"
                     width="300"
-                    label="金额">
+                    label="需求车型">
                   </el-table-column>
-                  <el-table-column
-                    fixed
-                    sortable
-                    prop="tradeTypeName"
-                    width="300"
-                    label="充值后余额">
-                  </el-table-column>
+                  <!--<el-table-column-->
+                    <!--fixed-->
+                    <!--sortable-->
+                    <!--prop="tradeTypeName"-->
+                    <!--width="150"-->
+                    <!--label="出发地">-->
+                  <!--</el-table-column>-->
                   <el-table-column
                     fixed
                     sortable
                     prop="totalAmount"
                     width="300"
-                    label="订单完成时间">
+                    label="订单金额">
                   </el-table-column>
+                <el-table-column
+                  fixed
+                  sortable
+                  prop="rewardSum"
+                  width="300"
+                  label="减免金额">
+                </el-table-column>
+
+                <!--<el-table-column-->
+                  <!--fixed-->
+                  <!--sortable-->
+                  <!--prop="totalAmount"-->
+                  <!--width="150"-->
+                  <!--label="减免时间">-->
+                <!--</el-table-column>-->
               </el-table>
             </div>
           </div>
@@ -86,7 +103,7 @@
 
 <script>
 
-  import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
+  import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment,postFlcReward} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
 
@@ -95,6 +112,7 @@
         return{
           isPfrecord:false,
           dataset:[],
+          datasetPrice:[],
           selected:[],
           infoData:{
             rewardMax:0.00,
@@ -114,15 +132,10 @@
             currentPage:1,
             pageSize:5,
             vo:{
-              carInfo:'',
-              incomeExpendType:'',
-              tradeEndTime:'',
-              tradeStartTime:'',
-              // "accountId": "string",
-              // "carInfo": "string",
-              // "incomeExpendType": "string",
-              // "tradeEndTime": "2018-09-20T07:05:11.259Z",
-              // "tradeStartTime": "2018-09-20T07:05:11.259Z"
+              // carInfo:'',
+              // incomeExpendType:'',
+              // tradeEndTime:'',
+              // tradeStartTime:'',
             }
           }
         }
@@ -136,11 +149,19 @@
 
       },
       methods:{
+        //
+        // getPayment(){
+        //   return postFlcReward(this.senData).then(res =>{
+        //     console.log(res,'优惠券')
+        //     // this.datasetPrice = res.list
+        //   }).catch(err => {
+        //     this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+        //   })
+        // },
         getPaymentList(){
-          return postFindSOPayment(this.senDataList).then(res =>{
-            this.dataset = res.list
-          }).catch(err => {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          return postFlcReward(this.senDataList).then(res =>{
+            this.dataset = res.data.list[0].aflcUserRewardList
+            console.log( res.data.list[0].aflcUserRewardList);
           })
         },
         fetchAllList(){
@@ -168,12 +189,7 @@
 </script>
 
 <style lang="scss">
-  ul,li{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .orderManageClass-lll{
+  .orderManageClass-lll-cou{
     background: rgb(242,242,242);
     h4{
       margin: 40px 0 15px 40px;
