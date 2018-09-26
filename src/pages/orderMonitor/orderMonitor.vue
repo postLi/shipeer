@@ -84,7 +84,7 @@
       markerClick(e) {
         var markerPoint = this.markerPoint = e.target;
         var infoWindow = this.infoWindow;
-        infoWindow.setContent("<div>详细信息</div><br><div style=\"font-size: 12px\"><br>地址：<span id=\"mapAddr\"></span><br><br><a href=\"javascript:showTrack('" + markerPoint.content +
+        infoWindow.setContent("<div>详细信息</div><div style=\"font-size: 12px\"><br>地址：<span id=\"mapAddr\"></span><br><br><a href=\"javascript:showTrack('" + markerPoint.content +
           "')\">查看轨迹</a></div>");
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
