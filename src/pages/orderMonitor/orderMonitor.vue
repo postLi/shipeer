@@ -77,19 +77,18 @@
 
       mp.setFitView(points);
 
-      this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(200, 150)});
+      this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150)});
       this.geocoder = new AMap.Geocoder();
     },
     methods: {
       markerClick(e) {
-        alert("deng");
         var markerPoint = this.markerPoint = e.target;
         var infoWindow = this.infoWindow;
         infoWindow.setContent("<div>详细信息</div><br><div style=\"font-size: 12px\"><br>地址：<span id=\"mapAddr\"></span><br><br><a href=\"javascript:showTrack('" + markerPoint.content +
           "')\">查看轨迹</a></div>");
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
-        geocoder.getAddress(pos, function (status, result) {
+        this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
             document.getElementById("mapAddr").innerText = address;
