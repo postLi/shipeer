@@ -4,37 +4,21 @@
       <div class="padding_20" ref="getTop">
         <header class="flex_a f_f">
           <div class="flex_a m-r">
-            <span class="window-title-left">地址类型：</span>
-            <el-select v-model="addressId" placeholder="请选择" size="small" class="address-width" clearable>
-              <el-option
-                v-for="item in options"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
+            <span class="window-title-left">提货地：</span>
+            <el-input v-model="addressFrom" placeholder="请输入地址" size="small" class="address-width "></el-input>
+          </div>
+          <div class="flex_a m-r">
+            <span class="window-title-left">收货地：</span>
+            <el-input v-model="addressTo" placeholder="请输入联系人" size="small" class="address-width "></el-input>
           </div>
 
           <div class="flex_a m-r">
-            <span class="window-title-left">地址：</span>
-            <el-input v-model="address" placeholder="请输入地址" size="small" class="address-width "></el-input>
-          </div>
-          <div class="flex_a m-r">
-            <span class="window-title-left">联系人：</span>
-            <el-input v-model="contacts" placeholder="请输入联系人" size="small" class="address-width "></el-input>
-          </div>
-          <div class="flex_a m-r">
-            <span class="window-title-left">联系电话：</span>
-            <el-input v-model="contactsPhone" placeholder="请输入联系电话" size="small" class="address-width "></el-input>
-          </div>
-
-          <div class="flex_a">
             <el-button size="small" type="success" icon="el-icon-search" @click="search()" style="background-color: #2fb301;">查询</el-button>
             <el-button size="small"  plain icon="el-icon-refresh" style="	background-color: #dcdcdc;border: solid 1px #dcdfe6;color: white" @click="reset()">重置</el-button>
           </div>
         </header>
 
-        <el-button class="m-15" size="small" type="success" icon="el-icon-search" @click="openWindow()" style="background-color: #2fb301;">新增目的地</el-button>
+        <el-button class="m-15" size="small" type="success" icon="el-icon-search" @click="openWindow()" style="background-color: #2fb301;">新增</el-button>
       </div>
 
 
@@ -44,42 +28,50 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="地址类型" label-class-name="table_head" header-align="center" align="center"  width="100">
+        <el-table-column prop="cityCode" label="提货地" label-class-name="table_head" header-align="center" align="center"  min-width="200">
           <template slot-scope="scope" >
-            <div v-if="scope.row.type === 1">提货地址</div>
-            <div v-if="scope.row.type === 0">收货地址</div>
+            {{scope.row[0].name}}
           </template>
         </el-table-column>
-        <el-table-column prop="cityCode" label="城市" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
-        <el-table-column prop="provinceCityArea" label="地址" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
+        <el-table-column prop="address" label="详细地址" label-class-name="table_head" header-align="center" align="center"  min-width="200">
+          <template slot-scope="scope" >
+            {{scope.row[0].address}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="floorHousenum" label="目的地" label-class-name="table_head" header-align="center" align="center"  min-width="200">
+          <template slot-scope="scope" >
+            {{scope.row[scope.row.length - 1].name}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="contacts" label="详细地址" label-class-name="table_head" header-align="center" align="center"  min-width="200">
+          <template slot-scope="scope" >
+            {{scope.row[scope.row.length - 1].address}}
+          </template>
+        </el-table-column>
 
-        <el-table-column prop="address" label="详细地址" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
-
-        <el-table-column prop="floorHousenum" label="门牌号" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
-
-        <el-table-column prop="contacts" label="联系人" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
-
-        <el-table-column prop="contactsPhone" label="联系电话" label-class-name="table_head" header-align="center" align="center"  min-width="200"></el-table-column>
+        <el-table-column prop="contactsPhone" label="途径地数量" label-class-name="table_head" header-align="center" align="center"  width="120">
+          <template slot-scope="scope" >
+            {{scope.row.length}}
+          </template>
+        </el-table-column>
         <el-table-column prop="address" label="操作" label-class-name="table_head" header-align="center" align="center" width="140"  fixed="right">
           <template slot-scope="scope" >
-            <el-button type="text"  @click="edit(item)" style="text-decoration: underline;color: #1890ff;">编辑</el-button>
-            <el-button type="text"  @click="del(item.id)" style="text-decoration: underline;color: #1890ff;">删除</el-button>
+            <el-button type="text"  @click="edit(scope.row)" style="text-decoration: underline;color: #1890ff;">编辑</el-button>
+            <el-button type="text"  @click="del(scope.row)" style="text-decoration: underline;color: #1890ff;">删除</el-button>
           </template>
         </el-table-column>
-
       </el-table>
 
-
-
       <footer ref="footer">
-        <my-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></my-pagination>
+        <!--<my-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></my-pagination>-->
       </footer>
     </div>
     <el-dialog
       :title="name +'常用路线'"
       :visible.sync="window"
       width="600px"
-      :close="handleClose">
+      @open="handleOpen"
+      @close="handleClose">
       <div class="add-route-item ">
         <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
           <div class="flex_sb">
@@ -94,20 +86,22 @@
             <img src="../../assets/main/tihuod.png" alt="">
             <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
           </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 item-base-flex flex_a margin_r_10">
-              <img src="../../assets/main/menpaih.png" alt="">
-              <input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>
-            </div>
-            <div class="flex_1 item-base-flex flex_a margin_r_10">
-              <img src="../../assets/main/fahuor.png" alt="">
-              <input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>
-            </div>
-            <div class="flex_1 item-base-flex flex_a">
-              <img src="../../assets/main/nav_phone.png" alt="">
-              <input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>
-            </div>
-          </div>
+          <!--<div class="flex_r margin_t_10">-->
+            <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
+              <!--<img src="../../assets/main/menpaih.png" alt="">-->
+              <!--<input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>-->
+            <!--</div>-->
+            <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
+              <!--<img src="../../assets/main/fahuor.png" alt="">-->
+              <!--<input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>-->
+            <!--</div>-->
+            <!--<div class="flex_1 item-base-flex flex_a">-->
+              <!--<img src="../../assets/main/nav_phone.png" alt="">-->
+              <!--<input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>-->
+            <!--</div>-->
+          <!--</div>-->
+
+
           <!--<route-item :address="form.origin"-->
                         <!--:floorHousenum="form.floor" @inputFloorHousenum="value => { form.floor = value }"-->
                         <!--:contacts="form.name"  @inputContacts="value => { form.name = value }"-->
@@ -147,7 +141,7 @@
         return{
           window:false,
           name:'',
-          type:'',//区分货主id（弹窗）
+
           p: { page: 1, size: 20, total: 0 },
           height:0,
           topHeight:0,
@@ -176,32 +170,54 @@
               provinceCityArea: "",
               shipperSort: 1
             }],
-          form:{
-            address: "",//详细地址
-            cityCode: "",//城市编码（格式440100）
-            contacts: "",//联系人
-            contactsPhone: "",//联系电话
-            coordinate: "",//发货地坐标
-            floorHousenum: "",//楼层及门牌号
-            provinceCityArea: "",//省市区（格式:广东省广州市天河区）
-            summary: "",//地点简称
-            type: '',//区分货主(1为发货人，0为收货人)
 
-          },
-          contactsPhone:'',
-          contacts:'',
-          address:'',
-          addressId:'',//区分货主id（搜索）
-          options: [{
-            id: 1,
-            name: '提货地址'
-          }, {
-            id: 0,
-            name: '收货地址'
-          }],
+          addressTo:'',
+          addressFrom:'',
+
         }
       },
       methods:{
+        toLoadUI(item,i){
+          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
+            let poiPicker = new PoiPicker({
+              input: this.$refs[i][0]
+            });
+            this.toPoiPickerReady(item,poiPicker);
+          });
+        },
+        toPoiPickerReady(item,poiPicker) {
+          window.poiPicker = poiPicker;
+          poiPicker.on('poiPicked', (poiResult)=> {
+            console.log(poiResult)
+            if(poiResult.item.location === undefined){
+              this.$message.warning("没有获取到地址");
+              return
+            }
+            let geocoder = new AMap.Geocoder({});
+            geocoder.getAddress([poiResult.item.location.lng,poiResult.item.location.lat], (status, result) =>{
+              if (status === 'complete' && result.info === 'OK') {
+                console.log(result)
+                this.$set(item,'origin',result.regeocode.formattedAddress);
+                this.$set(item,'cityCode',result.regeocode.addressComponent.adcode);
+                this.$set(item,'originCoordinate',`${poiResult.item.location.lat},${poiResult.item.location.lng}`);
+                this.$set(item,'originName',poiResult.item.name);
+                this.$set(item,'provinceCityArea',`${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`);
+              }
+            });
+          });
+        },
+        edit(item){
+          this.name= "编辑";
+          this.window = !this.window;
+          item.forEach((item1,i)=>{
+            this.$set(item1,'origin',item1.address);
+            this.$set(item1,'originCoordinate',`${item1.latitude},${item1.longtitude}`);
+            this.$set(item1,'shipperSort',i);
+          });
+
+          console.log(item)
+          this.addRoute = item;
+        },
         delDestination(i){
           this.addRoute.splice(i,1);
           this.addRoute.forEach((item ,i)=>{
@@ -235,73 +251,50 @@
           this.p.size = size;
           this.getList(this.p);
         },
-        del(id){
+        del(item){
           this.$confirm('此操作将删除选择的数据, 是否确定删除?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            postApi('/aflc-uc/aflcShipperLineApi/deleteAflcShipperLine',[id]).then(() => {
+            postApi(`/aflc-uc/aflcShipperLineApi/deleteAflcShipperLine/${item[0].shipperNo}`).then(() => {
               this.$message.info('删除成功');
               this.getList();
             })
 
           })
         },
-        edit(item){
-          this.name= "编辑";
-          this.window = !this.window;
-          this.form = item;
-          if(this.window === true){
-            this.loadUI()
-          }else {
 
-          }
-        },
         save(){
-          if(this.type === ''){
-            this.$message.warning("请选择提货或收货地址");
+
+          console.log(this.addRoute)
+          let check =  this.addRoute.some((item)=>{
+            return item.originCoordinate === ''
+          });
+
+          if(check){
+            this.$message.warning('收发货地址没有获取到坐标点');
             return
           }
-          if(this.form.coordinate === ''){
-            this.$message.warning("没有获取到坐标点，保存失败");
-            return
-          }
-          if(this.type === 1){
-            if(this.form.contactsPhone === ''){
-              this.$message.warning("手机号码必填");
-            }else {
-              if(!REGEX.MOBILE.test(this.form.contactsPhone)){
-                this.$message.warning("手机号码格式错误");
-                return
-              }
-            }
-          }else{
-            if(!REGEX.MOBILE.test(this.form.contactsPhone) && this.form.contactsPhone !== ''){
-              this.$message.warning("手机号码格式错误");
-              return
-            }
-          }
-
-          this.form.type = this.type;
-
-
-          let parm =  {
-            "aflcShipperLineDtos": this.addRoute,
-            "shipperLineName": new Date() * 1
-          };
-
-          if(this.form.id){
-            postApi('/aflc-uc/aflcShipperLineApi/updateAflcShipperLine',this.form).then((res)=>{
-              if(res !== ''){
+          if( this.name === "编辑"){
+            let parm =  {
+              "aflcShipperLineDtos": this.addRoute,
+              "shipperLineName": this.addRoute[0].lineName
+            };
+            postApi(`/aflc-uc/aflcShipperLineApi/updateAflcShipperLine/${this.addRoute[0].shipperNo}`,parm).then((res)=>{
+              if(res !== '' || res !== null){
                 this.$message.success("修改成功");
                 this.window = false;
                 this.getList();
               }
             });
           }else {
-            postApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine',this.form).then((res)=>{
-              if(res !== ''){
+            let parm =  {
+              "aflcShipperLineDtos": this.addRoute,
+              "shipperLineName": new Date() * 1
+            };
+            postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine',parm).then((res)=>{
+              if(res !== '' || res !== null){
                 this.$message.success("新增成功");
                 this.window = false;
                 this.getList();
@@ -309,56 +302,38 @@
             });
           }
         },
-        requestClick(id){
-          this.type = id;
-        },
-        handleClose(){
+        handleOpen(){
 
         },
-        loadUI(){
-          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
-            let poiPicker = new PoiPicker({
-              input: this.$refs[i][0]
-            });
-            this.poiPickerReady(poiPicker);
-          });
-        },
-        poiPickerReady(poiPicker) {
-          window.poiPicker = poiPicker;
-          poiPicker.on('poiPicked', (poiResult)=> {
-            console.log(poiResult)
-            if(poiResult.item.location === undefined){
-              this.$message.warning("没有获取到地址");
-              return
-            }
-            this.form.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
-            this.form.cityCode = poiResult.item.adcode;
-            this.form.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-            this.form.provinceCityArea = poiResult.item.district;
-            this.form.summary = poiResult.item.name;
-            this.form.type = this.type;
-          });
+        handleClose(){
+          this.getList()
         },
         openWindow(){
           this.name= "新增";
-          this.window = true
-
-          this.form ={
-            address: "",
-            cityCode: "",
-            contacts: "",
-            contactsPhone: "",
-            coordinate: "",
-            floorHousenum: "",
-            provinceCityArea: "",
-            summary: "",
-            type: '',
-          };
-          if(this.window === true){
-            this.loadUI()
-          }else {
-
-          }
+          this.window = true;
+          this.addRoute = [
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: 0
+            },
+            {
+              tel:'',
+              name:'',
+              floor:'',
+              cityCode: "",
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: 1
+            }]
         },
         search(){
 
@@ -367,14 +342,13 @@
 
         },
         getList(){
-          postApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
-            this.tableData = res.list;
+          getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
+            this.tableData = res;
           });
         }
     },
       created(){
         this.getList();
-
       },
 
       mounted(){
@@ -393,15 +367,15 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .item-base-flex{
     height: 31px;
     border-radius: 2px;
     border: solid 1px #dcdfe6;
     box-sizing: border-box;
-  img{
-    margin-left: 3px;
-  }
+      img{
+        margin-left: 3px;
+      }
   }
   .address-width{
     width: 150px;

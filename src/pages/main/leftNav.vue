@@ -11,6 +11,7 @@
       data() {
         return {
           leftData:[
+            {name: "在途监控", id: 0,  router: "/orderMonitor",children: [],selected:false,show:false},
             {name: "在线下单", id: 1,  router: "/order",children: [],selected:false,show:false},
             {name: "订单管理", id: 2,  router: "/orderManage/allOrder",children: [
                 {name: "全部", id: 2.1, pid:2, router: "/OrderManage/allOrder",children: [],selected:false,show:false},
