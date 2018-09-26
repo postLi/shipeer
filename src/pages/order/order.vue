@@ -91,7 +91,7 @@
             </div>
             <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
             <show-map :data="item" :ref="index"></show-map>
-            <show-address :showAddress="item" :ref="index" :type="(index ===0)?1:0" @selectAddress="(data)=>{
+            <show-address :showAddress="item" :ref="index" :type="(index ===0)?0:1" @selectAddress="(data)=>{
                 return getSelectAddress1(item,data)
             }"></show-address>
           </div>
@@ -524,7 +524,7 @@
           this.tipWindow = false;
         },
         getSelectAddress1(item,data){
-          //item.floorHousenum = data.floorHousenum;
+          item.floorHousenum = data.floorHousenum;
           // item.cityCode = data.cityCode;
           item.consignee = data.contacts;
           item.consigneeMobile = data.contactsPhone;
@@ -591,7 +591,7 @@
         getPriceList(code){
           //价格服务 //额外需求
           getApi(`/aflc-sm/aflcPriceApi/getPriceByArea/${code}`).then((res)=>{
-            console.log(res)
+
             // if(res[0].serviceName === "同城"){
               res[0].list.forEach((item)=>{
                 item.list[0].show = false;
@@ -659,6 +659,22 @@
           });
           this.$localStorage.set("formDown",this.form);
           this.$router.push('/order/showMapNext');
+
+          // let truckOptions = {
+          //   policy:0,
+          //   size:1,
+          // };
+          // let path = [];
+          // this.form.to.forEach((item)=>{
+          //   path.push({lnglat:item.originCoordinate.split(',').reverse()});
+          // });
+          //
+          // let driving = new AMap.TruckDriving(truckOptions);
+          //
+          // driving.search(path,function(status, result) {
+          //   console.log(result)
+          // });
+
         },
         selectCar(id){
           this.form.carId = id;

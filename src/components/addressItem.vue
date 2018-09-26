@@ -46,12 +46,26 @@
             this.$message.warning("没有获取到地址");
             return
           }
-          this.data.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
-          this.data.cityCode = poiResult.item.adcode;
-          this.data.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-          this.data.provinceCityArea = poiResult.item.district;
-          this.data.summary = poiResult.item.name;
-          this.data.type = this.type;
+
+            let geocoder = new AMap.Geocoder({});
+            geocoder.getAddress([poiResult.item.location.lng,poiResult.item.location.lat], (status, result) =>{
+              if (status === 'complete' && result.info === 'OK') {
+                console.log(result)
+                this.data.address = result.regeocode.formattedAddress;
+                //result.regeocode.addressComponent.adcode
+                this.data.cityCode = result.regeocode.addressComponent.city;
+                this.data.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
+                this.data.provinceCityArea = `${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`;
+                this.data.summary = poiResult.item.name;
+                this.data.type = this.type;
+              }
+            });
+          // this.data.address = `${poiResult.item.district?poiResult.item.district:''}${poiResult.item.address}`;
+          // this.data.cityCode = poiResult.item.adcode;
+          // this.data.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
+          // this.data.provinceCityArea = poiResult.item.district;
+          // this.data.summary = poiResult.item.name;
+          // this.data.type = this.type;
         });
       },
     },

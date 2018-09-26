@@ -11,19 +11,19 @@
         <div class="flex_a">
           <div class="flex_1">
             <span class="order-key">用车时间：</span>
-            <span class="order-value">{{parm.useCarTime}}</span>
+            <span class="window-title-12">{{parm.useCarTime}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">起步价（{{carTypeName}}）：</span><span class="order-value">¥{{price}}元</span></div>
-          <!--<div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span>分钟</span></div>-->
-          <div class="flex_1"><span class="order-value">全程预计需要<span class="c-3">{{time}}</span></span></div>
+          <div class="flex_1"><span class="order-key">起步价（{{carTypeName}}）：</span><span class="window-title-12">¥{{price}}元</span></div>
+          <!--<div class="flex_1"><span class="window-title-12">全程预计需要<span class="c-3">{{time}}</span>分钟</span></div>-->
+          <div class="flex_1"><span class="window-title-12">全程预计需要<span class="c-3">{{time}}</span></span></div>
         </div>
 
         <div class="flex_a margin_t_10">
           <div class="flex_1">
             <span class="order-key">所需车型：</span>
-            <span class="order-value">{{carTypeName}}</span>
+            <span class="window-title-12">{{carTypeName}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">超里程费（{{kmPrice}}公里）：</span><span class="order-value">¥{{outstripPrice}}元</span></div>
+          <div class="flex_1"><span class="order-key">超里程费（{{kmPrice}}公里）：</span><span class="window-title-12">¥{{outstripPrice}}元</span></div>
           <div class="flex_1"></div>
         </div>
         <div class="margin_t_10 order-key">若产生高速费、停车费和搬运费,根据实际费用由用户支付 若涉及逾时等候费,请按照收费标准支付</div>
@@ -37,11 +37,25 @@
 
         </div>
 
-        <div class="flex_ae total">
-          <div class="order-value">总计：</div>
-          <div>¥{{parm.totalAmount}}元</div>
-          <div class="order-value margin_l_10">(已减免0元)</div>
-          <div class="margin_l_10">收费标准</div>
+        <div class="flex_es total">
+          <div class="flex_ae">
+            <div class="window-title-12">总计：</div>
+            <div class="font-1">¥{{parm.totalAmount}}元</div>
+            <div class="p_r">
+              <div class="window-title-12 margin_l_10">(已减免0元，<span class="font-3 pointer" @click="showExchange()">更多优惠</span>)</div>
+              <div class="exchange-owner" v-if="windowExchange">
+                <div class="window-title-left">我的优惠卷</div>
+                <div>
+                  <div class="exchange-item">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="margin_l_10 font-2">收费标准</div>
+
         </div>
 
         <div class="order-pay">
@@ -83,8 +97,6 @@
 
       </div>
 
-
-
     </div>
   </div>
 
@@ -99,6 +111,7 @@
       components:{routeLine},
       data(){
           return{
+            windowExchange:false,
             radio:1,
             payTypeId:1,
             payTypeList:[{id:1,name:'马上付款'},{id:2,name:'装货时付款'},{id:3,name:'收货时付款'}],
@@ -113,6 +126,25 @@
           }
       },
       methods:{
+        showExchange(){
+          this.windowExchange = !this.windowExchange;
+          if(this.windowExchange){
+            let parm = {
+              "currentPage": 1,
+              "pageSize": 100,
+              "vo": {
+                "couponStatusName": "未使用",
+                "userId": "3998a8c96d914bbe93493b00f2fc2899"
+              }
+            };
+            postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
+              console.log(res)
+              if(res !== '' || res !== null){
+              }
+            });
+          }
+
+        },
         pay(){
           if(this.parm.distance < 0.1){
             this.$message.warning("距离必须大于0.1公里");
@@ -120,7 +152,7 @@
           }
           postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
             console.log(res)
-            if(res !== ''){
+            if(res !== '' || res !== null){
             }
           });
         },
@@ -176,13 +208,28 @@
           useCarTime: new Date(this.form.time).format("yyyy-MM-dd hh:mm:ss"),//用车时间(yyyy-MM-dd HH:mm:ss)
           usedCarType: carType//用车类型（车辆类型）
         };
-
+        let size;
+        switch (carType) {
+          case "AF01801":
+            size = 1;
+            break;
+          case "AF01802":
+            size = 2;
+            break;
+          case "AF01803":
+            size = 3;
+            break;
+          case "AF01804":
+            size = 4;
+            break;
+        }
+        console.log(size)
         let coordinate = this.parm.shipperLineDtoList;
         let map = new AMap.Map(this.$refs.allMapNext, {});
         let truckOptions = {
           map: map,
           // policy:1,
-          size:1,
+          size:size,
           //city:'',
           //panel:'panel'
         };
@@ -198,18 +245,14 @@
           this.kmPrice =  this.carItem.list[0].kmPrice;
           let outstripPrice =  this.carItem.list[0].outstripPrice;
 
-          console.log('超里程费' + outstripPrice)
-          console.log('距离' +this.parm.distance)
-
           if(this.parm.distance - this.kmPrice > 0){
             let distance = this.parm.distance - this.kmPrice;
-            this.outstripPrice = distance.toFixed(0) * outstripPrice;
-            this.parm.orderPrice =  this.price + this.outstripPrice;
+            this.outstripPrice = distance * outstripPrice;
+            this.parm.orderPrice =  this.price + (this.outstripPrice.toFixed(0) * 1);
           }else {
             this.parm.orderPrice =  this.price;
           }
           this.parm.totalAmount = this.parm.orderPrice + this.parm.extraPrice * 1;
-          console.log(this.parm)
 
           let leftTime = result.routes[0].time;
           let d = parseInt(leftTime / 3600 / 24);
@@ -257,10 +300,6 @@
       font-size: 12px;
       color: #999999;
     }
-    .order-value{
-      font-size: 12px;
-      color: #333333;
-    }
     .c-3{
     color: #1890ff;
   }
@@ -272,13 +311,18 @@
     overflow: auto;
   }
   .total{
-    :nth-of-type(2){
+    .font-1{
       font-size: 18px;
       color: #e6454a;
     }
-    :nth-of-type(4){
+    .font-2{
       font-size: 12px;
       color: #5eb2ff;
+      text-decoration: underline;
+    }
+    .font-3{
+      font-size: 12px;
+      color: #e6454a;
       text-decoration: underline;
     }
   }
@@ -337,6 +381,22 @@
   .c-r{
     font-size: 12px;
     color: #e6454a;
+  }
+
+  .exchange-owner{
+    position: absolute;
+    top: 0;
+    left: 140px;
+    width: 318px;
+    height: 331px;
+    background-color: #f2f2f2;
+    box-shadow: 4px 4px 8px 0
+    rgba(153, 153, 153, 0.5);
+    z-index: 300;
+    padding: 10px;
+    .exchange-item{
+      height: 80px;
+    }
   }
 
 </style>
