@@ -13,7 +13,10 @@
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
         infoWindow: null,
-        geocoder: null
+        geocoder: null,
+        polyline: null,
+        passedPolyline: null,
+        redball: null
       }
     },
     mounted() {
@@ -79,6 +82,35 @@
 
       this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150)});
       this.geocoder = new AMap.Geocoder();
+      window.showTrack = this.showTrack;
+      window.checkTrack = this.checkTrack;
+      this.redball = new AMap.Marker({
+        icon: this.redballUrl,
+        offset: new AMap.Pixel(-16, -41),
+        animation: "AMAP_ANIMATION_DROP",
+        autoRotation: false
+      });
+      this.redball.on('moving', function (e) {
+        this.passedPolyline.setPath(e.passedPath);
+      });
+      this.polyline = new AMap.Polyline({
+        map: mp,
+        // path: pois,
+        strokeColor: "#00FF00",  //线颜色
+        // strokeOpacity: 1,     //线透明度
+        strokeWeight: 7,      //线宽
+        // strokeStyle: "solid"  //线样式
+        showDir: true
+      });
+      this.passedPolyline = new AMap.Polyline({
+        map: mp,
+        // path: lineArr,
+        strokeColor: "#F00",  //线颜色
+        // strokeOpacity: 1,     //线透明度
+        strokeWeight: 7,      //线宽
+        // strokeStyle: "solid"  //线样式
+        showDir: true
+      });
     },
     methods: {
       markerClick(e) {
@@ -94,6 +126,102 @@
             document.getElementById("mapAddr").innerText = address;
           }
         });
+      },
+      showTrack(orderId) {
+        var mp = this.mp;
+        mp.clearInfoWindow();
+        var pois = this.genTrack(orderId);
+        if (pois == null || pois.length < 2)
+          return;
+        var polyline = this.polyline;
+        polyline.setPath(pois);
+        var redball = this.redball;
+        redball.setPosition(pois[0]);
+        redball.setMap(mp);
+        mp.setFitView([polyline, redball]);
+        redball.moveAlong(pois, 1000);
+        checkTrack();
+      },
+      genTrack(orderId) {
+        var pois = new Array();
+        if (orderId == "1") {
+          var point = new AMap.LngLat(113.279201, 23.079731);
+          pois.push(point);
+          point = new AMap.LngLat(113.298245, 23.070488);
+          pois.push(point);
+          point = new AMap.LngLat(113.314486, 23.074478);
+          pois.push(point);
+          point = new AMap.LngLat(113.314774, 23.09755);
+          pois.push(point);
+          point = new AMap.LngLat(113.301694, 23.095688);
+          pois.push(point);
+          point = new AMap.LngLat(113.28804, 23.086912);
+          pois.push(point);
+        } else if (orderId == "2") {
+          var point = new AMap.LngLat(116.383141, 39.923679);
+          pois.push(point);
+          point = new AMap.LngLat(116.389105, 39.929378);
+          pois.push(point);
+          point = new AMap.LngLat(116.389105, 39.929378);
+          pois.push(point);
+          point = new AMap.LngLat(116.394855, 39.928382);
+          pois.push(point);
+          point = new AMap.LngLat(116.397154, 39.926224);
+          pois.push(point);
+          point = new AMap.LngLat(116.395645, 39.924232);
+          pois.push(point);
+        } else if (orderId == "3") {
+          var point = new AMap.LngLat(106.554291, 29.597066);
+          pois.push(point);
+          point = new AMap.LngLat(106.520299, 29.585509);
+          pois.push(point);
+          point = new AMap.LngLat(106.51958, 29.579164);
+          pois.push(point);
+          point = new AMap.LngLat(106.536397, 29.575709);
+          pois.push(point);
+          point = new AMap.LngLat(106.55156, 29.577531);
+          pois.push(point);
+          point = new AMap.LngLat(106.546242, 29.585069);
+          pois.push(point);
+        } else if (orderId == "4") {
+          var point = new AMap.LngLat(103.79549, 36.095664);
+          pois.push(point);
+          point = new AMap.LngLat(103.815396, 36.09718);
+          pois.push(point);
+          point = new AMap.LngLat(103.821361, 36.092164);
+          pois.push(point);
+          point = new AMap.LngLat(103.832859, 36.090473);
+          pois.push(point);
+          point = new AMap.LngLat(103.838465, 36.080264);
+          pois.push(point);
+          point = new AMap.LngLat(103.816546, 36.083181);
+          pois.push(point);
+        }
+        return pois;
+      },
+      checkTrack() {
+        var polyline = this.polyline;
+        var redball = this.redball;
+        if (polyline != null) {
+          var pois = polyline.getPath();
+          if (pois == null || pois.length < 2) {
+            redball.setMap(null);
+            return;
+          }
+          var pos2 = redball.getPosition();
+          if (pos2 == null) {
+            redball.setMap(null);
+            return;
+          }
+          var pos = pois[pois.length - 1];
+          if (pos2.equals(pos)) {
+            redball.setMap(null);
+            return;
+          }
+          setTimeout("checkTrack()", 100);
+        } else {
+          redball.setMap(null);
+        }
       }
     }
   }
