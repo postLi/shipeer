@@ -23,6 +23,9 @@ import ServerOrder from '@/pages/orderManage/server.vue'
 
 import AddressManage from '@/pages/addressManage/addressManage.vue'
 import RouteManage from '@/pages/routeManage/routeManage.vue'
+
+import OrderMonitor from '@/pages/orderMonitor/orderMonitor.vue'
+
 Vue.use(Router);
 
 
@@ -32,7 +35,12 @@ export default new Router({
       path: '/main',
       name: 'Main',
       component: Main,
-      children:[
+      children: [
+        {
+          path: '/orderMonitor',
+          name: 'orderMonitor',
+          component: OrderMonitor,
+        },
         {
           path: '/order',
           name: 'Order',
@@ -78,15 +86,15 @@ export default new Router({
           ],
         },
         {
-          path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'
+          path: '/orderRouter/payFoy', component: PayFor, name: 'PayFor'
         },
         {
-          path: '/orderRouter/inSingle', component: InSingle,name:'InSingle'
+          path: '/orderRouter/inSingle', component: InSingle, name: 'InSingle'
         },
         {
-          path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
-        },{
-          path: '/orderRouter/getPickUp', component: GetPickUp,name:'GetPickUp'
+          path: '/orderRouter/alOrder', component: AlOrder, name: 'AlOrder'
+        }, {
+          path: '/orderRouter/getPickUp', component: GetPickUp, name: 'GetPickUp'
         },
         {
           path: '/allRecod',
@@ -125,10 +133,10 @@ export default new Router({
       ]
     },
     {
-      path: '/', component: Login,name:'Login'
+      path: '/', component: Login, name: 'Login'
     },
     {
-      path: '/register', component: Register,name:'Register'
+      path: '/register', component: Register, name: 'Register'
     },
     {
       path: '/order1',
