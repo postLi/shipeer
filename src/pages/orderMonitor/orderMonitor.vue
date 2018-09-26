@@ -12,8 +12,10 @@
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
         </el-button>
       </el-input>
-    </div>
-    <div class="orderBox">
+      <div class="orderBox" >
+        <div class="el-icon-minus" @click="showOrderBox=false"></div>
+        <div class="orderSearchResult" v-show="showOrderBox"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,6 +25,7 @@
     name: "orderMonitor",
     data() {
       return {
+        showOrderBox: true,
         mp: null,
         points: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
@@ -270,23 +273,28 @@
 </style>
 
 <style scoped>
-  .orderBox {
+  .orderBox .el-icon-minus{
     position: absolute;
-    right: 10px;
-    top: 75px;
+    right: 12px;
+  }
+
+  .orderBox {
     width: 396px;
-    height: 523px;
     padding: 12px;
+    margin-top: 12px;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
   }
 
+  .orderSearchResult {
+    height: 500px;
+  }
+
   .orderSearch {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 20px;
     width: 396px;
-
   }
 
   .topLayer {
