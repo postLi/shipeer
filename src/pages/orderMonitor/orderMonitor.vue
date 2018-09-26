@@ -87,6 +87,8 @@
       points.push(marker);
 
       mp.setFitView(points);
+      document.getElementById("displayAll").onclick = this.displayAllMarkers;
+      document.getElementById("displayMarker").onclick = this.centerMark;
 
       this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150)});
       this.geocoder = new AMap.Geocoder();
@@ -98,7 +100,7 @@
         animation: "AMAP_ANIMATION_DROP",
         autoRotation: false
       });
-      this.redball.on('moving', function (e) {
+      this.redball.on('moving', (e) => {
         this.passedPolyline.setPath(e.passedPath);
       });
       this.polyline = new AMap.Polyline({
@@ -121,6 +123,17 @@
       });
     },
     methods: {
+      displayAllMarkers() {
+        if (this.mp == null || this.points == null)
+          return;
+        this.mp.setFitView(this.points);
+        if (this.redball != null)
+          this.redball.setMap(null);
+      },
+      centerMark() {
+        if (this.markerPoint != null)
+          this.mp.panTo(this.markerPoint.getPosition());
+      },
       markerClick(e) {
         var markerPoint = this.markerPoint = e.target;
         var infoWindow = this.infoWindow;
