@@ -143,7 +143,7 @@
         loading: false,
         tabId: 0,
         userData: {
-          userPhone: '13201030260',
+          userPhone: '13000000001',
           userPassword: 'f5668764ca9d2de67219e54dac82928c',
           pwVcode: ''
         },
