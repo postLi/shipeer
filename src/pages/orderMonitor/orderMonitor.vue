@@ -7,8 +7,13 @@
         <button id="displayMarker" class="btn">移动到中心点</button>
       </div>
     </div>
+    <div class="orderSearch">
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
+        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+        </el-button>
+      </el-input>
+    </div>
     <div class="orderBox">
-
     </div>
   </div>
 </template>
@@ -251,6 +256,19 @@
   }
 </script>
 
+<style>
+  .orderSearchInput .el-input-group__append {
+    background-color: #67c23a;
+    border: 1px solid #67c23a;
+  }
+
+  .orderSearchInput .el-input-group__append .orderSearchButton {
+    background-color: #67c23a;
+    border-color: #67c23a;
+    color: #fff;
+  }
+</style>
+
 <style scoped>
   .orderBox {
     position: absolute;
@@ -258,15 +276,25 @@
     top: 75px;
     width: 396px;
     height: 523px;
+    padding: 12px;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+  }
+
+  .orderSearch {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    width: 396px;
+
   }
 
   .topLayer {
     position: relative;
     width: 100%;
     min-width: 900px;
-    height: 100%
+    height: 100%;
+    min-height: 900px;
   }
 
   #monitor_map {
