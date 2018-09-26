@@ -82,10 +82,10 @@
             <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
           </div>
 
-          <div class="item-base-flex flex_a margin_t_10">
-            <img src="../../assets/main/tihuod.png" alt="">
-            <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
-          </div>
+          <!--<div class="item-base-flex flex_a margin_t_10">-->
+            <!--<img src="../../assets/main/tihuod.png" alt="">-->
+            <!--<input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>-->
+          <!--</div>-->
           <!--<div class="flex_r margin_t_10">-->
             <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
               <!--<img src="../../assets/main/menpaih.png" alt="">-->
@@ -102,11 +102,7 @@
           <!--</div>-->
 
 
-          <!--<route-item :address="form.origin"-->
-                        <!--:floorHousenum="form.floor" @inputFloorHousenum="value => { form.floor = value }"-->
-                        <!--:contacts="form.name"  @inputContacts="value => { form.name = value }"-->
-                        <!--:contactsPhone="form.tel"  @inputContactsPhone="value => { form.tel = value }"-->
-                        <!--:index="index" :ref="index"></route-item>-->
+          <route-item :data="item" :index="index"></route-item>
         </div>
       </div>
 
