@@ -82,27 +82,8 @@
             <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
           </div>
 
-          <!--<div class="item-base-flex flex_a margin_t_10">-->
-            <!--<img src="../../assets/main/tihuod.png" alt="">-->
-            <!--<input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>-->
-          <!--</div>-->
-          <!--<div class="flex_r margin_t_10">-->
-            <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
-              <!--<img src="../../assets/main/menpaih.png" alt="">-->
-              <!--<input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>-->
-            <!--</div>-->
-            <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
-              <!--<img src="../../assets/main/fahuor.png" alt="">-->
-              <!--<input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>-->
-            <!--</div>-->
-            <!--<div class="flex_1 item-base-flex flex_a">-->
-              <!--<img src="../../assets/main/nav_phone.png" alt="">-->
-              <!--<input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>-->
-            <!--</div>-->
-          <!--</div>-->
-
-
           <route-item :data="item" :index="index"></route-item>
+
         </div>
       </div>
 
@@ -173,40 +154,13 @@
         }
       },
       methods:{
-        toLoadUI(item,i){
-          AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
-            let poiPicker = new PoiPicker({
-              input: this.$refs[i][0]
-            });
-            this.toPoiPickerReady(item,poiPicker);
-          });
-        },
-        toPoiPickerReady(item,poiPicker) {
-          window.poiPicker = poiPicker;
-          poiPicker.on('poiPicked', (poiResult)=> {
-            console.log(poiResult)
-            if(poiResult.item.location === undefined){
-              this.$message.warning("没有获取到地址");
-              return
-            }
-            let geocoder = new AMap.Geocoder({});
-            geocoder.getAddress([poiResult.item.location.lng,poiResult.item.location.lat], (status, result) =>{
-              if (status === 'complete' && result.info === 'OK') {
-                console.log(result)
-                this.$set(item,'origin',result.regeocode.formattedAddress);
-                this.$set(item,'cityCode',result.regeocode.addressComponent.adcode);
-                this.$set(item,'originCoordinate',`${poiResult.item.location.lat},${poiResult.item.location.lng}`);
-                this.$set(item,'originName',poiResult.item.name);
-                this.$set(item,'provinceCityArea',`${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`);
-              }
-            });
-          });
-        },
+
         edit(item){
           this.name= "编辑";
           this.window = !this.window;
           item.forEach((item1,i)=>{
             this.$set(item1,'origin',item1.address);
+            this.$set(item1,'originName',item1.name);
             this.$set(item1,'originCoordinate',`${item1.latitude},${item1.longtitude}`);
             this.$set(item1,'shipperSort',i);
           });

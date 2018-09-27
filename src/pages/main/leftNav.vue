@@ -26,7 +26,7 @@
             // {name: "我的司机", id: 6,  router: "/orderRouter/inSingle",children: [],selected:false,show:false},
             // {name: "我的司机", id: 6,  router: "/orderRouter/payFoy",children: [],selected:false,show:false},
             {name: "我的司机", id: 6,  router: "/MyDriver",children: [],selected:false,show:false},
-            {name: "收费标准", id: 7,  router: "/main",children: [],selected:false,show:false},
+            {name: "收费标准", id: 7,  router: "/chargeStandard",children: [],selected:false,show:false},
             {name: "管理中心", id: 8,  router: "/manageCenter",children: [
                 {name: "企业钱包", id: 9, pid:8, router: "/main",children: [],selected:false,show:false},
               ],selected:false,show:false},

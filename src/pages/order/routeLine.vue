@@ -21,7 +21,7 @@
         <div class="window-title-10">{{item.origin}}</div>
       </div>
 
-      <div v-if="from === 'order'">
+      <div v-if="from === 'order'" @click="selectLine()" class="pointer" title="点击选择路线">
         <div class="window-title-12">{{item.name}}</div>
         <div class="window-title-10">{{item.address}}</div>
       </div>
@@ -33,7 +33,12 @@
 <script>
     export default {
       name: "routeLine",
-      props:["data","from"]
+      props:["data","from"],
+      methods:{
+        selectLine(){
+          this.$emit("selectLine",this.data)
+        }
+      }
     }
 </script>
 

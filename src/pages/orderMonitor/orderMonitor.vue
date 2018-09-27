@@ -3,18 +3,340 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button id="displayAll" class="btn" style="margin-right:5px;">显示全部车辆</button>
-        <button id="displayMarker" class="btn">移动到中心点</button>
+        <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
+        <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
+        <button class="btn" style="margin-left:5px;" @click="testInfoWindow">测试信息窗口</button>
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
-        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
-        </el-button>
-      </el-input>
-      <div class="orderBox" >
-        <div class="el-icon-minus" @click="showOrderBox=false"></div>
-        <div class="orderSearchResult" v-show="showOrderBox"></div>
+      <div align="right">
+        <div class="title" style="font-size: 16px">在途监控
+        </div>
+        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult" style="vertical-align: middle;"></div>
+      </div>
+      <div class="orderBox" v-show="showOrderSearchResult">
+        <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
+          <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+          </el-button>
+        </el-input>
+        <div class="orderSearchResult">
+          <div class="title" style="float: none">
+            全部服务中
+          </div>
+          <div class="table">
+            <div class="row">
+              <div class="cell">
+                司机已接单
+              </div>
+              <div class="cell">
+                司机赶往提货地
+              </div>
+              <div class="cell">
+                司机已到提货地
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell" style="padding-top: 12px">
+                司机已装货
+              </div>
+              <div class="cell">
+                运输中
+              </div>
+              <div class="cell">
+                司机已到目的地
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell" style="padding-top: 12px">
+                司机已卸货
+              </div>
+              <div class="cell">
+                司机改派
+              </div>
+            </div>
+          </div>
+          <div style="max-height: 300px;overflow: auto">
+            <div class="table">
+              <div class="row">
+                <div class="cellHeader">
+                  序号
+                </div>
+                <div class="cellHeader">
+                  车牌号
+                </div>
+                <div class="cellHeader">
+                  司机
+                </div>
+                <div class="cellHeader">
+                  联系电话
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  1
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  2
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  3
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  4
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  5
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  6
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  7
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  8
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  9
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  10
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  11
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  12
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  13
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  14
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  15
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  16
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+              <div class="row">
+                <div class="cell2">
+                  17
+                </div>
+                <div class="cell2">
+                  粤A123456
+                </div>
+                <div class="cell2">
+                  李世杰
+                </div>
+                <div class="cell2">
+                  18028693660
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position: absolute;bottom: 12px">
+            <div>
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                :pager-count="4"
+                :total="1000">
+              </el-pagination>
+            </div>
+            <div style="padding-left: 4px">
+              <el-pagination
+                background
+                layout="total, sizes, jumper"
+                :total="1000">
+              </el-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="infoWindow">
+      <div class="customInfoWindow">
+        <div class="title">
+          <div id="infoWindowTitle"></div>
+          <div class="el-icon-close" style="position: absolute;right: 7px;top:11px" onclick="closeInfoWindow()"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -25,17 +347,20 @@
     name: "orderMonitor",
     data() {
       return {
-        showOrderBox: true,
+        showOrderSearchResult: true,
+        showOrderSearchResultIcon: "el-icon-minus",
         mp: null,
         points: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
         infoWindow: null,
+        infoWindow2: null,
         geocoder: null,
         polyline: null,
         passedPolyline: null,
-        redball: null
+        redball: null,
+        orderStatus: ""
       }
     },
     mounted() {
@@ -98,10 +423,13 @@
       points.push(marker);
 
       mp.setFitView(points);
-      document.getElementById("displayAll").onclick = this.displayAllMarkers;
-      document.getElementById("displayMarker").onclick = this.centerMark;
 
-      this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150)});
+      this.infoWindow = new AMap.InfoWindow({
+        offset: new AMap.Pixel(0, -66),
+        size: new AMap.Size(260, 150),
+        showShadow: true,
+        isCustom: false
+      });
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
       window.checkTrack = this.checkTrack;
@@ -132,8 +460,34 @@
         // strokeStyle: "solid"  //线样式
         showDir: true
       });
+      this.infoWindow2 = new AMap.InfoWindow({
+        offset: new AMap.Pixel(0, -66),
+        size: new AMap.Size(260, 150),
+        isCustom: true
+      });
+      window.closeInfoWindow=this.closeInfoWindow;
     },
     methods: {
+      closeInfoWindow(){
+        this.infoWindow2.close();
+      },
+      testInfoWindow() {
+        var infoWindow = this.infoWindow2;
+        infoWindow.setContent("");
+        document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
+        infoWindow.setContent(document.getElementById("infoWindow").innerHTML);
+        var pos = new AMap.LngLat(85.507199, 37.269658);
+        infoWindow.open(this.mp, pos);
+      },
+      clickOrderSearchResult() {
+        if (this.showOrderSearchResultIcon == "el-icon-minus") {
+          this.showOrderSearchResult = false;
+          this.showOrderSearchResultIcon = "el-icon-plus";
+        } else {
+          this.showOrderSearchResult = true;
+          this.showOrderSearchResultIcon = "el-icon-minus";
+        }
+      },
       displayAllMarkers() {
         if (this.mp == null || this.points == null)
           return;
@@ -273,20 +627,70 @@
 </style>
 
 <style scoped>
-  .orderBox .el-icon-minus{
-    position: absolute;
-    right: 12px;
-  }
-
-  .orderBox {
-    width: 396px;
-    padding: 12px;
-    margin-top: 12px;
+  .customInfoWindow {
+    width: 328px;
+    height: 471px;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
   }
 
+  .customInfoWindow .title {
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #2fb301;
+  }
+
+  #infoWindow {
+    display: none
+  }
+
+  .orderSearchResult .table {
+    display: table;
+    font-size: 12px;
+    width: 100%;
+    padding: 12px;
+    vertical-align: center;
+  }
+
+  .orderSearchResult .table .row {
+    display: table-row
+  }
+
+  .orderSearchResult .table .cell {
+    display: table-cell
+  }
+
+  .orderSearchResult .table .cellHeader {
+    display: table-cell;
+    border: 1px solid gray;
+    text-align: center;
+  }
+
+  .orderSearchResult .table .cell2 {
+    display: table-cell;
+    border: 1px solid gray;
+    text-align: center;
+    color: gray;
+  }
+
+  .orderSearchInput {
+    margin-top: 12px;
+  }
+
+  .orderSearch .title {
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #333333;
+  }
+
   .orderSearchResult {
+    margin-top: 12px;
     height: 500px;
   }
 
@@ -295,6 +699,9 @@
     right: 12px;
     top: 20px;
     width: 396px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+    padding: 15px;
   }
 
   .topLayer {

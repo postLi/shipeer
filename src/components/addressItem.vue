@@ -19,7 +19,7 @@
 
       <div class="flex_1 item-base-flex flex_a">
         <img src="../assets/main/nav_phone.png" alt="">
-        <input class="my-input margin_l_10" :placeholder="(type === 1)?'联系电话（必填）':'联系电话（选填）'" v-model="data.contactsPhone"/>
+        <input class="my-input margin_l_10" :placeholder="(type === '0')?'联系电话（必填）':'联系电话（选填）'" v-model="data.contactsPhone"/>
       </div>
     </div>
   </div>
