@@ -9,7 +9,7 @@
     </div>
     <div class="orderSearch">
       <div align="right">
-        <div class="title">在途监控
+        <div class="title" style="font-size: 16px">在途监控
         </div>
         <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult"></div>
       </div>
@@ -18,7 +18,60 @@
           <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
           </el-button>
         </el-input>
-        <div class="orderSearchResult"></div>
+        <div class="orderSearchResult">
+          <div class="title" style="float: none">
+            全部服务中
+          </div>
+          <div style="display: table;font-size: 12px;width: 100%;padding: 12px">
+            <div style="display:table-row">
+              <div style="display: table-cell">
+                司机已接单
+              </div>
+              <div style="display: table-cell">
+                司机赶往提货地
+              </div>
+              <div style="display: table-cell">
+                司机已到提货地
+              </div>
+            </div>
+            <div style="display:table-row">
+              <div style="display: table-cell;padding-top: 12px">
+                司机已装货
+              </div>
+              <div style="display: table-cell">
+                运输中
+              </div>
+              <div style="display: table-cell">
+                司机已到目的地
+              </div>
+            </div>
+            <div style="display:table-row">
+              <div style="display: table-cell;padding-top: 12px">
+                司机已卸货
+              </div>
+              <div style="display: table-cell">
+                司机改派
+              </div>
+            </div>
+          </div>
+          <div style="position: absolute;bottom: 12px">
+            <div>
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                :pager-count="4"
+                :total="1000">
+              </el-pagination>
+            </div>
+            <div style="padding-left: 4px">
+              <el-pagination
+                background
+                layout="total, sizes, jumper"
+                :total="1000">
+              </el-pagination>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -312,7 +365,7 @@
     width: 396px;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
-    padding: 12px;
+    padding: 15px;
   }
 
   .topLayer {
