@@ -78,7 +78,7 @@
         save(){
           if(this.data.shipperSort === 0){
             if(this.data.consigneeMobile === ''){
-              this.$message.warning("手机号码必填");
+              this.$message.warning("发货人联系电话（必填）");
               return
             }else {
               if(!REGEX.MOBILE.test(this.data.consigneeMobile)){
@@ -150,7 +150,7 @@
                   floorHousenum: this.data.floorHousenum,//楼层及门牌号
                   provinceCityArea: `${positionResult.regeocode.addressComponent.province}${positionResult.regeocode.addressComponent.city}${positionResult.regeocode.addressComponent.district}`,//省市区（格式:广东省广州市天河区）
                   summary: positionResult.regeocode.pois[0].name,//地点简称
-                  type: (this.data.shipperSort === 0)?1:0,//区分货主(1为发货人，0为收货人)
+                  type: (this.data.shipperSort === 0)?0:1,//区分货主(0为发货人，1为收货人)
                 }
               });
               positionPicker.on('fail', (positionResult)=> {

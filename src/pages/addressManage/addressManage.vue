@@ -247,7 +247,7 @@
         };
       },
       search(){
-        this.getList()
+        this.getList(this.addressIdSearch)
       },
       reset(){
         this.addressIdSearch = '';

@@ -22,6 +22,7 @@ import AlcencelOrder from '@/pages/orderManage/alcencel.vue'
 import AllOrderOrder from '@/pages/orderManage/allOrder.vue'
 import AlreadyOrder from '@/pages/orderManage/already.vue'
 import ServerOrder from '@/pages/orderManage/server.vue'
+import ChargeStandard from '@/pages/chargeStandard/chargeStandard.vue'
 
 import AddressManage from '@/pages/addressManage/addressManage.vue'
 import RouteManage from '@/pages/routeManage/routeManage.vue'
@@ -53,6 +54,12 @@ export default new Router({
           name: 'ShowMapNext',
           component: ShowMapNext,
         },
+        {
+          path: '/chargeStandard',
+          name: 'ChargeStandard',
+          component: ChargeStandard,
+        },
+
         {
           path: '/myDriver',
           name: 'MyDriver',

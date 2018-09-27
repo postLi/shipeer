@@ -5,7 +5,7 @@
         <span class="title">小提示</span>
         <span class="title1">（<span>*</span>号为必填项）</span>
       </div>
-
+      <el-form :model="form"  ref="Rules" class="myForm">
       <div class="item-margin item-1 flex_r">
         <div class="item-l"><span class="f_r">*</span>选择城市：</div>
         <el-cascader placeholder="请选择城市" size="small"
@@ -16,7 +16,7 @@
         filterable
         @change="getPriceByArea">
         </el-cascader>
-
+        <el-form-item label="" label-width="">
         <div class="item-1-2">
           <span>选择用车时间：</span>
           <el-date-picker
@@ -32,8 +32,10 @@
           >
           </el-date-picker>
         </div>
-
-        <div  class="item-1-3">
+        </el-form-item>
+        <el-form-item label="" label-width=""  prop="time"
+                      :rules="{required: true, message: ' ', trigger: 'change'}">
+        <div class="item-1-3">
           <el-select v-model="form.time" placeholder="选择时间" size="small" style="width: 121px">
             <el-option
               v-for="item in timeList"
@@ -43,9 +45,9 @@
             </el-option>
           </el-select>
         </div>
-
+        </el-form-item>
       </div>
-
+      </el-form>
       <div class="item-margin item-2 flex_r">
       <div class="item-l"><span class="f_r">*</span>选择车型：</div>
       <div class="flex_ae">
@@ -91,7 +93,7 @@
             </div>
             <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
             <show-map :data="item" :ref="index"></show-map>
-            <show-address :showAddress="item" :ref="index" :type="(index ===0)?0:1" @selectAddress="(data)=>{
+            <show-address :showAddress="item" :ref="index" :type="(index ===0)?'0':'1'" @selectAddress="(data)=>{
                 return getSelectAddress1(item,data)
             }"></show-address>
           </div>
@@ -114,12 +116,14 @@
                 <div class="p_r">
                   <el-button size="small" @click="$refs.show[0].showWindow()" type="primary">新增常用路线</el-button>
                   <!--新增常用路线-->
-                  <add-route ref="show" @addRoute = "getAddRoute"></add-route>
+
+                  <add-route ref="show" @addRoute = "getAddRoute" ></add-route>
+
                 </div>
               </div>
               <div class="flex_1 o_f" v-if="searchRouteList.length > 0">
                 <div class="route-item flex_f" v-for="(item,index) in searchRouteList" :key="item.id">
-                  <route-line :data="item" from="order"></route-line>
+                  <route-line :data="item" from="order" @selectLine="getSelectLine"></route-line>
                 </div>
               </div>
               <div v-else class="flex height_100 window-title-left">
@@ -256,10 +260,10 @@
 
       <div class="item-margin item-6 flex_r">
       <div class="item-l">额外需求(选填)：</div>
-      <el-button size="small" @click="requestClick(item.extraId)" v-for="(item,index) in requestList" :key="item.extraId"
-                 :style="{'background-color':(item.extraId === form.requestId)?'#1890ff':'#f2f2f2','color':(item.extraId === form.requestId)?'white':'black'}">
+      <el-button size="small" @click="requestClick(item)" v-for="(item,index) in requestList" :key="item.extraId"
+                 :style="{'background-color':(item.selected)?'#1890ff':'#f2f2f2','color':(item.selected)?'white':'black'}">
         <span v-if="item.extraName ==='需要装卸'">{{item.extraName}}（与司机议价）</span>
-        <span v-else>{{item.extraName}}（免费）</span>
+        <span v-else>{{item.extraName}}{{item.remark === ''? '（免费）':'￥(' + item.remark + ')' }}</span>
       </el-button>
     </div>
 
@@ -331,6 +335,20 @@
 
     </div>
 
+    <el-dialog title="司机需带回" width="400px" :visible.sync="dialogFormVisible">
+      <el-form :model="extraService"  ref="extraServiceRules">
+        <el-form-item label="" label-width=""  prop="money"
+                      :rules="{required: true, validator: checkNumber, trigger: 'blur'}">
+          <el-input size="small" v-model="extraService.money" placeholder="输入金额（元）"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="extraServiceReset('extraServiceRules')">取 消</el-button>
+        <el-button size="small" type="primary" @click="extraServiceSave('extraServiceRules')">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 
 </template>
@@ -351,8 +369,20 @@
       components: {
         myDialog,showMap,showMapNext,addRoute,showAddress,myButton,routeLine
       },
+      watch:{
+        // form:{
+        //   handler(newValue, oldValue) {
+        //     console.log(newValue)
+        //   },
+        //   deep: true
+        // }
+      },
       data() {
         return {
+          dialogFormVisible:false,
+          extraService:{
+            money:''
+          },
           defaultProps: {
             value:'code',
             children: 'cities',
@@ -380,7 +410,7 @@
             city:'',
             carId:"AF01801",
             specCode:'',//车辆规格Code
-            requestId:'',//额外需求id
+            extraServiceDtoList:[],//额外服务
             goodsId:'',//货物id
             goodsName:'',
             wightId:'',//重量id
@@ -399,7 +429,7 @@
               originName: "",//地点名称
               provinceCityArea: "",//省市区（格式:广东省广州市天河区）
               shipperSort: 0,//线路排序号
-                show:false,mapTo:null,loadOne:true,zoom:14
+                show:false,mapTo:null,zoom:14
             },
               {
                 consignee: "",
@@ -410,7 +440,7 @@
                 originName: "",
                 provinceCityArea: "",
                 shipperSort: 1,
-                show:false,mapTo:null,loadOne:true,zoom:14}
+                show:false,mapTo:null,zoom:14}
               ],
             remark:''//给司机捎句话
           },
@@ -436,6 +466,34 @@
         }
       },
       methods:{
+        getSelectLine(dataList){
+
+          console.log(dataList)
+          this.form.to = [];
+
+          dataList.forEach((item,i)=>{
+            this.form.to.push({
+              consignee: "",
+              consigneeMobile: "",
+              isSms: 0,
+              origin: "",
+              originCoordinate: "",
+              originName: "",
+              provinceCityArea: "",
+              shipperSort: i,
+              show:false,mapTo:null,zoom:14
+            });
+            // this.form.to[i].floorHousenum =item;
+            // this.form.to[i].consignee =item;
+            // this.form.to[i].consigneeMobile =item;
+
+            this.form.to[i].origin =item.address;
+            this.form.to[i].originCoordinate =`${item.latitude},${item.longtitude}`;
+            this.form.to[i].originName =item.name;
+            this.form.to[i].provinceCityArea =item.provinceCityArea;
+          })
+          this.windowRoute = false;
+        },
         getAddRoute(data){
           getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
             this.searchRouteList = res;
@@ -533,6 +591,7 @@
           item.originName = data.summary;
           item.provinceCityArea = data.provinceCityArea;
           //item.type = data.type;
+          console.log(item)
         },
 
         goodsSearch(queryString, cb){
@@ -598,6 +657,10 @@
               });
               this.form.carList = res[0].list;
               getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res[0].serviceCode}`).then((res1)=>{
+                res1.forEach((item)=>{
+                  item.selected = false;
+                  item.remark = ''
+                });
                 this.requestList = res1;
               })
             // }
@@ -630,7 +693,7 @@
             originName: "",
             provinceCityArea: "",
             shipperSort: i,
-            show:false,mapTo:'',loadOne:true,zoom:14,})
+            show:false,mapTo:'',zoom:14,})
         },
 
         next(){
@@ -657,6 +720,17 @@
           this.form.to.forEach((item)=>{
             delete item.mapTo;
           });
+          let extraServiceDtoList = [];
+          let list =  this.requestList.filter((item)=>{
+            return item.selected === true
+          });
+          list.forEach((item)=>{
+            extraServiceDtoList.push({
+              extraId:item.extraId,
+              remark:item.remark
+            })
+          });
+          this.form.extraServiceDtoList = extraServiceDtoList;
           this.$localStorage.set("formDown",this.form);
           this.$router.push('/order/showMapNext');
 
@@ -682,8 +756,33 @@
         specClick(code){
           this.form.specCode = code;
         },
-        requestClick(id){
-          this.form.requestId = id;
+        requestClick(item){
+            if(item.extraId === "1b51fb332dac42da9f19092d275caf29"){
+              item.selected = !item.selected;
+              this.requestList.forEach((item)=>{
+                if(item.extraId ==="2b988d6a75314914ae5fdf724e10b1c9"){
+                  item.selected = false
+                }
+              })
+            }else if(item.extraId ==="2b988d6a75314914ae5fdf724e10b1c9"){
+              item.selected = !item.selected
+              this.requestList.forEach((item)=>{
+                if(item.extraId ==="1b51fb332dac42da9f19092d275caf29"){
+                  item.selected = false
+                }
+              })
+            } else if(item.extraId === "ee9b54d836a74924b43824b62c79c734"){
+              if(item.selected === false){
+                item.selected = false;
+                this.dialogFormVisible = true
+              } else {
+                item.selected = false;
+                item.remark = ''
+              }
+            } else {
+              item.selected = !item.selected
+            }
+
         },
         showMap1(item,i){
           this.$refs[i][0].ok();
@@ -696,21 +795,19 @@
                 console.log(result);
                 let adcode =  result.adcode * 1;
                 let city = result.city;
-                // let adcode =  11111111;
-                // let city = 2222222;
                 //城市列表
                 getApi('/aflc-common/aflcCommonAddressApi/cityList').then((res)=>{
                   res.forEach((item)=>{
                     item.code = item.pinyin;
                     item.name = item.pinyin;
                   });
-                  res.unshift({code: "当前城市", name: "当前城市", pinyin: "当前城市",cities:[{
+                  res.unshift({code: "当前定位城市", name: "当前定位城市", pinyin: "当前定位城市",cities:[{
                       code: adcode,
                       name: city,
                       parentCode: 1,
-                      pinyin: "当前城市",
+                      pinyin: "当前定位城市",
                     }]});
-                  this.form.code = ["当前城市",adcode];
+                  this.form.code = ["当前定位城市",adcode];
                   this.cityList = res;
                   this.getPriceList(adcode)
                 });
@@ -718,15 +815,50 @@
             }
           });
         },
+
+        checkNumber(rule, value, callback){
+          let re = /^0{1}([.]([1-9][0-9]?)|[.][0-9][1-9])$|^[1-9]\d*([.]{1}[0-9]{1,2})?$/;
+          if (value === '') {
+            callback(new Error('请输入价格'));
+          }else {
+            if(re.test(value)){
+              callback()
+            }else {
+              callback(new Error('价格格式错误'));
+            }
+          }
+        },
+        extraServiceReset(formName){
+          this.$refs[formName].resetFields();
+          this.dialogFormVisible = false
+        },
+        extraServiceSave(formName){
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.requestList.forEach((item)=>{
+                if(item.extraId ==="ee9b54d836a74924b43824b62c79c734"){
+                  item.selected = true;
+                  item.remark = this.extraService.money;
+                }
+              })
+              this.dialogFormVisible = false
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
+
+
+        }
       },
 
       mounted(){
         this.createMap();
 
         //选择车型
-        getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarTypeList').then((res)=>{
-          console.log(res)
-        })
+        // getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarTypeList').then((res)=>{
+        //   console.log(res)
+        // })
 
         //车辆规格
         getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarSpecList').then((res)=>{

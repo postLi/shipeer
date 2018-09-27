@@ -79,7 +79,7 @@
             floorHousenum: "",//楼层及门牌号
             provinceCityArea: "",//省市区（格式:广东省广州市天河区）
             summary: "",//地点简称
-            type: '',//区分货主(1为发货人，0为收货人)
+            type: '',//区分货主(0为发货人，1为收货人)
 
           }
         }
@@ -120,9 +120,10 @@
             this.$message.warning("没有获取到坐标点，保存失败");
             return
           }
-          if(this.type === 1){
+          if(this.type === '0'){
             if(this.form.contactsPhone === ''){
-              this.$message.warning("手机号码必填");
+              this.$message.warning("联系电话（必填）");
+              return
             }else {
               if(!REGEX.MOBILE.test(this.form.contactsPhone)){
                 this.$message.warning("手机号码格式错误");

@@ -40,16 +40,34 @@
         <div class="flex_es total">
           <div class="flex_ae">
             <div class="window-title-12">总计：</div>
-            <div class="font-1">¥{{parm.totalAmount}}元</div>
+            <div class="font-1">¥{{parm._totalAmount}}元</div>
             <div class="p_r">
-              <div class="window-title-12 margin_l_10">(已减免0元，<span class="font-3 pointer" @click="showExchange()">更多优惠</span>)</div>
-              <div class="exchange-owner" v-if="windowExchange">
+              <div class="window-title-12 margin_l_10">(已减免{{reduce}}元，<span class="font-3 pointer" @click="showExchange()">更多优惠</span>)</div>
+              <div class="exchange-owner flex_f" v-if="windowExchange">
                 <div class="window-title-left">我的优惠卷</div>
-                <div>
-                  <div class="exchange-item">
+                  <div class="o_f flex_1 margin_t_10" >
+                    <div class="exchange-item flex_a margin_b_10 pointer" :class="[parm.couponId === item.id?'select-exchange':'']" v-for="(item,index) in couponList" :key="item.id" @click="selectExchange(item)">
+                      <div class="exchange-item-left flex" :style="{'background-image':backgroundImg}">
+                        <div v-if="item.couponType === 'AF046201'">
+                          <div class="exchange-item-font1 flex">￥{{item.remissionDiscount}}</div>
+                          <div class="exchange-item-font2">满{{item.conditionDeduction}}可用</div>
+                        </div>
+                        <div v-if="item.couponType === 'AF046202'">
+                          <div class="exchange-item-font1 flex">{{item.remissionDiscount}}折</div>
+                          <div class="exchange-item-font2">最高抵扣{{item.conditionDeduction}}元</div>
+                        </div>
+                      </div>
 
+                      <div class="exchange-item-right flex_1 flex height_100">
+                        <div>
+                          <div class="window-title-left">【{{item.couponName}}】{{item.couponTypeName}}</div>
+                          <div class="window-title-left" style="padding: 0 7px;">{{item.endTime}}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+
               </div>
             </div>
           </div>
@@ -68,7 +86,7 @@
             </div>
           </div>
 
-          <div class="padding_10">
+          <div class="padding_10" v-if="payTypeId === 1">
             <div class="flex_a pay-select">
               <el-radio class="flex" style="margin-top: 2px;" v-model="radio" :label="1">&nbsp; </el-radio>
               <div class="pay-select-name">余额支付</div>
@@ -89,6 +107,12 @@
             </div>
           </div>
 
+          <div class="padding_10 flex height_100 window-title-left" v-if="payTypeId === 2">
+            装货时付款，等候时间按装货时间的2倍计算，装货时间超过30分钟，将产生等候费
+          </div>
+          <div class="padding_10 flex height_100 window-title-left" v-if="payTypeId === 3">
+            收货时付款，等候时间按装货时间的2倍计算，装货时间超过30分钟，将产生等候费
+          </div>
         </div>
 
         <div class="flex margin_20">
@@ -111,6 +135,7 @@
       components:{routeLine},
       data(){
           return{
+            backgroundImg:'url(' + require('../../assets/order/youhuiq.png') + ')',
             windowExchange:false,
             radio:1,
             payTypeId:1,
@@ -123,23 +148,62 @@
             price:0,//标准起步价(元)
             kmPrice:0,//标准起步价(公里)
             outstripPrice:0,//超里程费
+            couponList:[],
+            reduce:0//已减免
           }
       },
       methods:{
+        selectExchange(item){
+console.log(item)
+
+         if(this.parm.couponId !== item.id){
+           this.math();
+           if(item.couponType === "AF046201"){
+             if(item.conditionDeduction < this.parm._orderPrice){
+               this.parm.couponId = item.id;
+               this.reduce = item.remissionDiscount;
+               this.parm._orderPrice = this.parm._orderPrice - this.reduce;
+               this.parm._totalAmount = this.parm._orderPrice + this.parm.extraPrice * 1;
+             }else {
+               this.$message.warning(`满${item.conditionDeduction}可用`)
+             }
+           }
+
+           if(item.couponType === "AF046202"){
+             this.parm.couponId = item.id;
+             if(this.parm._orderPrice * item.remissionDiscount/10 > item.conditionDeduction){
+               this.reduce = item.conditionDeduction;
+               this.parm._orderPrice = this.parm._orderPrice - item.conditionDeduction
+             }else {
+               this.reduce = this.parm._orderPrice - this.parm._orderPrice * item.remissionDiscount/10;
+               this.parm._orderPrice = this.parm._orderPrice * item.remissionDiscount/10
+             }
+             this.parm._totalAmount = this.parm._orderPrice + this.parm.extraPrice * 1;
+           }
+
+         }else{
+           this.parm.couponId = '';
+           this.reduce = 0;
+           this.math();
+         }
+
+        },
         showExchange(){
           this.windowExchange = !this.windowExchange;
           if(this.windowExchange){
             let parm = {
-              "currentPage": 1,
-              "pageSize": 100,
-              "vo": {
-                "couponStatusName": "未使用",
-                "userId": "3998a8c96d914bbe93493b00f2fc2899"
+              currentPage: 1,
+              pageSize: 100,
+              vo: {
+                couponStatusName: "未使用",
+                carType:this.form.carId,
+                userId: this.$localStorage.get("28ky-userdata").shipperId
               }
             };
             postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
               console.log(res)
               if(res !== '' || res !== null){
+                this.couponList = res.list;
               }
             });
           }
@@ -158,6 +222,19 @@
         },
         selectPay(id){
           this.payTypeId = id;
+        },
+        math(){
+          let outstripPrice =  this.carItem.list[0].outstripPrice;
+          if(this.parm.distance - this.kmPrice > 0){
+            let distance = this.parm.distance - this.kmPrice;
+            this.outstripPrice = (distance * outstripPrice).toFixed(0) * 1;
+            this.parm.orderPrice =  this.price + this.outstripPrice;
+          }else {
+            this.parm.orderPrice =  this.price;
+          }
+          this.parm._orderPrice =  this.parm.orderPrice;
+          this.parm._totalAmount = this.parm.totalAmount  = this.parm.orderPrice + this.parm.extraPrice * 1;
+
         }
       },
       mounted(){
@@ -182,29 +259,26 @@
             spec: this.form.specCode//车辆规格
           },
           belongCity: this.form.code[1],//订单所属区域(定位的城市id)
-          "couponId": "string",//优惠券id
+          couponId: "",//优惠券id
           distance: 0,//实际总距离(地图计算)
           extraPrice: this.form.tipName,//附加小费
           extraPriceCode: this.form.tipId,//附加小费编码
-          extraServiceDtoList: [
-            {
-              extraId: this.form.requestId,//额外服务id
-              "remark": "string"//额外服务描述
-            }
-          ],
+          extraServiceDtoList: this.form.extraServiceDtoList,//额外服务
           goodsName: this.form.goodsName,//货物名称
           goodsVolume: this.form.wightName,//货物体积（方）
           goodsWeight: this.form.volumeName,//货物重量（吨）
           ip: "",//客户端ip地址(app端不用传)
           isFirst: (this.form.isFirst)?1:0 ,//我的司机优先接单(1为true，0为false)
           orderFrom: "web",//订单来源(ios,android)
-          orderPrice: 0,//订单原价格(未减优惠券，优惠金的金额)(地图计算)
-          "preferentialAmountId": "string",//优惠金id
+          orderPrice: 0,//订单原价格(未减优惠券，优惠金的金额)
+          _orderPrice:0,//订单原价格(未减优惠券，优惠金的金额)(地图计算,不是接口字段)
+          "preferentialAmountId": "",//优惠金id
           remark: this.form.remark,//给司机捎句话
           serviceCode: serivceCode,//服务分类（同城，省际,零担）
           shipperId:  this.$localStorage.get("28ky-userdata").shipperId,//货主id(app端不用传)
           shipperLineDtoList: this.form.to,//路线列表
-          totalAmount: 0,//总价格(地图计算)
+          totalAmount: 0,//总价格
+          _totalAmount: 0,//总价格(地图计算,不是接口字段)
           useCarTime: new Date(this.form.time).format("yyyy-MM-dd hh:mm:ss"),//用车时间(yyyy-MM-dd HH:mm:ss)
           usedCarType: carType//用车类型（车辆类型）
         };
@@ -223,7 +297,6 @@
             size = 4;
             break;
         }
-        console.log(size)
         let coordinate = this.parm.shipperLineDtoList;
         let map = new AMap.Map(this.$refs.allMapNext, {});
         let truckOptions = {
@@ -243,16 +316,8 @@
           this.parm.distance = result.routes[0].distance/1000;
           this.price =  this.carItem.list[0].price;
           this.kmPrice =  this.carItem.list[0].kmPrice;
-          let outstripPrice =  this.carItem.list[0].outstripPrice;
 
-          if(this.parm.distance - this.kmPrice > 0){
-            let distance = this.parm.distance - this.kmPrice;
-            this.outstripPrice = distance * outstripPrice;
-            this.parm.orderPrice =  this.price + (this.outstripPrice.toFixed(0) * 1);
-          }else {
-            this.parm.orderPrice =  this.price;
-          }
-          this.parm.totalAmount = this.parm.orderPrice + this.parm.extraPrice * 1;
+          this.math();
 
           let leftTime = result.routes[0].time;
           let d = parseInt(leftTime / 3600 / 24);
@@ -269,6 +334,9 @@
           }
 
         });
+      },
+      destroyed(){
+        this.$localStorage.remove("formDown");
       },
     }
 </script>
@@ -396,7 +464,26 @@
     padding: 10px;
     .exchange-item{
       height: 80px;
+      .exchange-item-left{
+        height: 80px;
+        width: 86px;
+        color: #ffffff;
+        .exchange-item-font1{
+          font-size: 22px;
+        }
+        .exchange-item-font2{
+          font-size: 12px;
+        }
+      }
+      .exchange-item-right{
+        background-color: white;
+      }
     }
+  }
+
+  .select-exchange{
+    border: 1px solid;
+    box-sizing: content-box;
   }
 
 </style>
