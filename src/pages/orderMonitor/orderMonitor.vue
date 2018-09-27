@@ -11,7 +11,7 @@
       <div align="right">
         <div class="title" style="font-size: 16px">在途监控
         </div>
-        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult"></div>
+        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult" style="vertical-align: middle;"></div>
       </div>
       <div class="orderBox" v-show="showOrderSearchResult">
         <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
@@ -22,34 +22,34 @@
           <div class="title" style="float: none">
             全部服务中
           </div>
-          <div style="display: table;font-size: 12px;width: 100%;padding: 12px">
-            <div style="display:table-row">
-              <div style="display: table-cell">
+          <div class="orderStatus">
+            <div class="row">
+              <div class="cell">
                 司机已接单
               </div>
-              <div style="display: table-cell">
+              <div class="cell">
                 司机赶往提货地
               </div>
-              <div style="display: table-cell">
+              <div class="cell">
                 司机已到提货地
               </div>
             </div>
-            <div style="display:table-row">
-              <div style="display: table-cell;padding-top: 12px">
+            <div class="row">
+              <div class="cell" style="padding-top: 12px">
                 司机已装货
               </div>
-              <div style="display: table-cell">
+              <div class="cell">
                 运输中
               </div>
-              <div style="display: table-cell">
+              <div class="cell">
                 司机已到目的地
               </div>
             </div>
-            <div style="display:table-row">
-              <div style="display: table-cell;padding-top: 12px">
+            <div class="row">
+              <div class="cell" style="padding-top: 12px">
                 司机已卸货
               </div>
-              <div style="display: table-cell">
+              <div class="cell">
                 司机改派
               </div>
             </div>
@@ -340,6 +340,21 @@
 </style>
 
 <style scoped>
+  .orderStatus {
+    display: table;
+    font-size: 12px;
+    width: 100%;
+    padding: 12px
+  }
+
+  .orderStatus .row {
+    display: table-row
+  }
+
+  .orderStatus .cell {
+    display: table-cell
+  }
+
   .orderSearchInput {
     margin-top: 12px;
   }
