@@ -25,6 +25,9 @@ import ServerOrder from '@/pages/orderManage/server.vue'
 
 import AddressManage from '@/pages/addressManage/addressManage.vue'
 import RouteManage from '@/pages/routeManage/routeManage.vue'
+
+import OrderMonitor from '@/pages/orderMonitor/orderMonitor.vue'
+
 Vue.use(Router);
 
 
@@ -35,6 +38,11 @@ export default new Router({
       name: 'Main',
       component: Main,
       children:[
+        {
+          path: '/orderMonitor',
+          name: 'orderMonitor',
+          component: OrderMonitor,
+        },
         {
           path: '/order',
           name: 'Order',
