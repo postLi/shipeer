@@ -8,13 +8,17 @@
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
-        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
-        </el-button>
-      </el-input>
-      <div class="orderBox" >
-        <div class="el-icon-minus" @click="showOrderBox=false"></div>
-        <div class="orderSearchResult" v-show="showOrderBox"></div>
+      <div align="right">
+        <div class="title">在途监控
+        </div>
+        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult"></div>
+      </div>
+      <div class="orderBox" v-show="showOrderSearchResult">
+        <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
+          <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+          </el-button>
+        </el-input>
+        <div class="orderSearchResult"></div>
       </div>
     </div>
   </div>
@@ -25,7 +29,8 @@
     name: "orderMonitor",
     data() {
       return {
-        showOrderBox: true,
+        showOrderSearchResult: true,
+        showOrderSearchResultIcon: "el-icon-minus",
         mp: null,
         points: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
@@ -134,6 +139,15 @@
       });
     },
     methods: {
+      clickOrderSearchResult() {
+        if (this.showOrderSearchResultIcon == "el-icon-minus") {
+          this.showOrderSearchResult = false;
+          this.showOrderSearchResultIcon = "el-icon-plus";
+        } else {
+          this.showOrderSearchResult = true;
+          this.showOrderSearchResultIcon = "el-icon-minus";
+        }
+      },
       displayAllMarkers() {
         if (this.mp == null || this.points == null)
           return;
@@ -273,20 +287,21 @@
 </style>
 
 <style scoped>
-  .orderBox .el-icon-minus{
-    position: absolute;
-    right: 12px;
+  .orderSearchInput {
+    margin-top: 12px;
   }
 
-  .orderBox {
-    width: 396px;
-    padding: 12px;
-    margin-top: 12px;
-    background-color: #ffffff;
-    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+  .orderSearch .title {
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    font-stretch: normal;
+    letter-spacing: 0px;
+    color: #333333;
   }
 
   .orderSearchResult {
+    margin-top: 12px;
     height: 500px;
   }
 
@@ -295,6 +310,9 @@
     right: 12px;
     top: 20px;
     width: 396px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+    padding: 12px;
   }
 
   .topLayer {
