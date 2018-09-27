@@ -47,9 +47,14 @@
                     <el-table-column
                       fixed
                       sortable
-                      prop="orderSerial"
                       width="150"
                       label="优惠券">
+                      <template slot-scope="scope">
+                        <div class="priceClass">
+                          <p>￥{{scope.row.deduction?scope.row.deduction:0.00}}</p>
+                          <p>满{{scope.row.SatisfyTheCondition?scope.row.deduction:0.00}}可用</p>
+                        </div>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       fixed
@@ -156,10 +161,16 @@
                     <el-table-column
                       fixed
                       sortable
-                      prop="orderSerial"
                       width="150"
                       label="优惠券">
+                      <template slot-scope="scope">
+                        <div class="priceClass">
+                          <p>￥{{scope.row.deduction?scope.row.deduction:0.00}}</p>
+                          <p>满{{scope.row.SatisfyTheCondition?scope.row.deduction:0}}可用</p>
+                        </div>
+                      </template>
                     </el-table-column>
+
                     <el-table-column
                       fixed
                       sortable
@@ -266,9 +277,15 @@
                     <el-table-column
                       fixed
                       sortable
-                      prop="orderSerial"
+
                       width="150"
                       label="优惠券">
+                      <template slot-scope="scope">
+                        <div class="priceClass">
+                          <p>￥{{scope.row.deduction?scope.row.deduction:0.00}}</p>
+                          <p>满{{scope.row.SatisfyTheCondition?scope.row.deduction:0}}可用</p>
+                        </div>
+                      </template>
                     </el-table-column>
                     <el-table-column
                       fixed
@@ -411,10 +428,7 @@
         return postExchange(this.senData).then(res => {
           this.fetchAllList()
           this.$message.success(res.data)
-          // console.log(res,);
-          // this.dataset = res.list
         }).catch(err => {
-          console.log(err)
           this.$message.error('错误：' + (err.errorInfo || err.errorInfo  || err.errorInfo  || JSON.stringify(err )))
         })
       },
@@ -422,7 +436,6 @@
         return postAflcCouponUse(this.senDataListO).then(res => {
           if (res.status === 200) {
             this.datasetOne = res.data.list
-            console.log(this.datasetOne, '重庆区');
           } else {
 
           }
@@ -524,6 +537,35 @@
             }
             .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell {
               text-align: center;
+            }
+            .el-table__row{
+              .cell{
+                .priceClass{
+                  display: inline-block;
+                  background: rgb(255,90,70);
+                  padding: 10px 12px;
+                  color: rgb(255,210,203);
+                  position: relative;
+                  border-radius: 4px;
+                  p:first-of-type{
+                    font-size: 16px;
+                    color: rgb(255,228,203);
+                  }
+                  p:last-of-type{
+                    font-size: 12px;
+                  }
+                  /*p:first-of-type:before{*/
+                    /*position: absolute;*/
+                    /*width: 4px;*/
+                    /*height: 4px;*/
+                    /*background: #fff;*/
+                    /*border-radius: 50%;*/
+                    /*top:1px;*/
+                    /*left:1px;*/
+                  /*}*/
+                }
+
+              }
             }
           }
         }

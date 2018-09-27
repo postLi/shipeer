@@ -7,10 +7,10 @@ let swg2 = '/aflcsmservice'
 // let swg3 = 'aflcorderservice-lyc'
 let swg3 = 'aflcorderservice'
 let swg4 = 'aflccommonservice'
-let swg5 = 'aflcsmservice-wtc'
+let swg5 = 'aflcsmservice'
 let swg6 = '/aflcusercenterservice'
 let swg7 = '/aflc-pay'
-let swg8 = '/aflcusercenterservice-wtc'
+let swg8 = '/aflcusercenterservice'
 // let swg3 = 'aflcsmservice-wtc/v2/api-docs'
 export function postFindMywallet() {
   return Axios.post('/aflcusercenterservice/aflcMywalletApi/findMywallet')

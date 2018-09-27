@@ -3,10 +3,10 @@
     <div id="mapcontainer"></div>
 
     <!--<div id="panel"></div>-->
-    <div id="myPageTop">
+    <div id="myPageTop" v-if="$route.query.tab === '派单中'">
      <div class="headerClass">
-       <span>司机赶往提货地</span>
-       <span @click="gotoOrder">取消订单</span>
+       <span>{{$route.query.tab}}</span>
+       <span @click="gotoOrder"><i class="el-icon-close"></i>取消订单</span>
        <!--<div class="btnClass">-->
          <!--<el-button type="success" size="mini" icon="el-icon-close">成功按钮</el-button>-->
        <!--</div>-->
@@ -17,7 +17,12 @@
         </div>
         <div class="centClass">
           <!--<div id="panel"></div>-->
-          1234567
+          <ul >
+            <template v-for="(item,index) in addList">
+              <li><p>{{item.instruction}}</p><span>南山区兴南路10号</span></li>
+
+            </template>
+          </ul>
         </div>
         <div class="footClass">
           <ul>
@@ -25,7 +30,7 @@
             <li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>
             <li><span>付款方式:</span><span>发货人付款(现金付款)</span></li>
             <li><span>实际支付:</span><span>(已支付) &nbsp;￥99.00</span></li>
-            <li><span>运输费用:</span><span>¥80.56 <el-button type="success" size="mini"  class="btnClass">去支付</el-button></span></li>
+            <li><span>运输费用:</span><span>¥80.56 <el-button type="success" size="mini"  class="btnClass" @click="add">加小费</el-button></span></li>
             <li><span>需要车型:</span><span>未免</span></li>
             <li><span>货物名称:</span><span>电脑</span></li>
             <li><span>货物重量:</span><span><0.7吨,1-2方</span></li>
@@ -35,8 +40,27 @@
         </div>
       </div>
 
+      <div class="diaClass">
+        <el-dialog
+          title="提示:优惠券不能抵扣小费费用"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          center>
+          <ul>
+            <li>￥10</li>
+            <li>￥10</li>
+            <li>￥10</li>
+          </ul>
+          <!--<span>需要注意的是内容是默认不居中的</span>-->
+          <span slot="footer" class="dialog-footer">
+    <el-button @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+  </span>
+        </el-dialog>
+      </div>
     </div>
-    <div class="myPageFoot">
+
+    <div class="myPageFoot" v-if="$route.query.tab!=='派单中'">
       <ul>
         <li>
           <img src="../../assets/role.png" alt="">
@@ -62,13 +86,6 @@
         </li>
       </ul>
     </div>
-
-    <!--<div class="aflcmap-pop-footer" slot="footer">-->
-      <!--<div class="addrname">当前选中的地址：{{this.thename}}<br>当前经纬度信息：{{this.thepos}}</div>-->
-      <!--<el-button type="primary" :disabled="noinfo" @click="submitForm">确 定</el-button>-->
-      <!--<el-button type="info" @click="close">取 消</el-button>-->
-
-    <!--</div>-->
 
   </div>
 </template>
@@ -102,6 +119,11 @@
       }
     },
     mounted() {
+      console.log(this.$route.query)
+      // if(this.$route.query.tab === '派单中'){
+      //   this.popVisibleTitle = this.$route.query.tab
+      // }
+
 // this.dialogTableVisible = this.popVisible
       this.init()
     },
@@ -114,6 +136,9 @@
     },
     data() {
       return {
+        addList:[],
+        centerDialogVisible: false,
+        popVisibleTitle:'',
         value5: 3.7,
         noinfo: true,
         dialogTableVisible: false,
@@ -123,6 +148,9 @@
       }
     },
     methods: {
+      add(){
+        this.centerDialogVisible = true
+      },
       gotoOrder(){
         this.$router.push({path: '/order'})
       },
@@ -139,6 +167,42 @@
       init() {
         // 从后端请求数据后再加载地图
         this.loadMap()
+        this.loadMsg()
+      },
+      initMsg(){
+        let JIM = new JMessage({
+          debug : true
+        })
+
+        JIM.onDisconnect(function(){
+          console.log("【disconnect】");
+        }); //异常断线监听
+
+        JIM.init({
+          "appkey":"02c4b4f0341b60405b3c99e7",
+          "random_str":  new Date().getTime(),
+          "signature":  '341be97d9aff90c9978347f66f945b77',
+          "timestamp":  new Date().getTime(),
+          "flag": 0
+        }).onSuccess(function(data) {
+          console.log('success:' + JSON.stringify(data));
+          JIM.onMsgReceive(function(data) {
+            data = JSON.stringify(data);
+            console.log('1msg_receive:' + data);
+
+          });
+        }).onFail(function(data) {
+          console.log('error:' + JSON.stringify(data))
+        });
+      },
+      loadMsg(){
+        if(window.JMessage){
+          this.initMsg()
+        } else {
+          loadJs('/static/js/jmessage-sdk-web.2.6.0.min.js').then(res=>{
+            this.initMsg()
+          })
+        }
       },
       loadMap() {
         if (window.AMap) {
@@ -185,11 +249,18 @@
           {keyword:'天河番禺区'},//途径
           {keyword:'广州市天河区'}//终点
         ];
-        driving.search(path,function(status, result) {
-          // console.log(status, result)
-          document.getElementById('panel').innerText = result
+        driving.search(path,(status, result)=> {
+          //
+          this.addList = result.routes[0].steps
+          // console.log(this.addList,'地图')
+          // result.routes[0].steps.forEach(el=>{
+          //
+          //   this.addList = el
+          //   console.log(this.addList,'地图2')
+          // })
+          // document.getElementById('panel').innerText = result
           // document.getElementById('panel').innerText = JSON.stringify(result)
-          //TODO something
+
         });
       },
 // 设置获取到的信息
@@ -210,12 +281,6 @@
 
 
 <style lang="scss">
-  h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
-  ul,li{
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
   .map-lll{
     width: 100%;
     height: 100%;
@@ -297,6 +362,7 @@
       padding:6px;
       font-family: "Microsoft Yahei", "微软雅黑", "Pinghei";
       font-size: 14px;
+
       .headerClass{
         font-size: 14px;
         color: #fff;
@@ -308,6 +374,7 @@
         span:last-of-type{
           cursor: pointer;
           color: rgb(196,233,183);
+          float:right;
         }
 
       }
@@ -325,6 +392,79 @@
         }
         .centClass{
           padding: 0 52px 46px 40px;
+          overflow-y: auto;
+          height: 120px;
+          width: 350px;
+          ul:first-of-type{
+            li{
+              overflow:hidden; //超出的文本隐藏
+              text-overflow:ellipsis; //溢出用省略号显示
+              white-space:nowrap; //溢出不换行
+              position: relative;
+              padding-left: 30px;
+              p{
+                font-size: 14px;
+                color: #333333;
+                padding-top: 8px;
+
+              }
+
+              span{
+                font-size: 12px;
+                color: #999999;
+                padding-top: 2px;
+              }
+            }
+            /*li:not(:first-of-type):not(:last-of-type) {*/
+              /*content: '';*/
+              /*display: block;*/
+              /*position: absolute;*/
+              /*top: 12px;*/
+              /*left: 0;*/
+              /*background: #979797;*/
+              /*width: 2px;*/
+              /*height: 30px;*/
+            /*}*/
+            li:first-of-type {
+              p:before{
+                content: '';
+                display: block;
+                position: absolute;
+                top: 12px;
+                left: 0;
+                background: #80cc5a;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+              }
+            }
+            li:not(:first-of-type):not(:last-of-type) {
+              p:before{
+                content: '';
+                display: block;
+                position: absolute;
+                top: 16px;
+                left: 2px;
+                background:#999999;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+              }
+            }
+            li:last-of-type {
+              p:before{
+                content: '';
+                display: block;
+                position: absolute;
+                top: 12px;
+                left: 0;
+                background: #e6454a;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+              }
+            }
+          }
         }
         .footClass{
           padding: 0 52px 56px 40px;
@@ -357,6 +497,18 @@
             }
             li:first-of-type{
               padding-top: 0;
+            }
+          }
+        }
+      }
+      .diaClass{
+        .el-dialog__wrapper{
+          .el-dialog__header{
+
+          }
+          .el-dialog__body{
+            ul{
+
             }
           }
         }

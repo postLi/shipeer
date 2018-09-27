@@ -1,5 +1,5 @@
 <template>
-  <div class="table-lll" ref="getTableWH">
+  <div class="table-lll-al" ref="getTableWH">
     <Search @change="getSearchParam" ref="getTop"></Search>
     <div class="info-table">
       <el-table
@@ -13,8 +13,6 @@
         tooltip-effect="dark"
         :default-sort = "{prop: 'id', order: 'ascending'}"
         :style="{'width': getBodyWidth + 'px'}"
-
-
       >
         <!--:height="heightComputer"-->
         <el-table-column
@@ -22,21 +20,48 @@
           sortable
           prop="id"
           label="序号"
-          width="90">
+          width="80">
           <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="orderSerial"
-          width="150"
-          label="订单号">
+          width="200"
+          label="订单号" class="blueClass">
+          <template slot-scope="scope">
+            <!--<el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">{{scope.row.orderSerial}}</el-button>-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">{{scope.row.orderSerial}}</el-button>
+            <!--派单中-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00804'">{{scope.row.orderSerial}}</el-button>
+            <!--司机已接单-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080601HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--司机赶往提货地-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080602HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--司机已到提货地-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080603HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--司机已卸货-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080607HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--运输中-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080605HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--司机已到目的地-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080606HZ'">{{scope.row.orderSerial}}</el-button>
+            <!--司机已卸货-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080607HZ'">{{scope.row.orderSerial}}</el-button>
+
+            <!--已完成-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00807'">{{scope.row.orderSerial}}</el-button>
+            <!--已取消-->
+            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00808'">{{scope.row.orderSerial}}</el-button>
+
+
+
+          </template>
         </el-table-column>
         <el-table-column
           fixed
           sortable
           prop="belongCityName"
-          width="130"
+          width="100"
           label="城市">
         </el-table-column>
         <el-table-column
@@ -50,29 +75,36 @@
           fixed
           sortable
           prop="abnormalNo"
-          width="120"
+          width="110"
           label="运费总额">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="useCarTime"
+
           width="160"
-          label="用车时间">
+          label="用车时间" >
+          <template slot-scope="scope"><span class="redClass">{{ scope.row.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span></template>
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="payStatus"
+
           width="110"
-          label="订单状态">
+          label="订单状态" >
+          <template slot-scope="scope">
+            <span class="greenClass">{{ scope.row.status }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="parentStatus"
+
           width="110"
           label="付款状态">
+          <template slot-scope="scope">
+            <span class="greenClass">{{ scope.row.payStatus }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           fixed
@@ -92,7 +124,7 @@
           fixed
           sortable
           prop="carNumber"
-          width="110"
+          width="100"
           label="车牌号">
         </el-table-column>
         <el-table-column
@@ -112,44 +144,42 @@
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
-          width="120"
+          width="150"
           label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
-            <el-button @click="handleClick1(scope.row)" type="text" size="small">派单中</el-button>
+            <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
+            <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
+            <!--<el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.payStatus === 'AF00801'">确认回款</el-button>-->
+            <el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.status === 'AF0080705'">确认回款</el-button>
+            <el-button type="text" size="small" @click="handleClickMessage(scope.row)"  v-if="scope.row.status === 'AF0080703'">确认回单</el-button>
+            <el-button @click="handleClickAgain(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF00807' && scope.row.payStatus === 'AF00802'">再下一单</el-button>
+            <el-button type="text" size="small" @click="handleClickAgain(scope.row)" v-if="scope.row.status === 'AF00808'">重新下单</el-button>
+            <el-button @click="handleClickUnloadOrder(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080607HZ'">确认收货</el-button>
+
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="page" ref="footer">
-      <div class="block">
-        <!--<span class="demonstration">调整每页显示条数</span>-->
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
 
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="sizes, prev, pager, next"
-          :total="1000">
-        </el-pagination>
-      </div>
-    </div>
+    <div class="info_tab_footer" ref="footer"> <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
+  <!--</div>-->
   </div>
 </template>
 
 <script>
   import Search from './components/search'
   import {postMyOrderList} from '@/api/concentrateAxios/orderManage'
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters} from 'vuex'
+  import Pager from '@/components/Pagination/index'
+  import {parseTime} from '@/utils/'
   export default{
     data(){
       return {
+        total: 0,
+        totalCount: 0,
         height:0,
         topHeight:0,
         footer:0,
-        currentPage3: 5,
         dataset:[
 
         ],
@@ -168,7 +198,9 @@
       },
     },
     components:{
-      Search
+      Search,
+      Pager
+
     },
     mounted(){
       this.getPaymentList()
@@ -185,9 +217,15 @@
       });
     },
     methods:{
+      handlePageChange(obj) {
+        this.senDataList.currentPage = obj.pageNum
+        this.senDataList.pageSize = obj.pageSize
+      },
       getPaymentList(){
         return postMyOrderList(this.senDataList.currentPage,this.senDataList.pageSize,this.senDataList.status).then(res =>{
           this.dataset = res.data.list
+          this.total = res.data.totalPage
+          this.totalCount = res.data.totalCount
         })
       },
       fetchAllList(){
@@ -197,24 +235,77 @@
         this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
         this.fetchAllList()
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+      handleClickToMap(row){
+        let title = '派单中'
+        let sendData = row
+        let sendFn = ''
+        if(row.payStatus === 'AF00801'){
+          if(row.isEnshrine === true){
+
+          }
+
+
+        }
+        this.$router.push({path: '/orderRouter/getPickUp',query: {
+            tab: title,
+            qy:sendData,
+            fn:sendFn
+          }})
+
       },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+      // handleClickSing(row){
+      //   this.$router.push({path: '/orderRouter/inSingle',query: {
+      //       tab: '短驳对账-创建对账'
+      //     }})
+      // },
+      handleClickPy(row) {
+        this.$router.push({path: '/orderRouter/payFoy'})
       },
-      handleClick(row) {
+
+      handleClickEvaDriver(row){
         this.$router.push({path: '/orderRouter/evaluateDriver'})
-        // this.$router.push({path: '/orderRouter/payFoy'})
-        // console.log(row);
       },
-      handleClick1(row) {
+      handleClickUnloadOrder(row) {
         this.$router.push({path: '/orderRouter/unloadOrder'})
-        // this.$router.push({path: '/orderRouter/getPickUp'})
-        console.log(row);
       },
-      addColl(){
-        this.$message('添加收藏司机');
+      handleClickAgain(row) {
+        this.$router.push({path: '/order'})
+      },
+      handleClickMessage(row) {
+        if(row.status === 'AF0080703'){
+          this.$confirm('确认已收到此订单司机带回来的回单?', '确认回单', {
+            confirmButtonText: '已收到汇款',
+            cancelButtonText: '还未收到'
+
+          }).then(() => {
+            this.$message({
+              type: 'primary',
+              message: '删除成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }else{
+          this.$confirm('确认已收到此订单司机带回来的回款?', '确认回款', {
+            confirmButtonText: '已收到回款',
+            cancelButtonText: '还未收到'
+
+          }).then(() => {
+            this.$message({
+              type: 'primary',
+              message: '删除成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+
       },
       getDbClick(){
 
@@ -232,7 +323,7 @@
 </script>
 
 <style lang="scss">
-  .table-lll{
+  .table-lll-al{
     margin-top: 10px;
     background: #fff;
     .info-table{
@@ -256,12 +347,39 @@
       .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
         text-align: center;
       }
+      .el-table__row{
+        .el-button{
+          color: #1890ff;
+        }
+        .redClass{
+          color: #ff300d;
+        }
+        .greenClass{
+          color: #2fb301;
+        }
+      }
 
     }
-    .page{
-      padding-top: 20px;
+   .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
     }
-    /*display: flex;*/
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
+    }
   }
 </style>
 

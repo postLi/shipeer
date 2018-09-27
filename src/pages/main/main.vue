@@ -53,6 +53,7 @@
     height: calc(100% - 54px);
   }
   .b-c{
+    position: relative;
     background-color: rgb(250, 250, 250);
   }
 </style>

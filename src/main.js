@@ -12,6 +12,7 @@ import {getUserInfo,removeUserInfo} from '@/utils/auth'
 import { Message, MessageBox } from 'element-ui'
 import '@/icons' // icon
 import { mapGetters } from 'vuex'
+import * as filters from './filters'
 
 Vue.config.productionTip = false;
 // Vue.use(Vuex);
@@ -134,6 +135,9 @@ Axios.interceptors.response.use(
     return Promise.reject(err)
   }
 )
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 Date.prototype.format = function(fmt) {
   var o = {

@@ -5,8 +5,8 @@
           <div class="headerClass">
             <ul>
               <li>在线交易优惠金</li>
-              <li>奖励上限：888.88元</li>
-              <li>累计减免：<span>1888.88</span>元</li>
+              <li>奖励上限：{{infoData.rewardMax}}元</li>
+              <li>累计减免：<span>{{infoData.rewardSumAll}}</span>元</li>
             </ul>
           </div>
         </el-header>
@@ -45,7 +45,7 @@
                 <el-table-column
                   fixed
                   sortable
-                  prop="id"
+                  prop="orderSerial"
                   width="300"
                   label="订单编号">
                 </el-table-column>
@@ -98,6 +98,7 @@
         </el-main>
 
       </el-container>
+      <div class="info_tab_footer" ref="footer">共计:{{ total }} <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
     </div>
 </template>
 
@@ -106,18 +107,19 @@
   import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment,postFlcReward} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
+  import Pager from '@/components/Pagination/index'
 
     export default {
       data(){
         return{
+          total: 0,
           isPfrecord:false,
           dataset:[],
           datasetPrice:[],
           selected:[],
           infoData:{
-            rewardMax:0.00,
-            balance:0.00,
-            nums:0
+            rewardSumAll:0,
+            rewardMax:0
           },
           userInfoData:getUserInfo(),
           loading:false,
@@ -141,7 +143,8 @@
         }
       },
       components:{
-        searchTime
+        searchTime,
+        Pager
       },
       mounted(){
 
@@ -149,6 +152,10 @@
 
       },
       methods:{
+        handlePageChange(obj) {
+          this.senDataList.currentPage = obj.pageNum
+          this.senDataList.pageSize = obj.pageSize
+        },
         //
         // getPayment(){
         //   return postFlcReward(this.senData).then(res =>{
@@ -161,7 +168,10 @@
         getPaymentList(){
           return postFlcReward(this.senDataList).then(res =>{
             this.dataset = res.data.list[0].aflcUserRewardList
-            console.log( res.data.list[0].aflcUserRewardList);
+            this.infoData.rewardSumAll= res.data.list[0].rewardSumAll
+            this.infoData.rewardMax= res.data.list[0].rewardMax
+            this.total= res.data.totalCount
+            console.log( res);
           })
         },
         fetchAllList(){
@@ -275,6 +285,26 @@
           }
         }
       }
+    }
+    .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
     }
   }
 </style>

@@ -1,5 +1,5 @@
 <template>
-	<div class="driver-lll" >
+	<div class="driver-lll-my" >
     <Search @change="getSearchParam"></Search>
     <div class="add-coll">
       <el-button type="success" plain size="mini" @click="addCollDriver">添加收藏司机</el-button>
@@ -79,20 +79,6 @@
          </el-table-column>
        </el-table>
    </div>
-    <div class="page">
-      <div class="block">
-        <!--<span class="demonstration">调整每页显示条数</span>-->
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
-          layout="sizes, prev, pager, next"
-          :total="1000">
-        </el-pagination>
-      </div>
-    </div>
     <el-dialog
       title="收藏司机"
       :visible.sync="centerDialogVisible"
@@ -109,7 +95,7 @@
 
   </span>
     </el-dialog>
-
+    <div class="info_tab_footer" ref="footer">共计:{{ total }} <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
   </div>
 </template>
 
@@ -117,9 +103,11 @@
    import Search from './components/search'
    import {postDriverList,postDriver} from '@/api/concentrateAxios/myDriver'
    import {REGEX} from '../../utils/valiRegex'
+   import Pager from '@/components/Pagination/index'
  export default{
      data(){
        return {
+         total: 0,
          // loading : false,
          centerDialogVisible : false,
          currentPage3: 5,
@@ -143,7 +131,8 @@
      }
    },
    components:{
-     Search
+     Search,
+     Pager
    },
    mounted(){
     this.getPaymentList()
@@ -185,12 +174,6 @@
        this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
        this.fetchAllList()
      },
-     handleSizeChange(val) {
-       console.log(`每页 ${val} 条`);
-     },
-     handleCurrentChange(val) {
-       console.log(`当前页: ${val}`);
-     },
      handleClick(row) {
        console.log(row);
      },
@@ -210,11 +193,11 @@
 </script>
 
 <style lang="scss">
- .driver-lll{
+ .driver-lll-my{
    margin: 10px;
    .info-table{
      /*display: flex;*/
-     padding-top: 20px;
+     padding: 20px 10px 0 20px;
      width: 100%;
      height: calc(100% - 38px);
      tr{
@@ -237,9 +220,28 @@
      }
 
    }
-   .page{
-     padding-top: 20px;
+   .add-coll{
+     margin-left: 80px;
    }
-   /*display: flex;*/
+   .info_tab_footer {
+     padding-left: 20px;
+     background: #fff;
+     height: 40px;
+     line-height: 40px;
+     box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+     position: relative;
+     z-index: 10;
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     width: 100%;
+   }
+   .show_pager {
+     float: right;
+     line-height: 40px;
+     height: 40px;
+     overflow: hidden;
+     margin-right: 40px;
+   }
  }
 </style>
