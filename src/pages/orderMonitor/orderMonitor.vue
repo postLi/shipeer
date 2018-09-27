@@ -3,8 +3,9 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button id="displayAll" class="btn" style="margin-right:5px;">显示全部车辆</button>
-        <button id="displayMarker" class="btn">移动到中心点</button>
+        <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
+        <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
+        <button class="btn" style="margin-left:5px;" @click="testInfoWindow">测试信息窗口</button>
       </div>
     </div>
     <div class="orderSearch">
@@ -412,10 +413,8 @@
       points.push(marker);
 
       mp.setFitView(points);
-      document.getElementById("displayAll").onclick = this.displayAllMarkers;
-      document.getElementById("displayMarker").onclick = this.centerMark;
 
-      this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150)});
+      this.infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -66), size: new AMap.Size(260, 150),showShadow:true,isCustom: false});
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
       window.checkTrack = this.checkTrack;
@@ -448,6 +447,9 @@
       });
     },
     methods: {
+      testInfoWindow(){
+        alert("deng");
+      },
       clickOrderSearchResult() {
         if (this.showOrderSearchResultIcon == "el-icon-minus") {
           this.showOrderSearchResult = false;
