@@ -17,13 +17,13 @@
         <div class="red-point-line address-line"></div>
       </div>
       <div v-if="from === 'showMapNext'">
-        <div class="window-title-12">{{item.originName}}</div>
-        <div class="window-title-10">{{item.origin}}</div>
+        <div class="window-title-12 c-3">{{item.originName}}</div>
+        <div class="window-title-10 c-9">{{item.origin}}</div>
       </div>
 
       <div v-if="from === 'order'" @click="selectLine()" class="pointer" title="点击选择路线">
-        <div class="window-title-12">{{item.name}}</div>
-        <div class="window-title-10">{{item.address}}</div>
+        <div class="window-title-12 c-3">{{item.name}}</div>
+        <div class="window-title-10 c-9">{{item.address}}</div>
       </div>
     </div>
   </div>

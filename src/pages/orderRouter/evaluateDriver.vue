@@ -7,26 +7,35 @@
           <div class="rate">
             <span>司机评分</span>
             <el-rate
-              v-model="value5"
-              disabled
+              v-model="rateDrive.starLevel"
+
               show-score
               text-color="#ff9900"
-              score-template="{value}">
+              score-template="{value}"
+              @change="changeRate"
+            >
             </el-rate>
           </div>
           <div class="rateTitle">
             <span>司机评语</span>
-            <ul>
-              <template v-for="(item,index) in liList">
-                <!--<li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">-->
-                <li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">{{item.name}}</li>
-              </template>
+            <div class="rateMess">
+              <el-checkbox-group v-model="checkboxGroup1" @change="changeActive">
+                <el-checkbox-button v-for="(item,index) in liList" :label="item.name" :key="item.name" :index="index">{{item.name}}</el-checkbox-button>
+              </el-checkbox-group>
+            </div>
+            <!--<ul>-->
+              <!--<template v-for="(item,index) in liList">-->
+                <!--<li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">{{item.name}}</li>-->
+              <!--</template>-->
 
-            </ul>
-            <el-input type="textarea" placeholder="师傅服务周到吗？输入评语为更多的小伙伴提供参考～"></el-input>
+            <!--</ul>-->
+
+          </div>
+          <div class="textarea">
+            <el-input type="textarea" placeholder="师傅服务周到吗？输入评语为更多的小伙伴提供参考～" v-model="rateDrive.rembel"></el-input>
           </div>
           <div class="btn">
-            <el-button type="success">评价</el-button>
+            <el-button type="success" @click="onSubmit">评价</el-button>
           </div>
           <!--<ul>-->
             <!--<li>评价司机<span>（您的评价将会被严格匿名）</span></li>-->
@@ -48,7 +57,7 @@
               <p></p>
               <span class="actClass">网显示</span>&nbsp;&nbsp;<span class="unClass">(外星人)</span>
               <el-rate
-                v-model="value5"
+                v-model="rateDetail.rateNum"
                 disabled
                 show-score
                 text-color="#ff9900"
@@ -106,6 +115,14 @@
             <p>猎德村复建房五区</p>
             <span>南山区兴南路10号</span>
           </li>
+          <li>
+            <p>猎德村复建房五区</p>
+            <span>南山区兴南路10号</span>
+          </li> <li>
+          <p>猎德村复建房五区</p>
+          <span>南山区兴南路10号</span>
+        </li>
+
         </ul>
       </el-main>
 
@@ -118,37 +135,108 @@
 
 <script>
   import {getUserInfo} from '@/utils/auth'
-
+  import {postEvaluateShipper,getSysDictByCodesGet} from '@/api/concentrateAxios/orderManage'
+  const cityOptions = ['上海', '北京', '广州', '深圳'];
   export default {
     data(){
       return{
+        checkboxGroup1: [],
+        cities: cityOptions,
         tabId:0,
         radio: '1',
-        value5: 3.7,
+        rateDrive:{
+          starLevel:5,
+          rembel:'',
+          evaluationType:''
+        },
+        rateDetail:{
+          rateNum:5,
+        },
+
         activeNames: '',
         changeItem: '',
         userData: getUserInfo(),
         liList:[
-          {name:'认路准确活地图'},
-          {name:'师傅很守时'},
-          {name:'服务态度好'},
-          {name:'免费回单回款'},
-          {name:'收费合理'}
-        ]
+        ],
+        senData:{
+          "evaluationDes": "",
+          "evaluationId": "",
+          "evaluationName": "",
+          "evaluationType": "",
+          "orderSerial": "",
+          "starLevel": "",
+          "userId": '',
+          "userName": ""
+          // getUserInfo().shipperId
+        },
+        sendCodes:{
+          codes:''
+        }
         // activeNames: ['1']
       }
     },
     mounted(){
-      console.log('userinfo":', window.USERDATA)
+      this.fetchRate('AF0042102')
+      // console.log(this.$route.query)
     },
     methods: {
-      changeActive(item,index){
-        this.tabId = index
-        this.changeItem = item
+      onSubmit(){
+
+        if(this.rateDrive.evaluationType.length === 0){
+          this.$message.info('请给司机评语~')
+        }else{
+          let evaluationType = this.rateDrive.evaluationType.map(el => {
+
+            return el
+          })
+          evaluationType = evaluationType.length > 1 ? evaluationType.join(',') : evaluationType
+
+          this.senData = {
+            "evaluationDes": this.rateDrive.rembel,
+            "evaluationId":this.userData.shipperId,
+            "evaluationName": this.userData.contacts,
+            "evaluationType": evaluationType,
+            // this.$route.query.qy.orderSerial
+            "orderSerial": this.$route.query.qy.orderSerial,
+            "starLevel": this.rateDrive.starLevel,
+            "userId": '',
+            // this.$route.query.qy.driverName
+            "userName": this.$route.query.qy.driverName
+          }
+        }
+        let promiseObj
+        promiseObj = postEvaluateShipper(this.senData)
+        promiseObj.then(res =>{
+          if(res.status===200){
+            this.$message.success('评价成功')
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+        })
 
       },
-      handleChange(val) {
-        console.log(val);
+      fetchRate(codes){
+        return getSysDictByCodesGet(codes).then(res=>{
+          if(res.status === 200){
+            if(this.rateDrive.starLevel > 3.5){
+              this.liList = res.data.AF0042102
+            }else{
+              this.liList = res.data.AF0042101
+            }
+          }
+        })
+      },
+      changeRate(item){
+        this.rateDrive.starLevel = item
+        if(this.rateDrive.starLevel > 3.5){
+          this.fetchRate('AF0042102')
+        }else{
+          this.fetchRate('AF0042101')
+        }
+      },
+      changeActive(item){
+        this.rateDrive.evaluationType = item
+        console.log(item)
       }
     }
   }
@@ -202,28 +290,40 @@
             color: #999999;
             float: left;
           }
-          ul{
-            float: left;
-            li{
-              float: left;
-              background-color: #f2f2f2;
-              padding: 8px 20px;
-              margin-left: 40px;
-              font-size: 12px;
-              cursor: pointer;
-              color: #333333;
+          .rateMess{
+            display: inline-block;
+            margin-left: 40px;
+            .el-checkbox-group{
+              /*background: skyblue;*/
+              .el-checkbox-button{
+                margin-left: 20px;
+                .el-checkbox-button__inner{
+                  background-color: #f2f2f2;
+                  color: #333333;
+                  font-size: 12px;
+                }
+
+              }
+              .el-checkbox-button.is-checked{
+                .el-checkbox-button__inner{
+                  background-color: #ff300d;
+                  border-color: #ff300d ;
+                  color: #ffffff;
+                  font-size: 12px;
+                }
+              }
             }
-            .active{
-              background-color: #ff300d;
-              opacity: 0.8;
-              color: #ffffff;
-            }
-          }
-          .el-textarea{
-            width: 50%;
-            margin: 20px 0 20px 100px;
+
           }
 
+        }
+        .textarea{
+          width: 100%;
+          display: inline-block;
+          margin: 20px 0 20px 100px;
+          .el-textarea{
+            width: 50%;
+          }
         }
         .btn{
           display: inline-block;
@@ -231,7 +331,6 @@
         }
       }
       .height-foot{
-
       }
 
     }
@@ -341,6 +440,9 @@
             font-size: 14px;
             color: #999999;
           }
+
+        }
+        li:not(:last-of-type){
           p:before{
             content: '';
             display: block;
@@ -356,19 +458,7 @@
         li:first-of-type{
           padding-top: 0;
         }
-        li:last-of-type{
-          p:before{
-            content: '';
-            display: block;
-            height: 30px;
-            /*width: 2px;*/
-            background: #fff;
-            position: absolute;
-            top: 24px;
-            left: -14px;
-            /*border: 2px solid #ddd;*/
-          }
-        }
+
         li:first-of-type:before{
           content: '';
           display: block;
@@ -381,9 +471,8 @@
           left: -18px;
 
 
-
         }
-        li:nth-of-type(2):before{
+        li:not(:first-of-type):not(:last-of-type):before{
           content: '';
           display: block;
           width: 8px;

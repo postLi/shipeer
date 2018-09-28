@@ -4,26 +4,26 @@
     <div class="order flex_f">
       <div class="title flex_sb">
         <div class="left">确认订单信息</div>
-        <div class="right">修改订单</div>
+        <div class="right pointer" @click="toOrderManage()">修改订单</div>
       </div>
 
       <div class="order-body flex_1">
         <div class="flex_a">
           <div class="flex_1">
             <span class="order-key">用车时间：</span>
-            <span class="window-title-12">{{parm.useCarTime}}</span>
+            <span class="window-title-12 c-3">{{parm.useCarTime}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">起步价（{{carTypeName}}）：</span><span class="window-title-12">¥{{price}}元</span></div>
+          <div class="flex_1"><span class="order-key">起步价（{{carTypeName}}）：</span><span class="window-title-12 c-3">¥{{price}}元</span></div>
           <!--<div class="flex_1"><span class="window-title-12">全程预计需要<span class="c-3">{{time}}</span>分钟</span></div>-->
-          <div class="flex_1"><span class="window-title-12">全程预计需要<span class="c-3">{{time}}</span></span></div>
+          <div class="flex_1"><span class="window-title-12 c-3">全程预计需要<span class="c-18">{{time}}</span></span></div>
         </div>
 
         <div class="flex_a margin_t_10">
           <div class="flex_1">
             <span class="order-key">所需车型：</span>
-            <span class="window-title-12">{{carTypeName}}</span>
+            <span class="window-title-12 c-3">{{carTypeName}}</span>
           </div>
-          <div class="flex_1"><span class="order-key">超里程费（{{kmPrice}}公里）：</span><span class="window-title-12">¥{{outstripPrice}}元</span></div>
+          <div class="flex_1"><span class="order-key">超里程费（{{kmPrice}}公里）：</span><span class="window-title-12 c-3">¥{{outstripPrice}}元</span></div>
           <div class="flex_1"></div>
         </div>
         <div class="margin_t_10 order-key">若产生高速费、停车费和搬运费,根据实际费用由用户支付 若涉及逾时等候费,请按照收费标准支付</div>
@@ -39,12 +39,15 @@
 
         <div class="flex_es total">
           <div class="flex_ae">
-            <div class="window-title-12">总计：</div>
+            <div class="window-title-12 c-3">总计：</div>
             <div class="font-1">¥{{parm._totalAmount}}元</div>
             <div class="p_r">
-              <div class="window-title-12 margin_l_10">(已减免{{reduce}}元，<span class="font-3 pointer" @click="showExchange()">更多优惠</span>)</div>
+              <div class="window-title-12 c-3 margin_l_10">(已减免{{reduce}}元，<span class="font-3 pointer" @click="showExchange()">更多优惠</span>)</div>
               <div class="exchange-owner flex_f" v-if="windowExchange">
-                <div class="window-title-left">我的优惠卷</div>
+                <div class="window-title-left c-3 flex_sb">
+                  <span>我的优惠卷</span>
+                  <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="windowExchange = false">
+                </div>
                   <div class="o_f flex_1 margin_t_10" >
                     <div class="exchange-item flex_a margin_b_10 pointer" :class="[parm.couponId === item.id?'select-exchange':'']" v-for="(item,index) in couponList" :key="item.id" @click="selectExchange(item)">
                       <div class="exchange-item-left flex" :style="{'background-image':backgroundImg}">
@@ -60,8 +63,8 @@
 
                       <div class="exchange-item-right flex_1 flex height_100">
                         <div>
-                          <div class="window-title-left">【{{item.couponName}}】{{item.couponTypeName}}</div>
-                          <div class="window-title-left" style="padding: 0 7px;">{{item.endTime}}</div>
+                          <div class="window-title-left c-3">【{{item.couponName}}】{{item.couponTypeName}}</div>
+                          <div class="window-title-left c-3" style="padding: 0 7px;">{{item.endTime}}</div>
                         </div>
                       </div>
                     </div>
@@ -87,59 +90,124 @@
           </div>
 
           <div class="padding_10" v-if="payTypeId === 1">
-            <div class="flex_a pay-select">
-              <el-radio class="flex" style="margin-top: 2px;" v-model="radio" :label="1">&nbsp; </el-radio>
-              <div class="pay-select-name">余额支付</div>
-              <div class="order-key">（可用余额<span class="c-r">0.00</span>元）</div>
-            </div>
+            <!--<div class="flex_a pay-select">-->
+              <!--<el-radio class="flex" style="margin-top: 2px;" v-model="payChannel" :label="1">&nbsp; </el-radio>-->
+              <!--<div class="pay-select-name">余额支付</div>-->
+              <!--<div class="order-key">（可用余额<span class="c-r">0.00</span>元）</div>-->
+            <!--</div>-->
 
             <div class="flex_a pay-select">
-              <el-radio class="flex" style="margin-top: 2px;"  v-model="radio" :label="2">&nbsp;</el-radio>
+              <el-radio class="flex" style="margin-top: 2px;"  v-model="payChannel" label="wx">&nbsp;</el-radio>
+              <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
               <div class="pay-select-name">微信支付</div>
               <div class="order-key margin_l_10">搬运等额外费用可在司机装货后支付</div>
               <div class="pay-discount c-r">(优惠8元)</div>
             </div>
             <div class="flex_a pay-select">
-              <el-radio class="flex" style="margin-top: 2px;"  v-model="radio" :label="3">&nbsp;</el-radio>
+              <el-radio class="flex" style="margin-top: 2px;"  v-model="payChannel" label="ali">&nbsp;</el-radio>
+              <icon-svg iconClass="lll02zfb" class="svg"></icon-svg>
               <div class="pay-select-name">支付宝支付</div>
               <div class="order-key margin_l_10">搬运等额外费用可在司机装货后支付</div>
               <div class="pay-discount c-r">(优惠8元)</div>
             </div>
           </div>
 
-          <div class="padding_10 flex height_100 window-title-left" v-if="payTypeId === 2">
+          <div class="padding_10 flex height_100 window-title-left c-3" v-if="payTypeId === 4">
             装货时付款，等候时间按装货时间的2倍计算，装货时间超过30分钟，将产生等候费
           </div>
-          <div class="padding_10 flex height_100 window-title-left" v-if="payTypeId === 3">
+          <div class="padding_10 flex height_100 window-title-left c-3" v-if="payTypeId === 3">
             收货时付款，等候时间按装货时间的2倍计算，装货时间超过30分钟，将产生等候费
           </div>
         </div>
 
         <div class="flex margin_20">
-          <el-button class=" f_w" style="background-color: #2fb301;width: 140px;height: 46px;font-size: 16px;" type="success" @click="pay()">去支付</el-button>
+          <el-button class=" f_w" style="background-color: #2fb301;width: 140px;height: 46px;font-size: 16px;" type="success" @click="pay()">
+            <span v-if="payTypeId === 1">去支付</span>
+            <span v-else>去叫车</span>
+          </el-button>
         </div>
 
       </div>
 
     </div>
+
+
+    <el-dialog
+      title="微信支付"
+      :visible.sync="centerDialogVisible"
+      width="600px"
+      center>
+      <div class="content">
+        <div class="contLeft">
+          <p>金额（元）</p>
+          <p>{{parm._totalAmount}}</p>
+          <img :src="pfimg" alt="">
+
+          <p>二维码有效时长为2个小时<br>
+            请尽快支付</p>
+        </div>
+        <div class="contRight">
+          <img src="../../assets/myorder/lll-iPhone X.png" alt="">
+          <img src="../../assets/myorder/saoyisao.png" alt="">
+          <p>请使用微信扫一扫</p>
+        </div>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="支付宝支付"
+      :visible.sync="centerDialogVisiblezfb"
+      width="600px"
+      center>
+      <div class="content">
+        <div class="contLeft">
+          <p>金额（元）</p>
+          <p>{{parm._totalAmount}}</p>
+          <img :src="pfimg" alt="">
+          <p>二维码有效时长为2个小时<br>
+            请尽快支付</p>
+        </div>
+        <div class="contRight">
+          <img src="../../assets/myorder/iPhoneXzhifub.png" alt="">
+          <img src="../../assets/myorder/zhifub_saoyisao.png" alt="">
+          <p>请使用支付宝扫一扫</p>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 
 </template>
 
 <script>
-  import { getApi ,postApi} from "@/api/api.js";
+  import { getApi ,postApi,onlyApi} from "@/api/api.js";
+
   import routeLine from './routeLine.vue'
     export default {
       name: "showMapNext",
       props:["getDuration"],
       components:{routeLine},
+      watch:{
+        centerDialogVisiblezfb(n){
+          if(!n){
+            clearTimeout(this.timer)
+          }
+        },
+        centerDialogVisible(n){
+          if(!n){
+            clearTimeout(this.timer)
+          }
+        }
+      },
       data(){
           return{
             backgroundImg:'url(' + require('../../assets/order/youhuiq.png') + ')',
+            centerDialogVisible:false,//微信窗口
+            centerDialogVisiblezfb:false,//支付宝窗口
+            pfimg:'',
             windowExchange:false,
-            radio:1,
+            payChannel:"wx",
             payTypeId:1,
-            payTypeList:[{id:1,name:'马上付款'},{id:2,name:'装货时付款'},{id:3,name:'收货时付款'}],
+            payTypeList:[{id:1,name:'马上付款'},{id:4,name:'装货时付款'},{id:3,name:'收货时付款'}],
             form:[],
             parm:{},
             carItem:{},
@@ -149,10 +217,14 @@
             kmPrice:0,//标准起步价(公里)
             outstripPrice:0,//超里程费
             couponList:[],
-            reduce:0//已减免
+            reduce:0,//已减免
+            orderId:''//订单Id
           }
       },
       methods:{
+        toOrderManage(){
+          this.$router.push('/OrderManage/allOrder');
+        },
         selectExchange(item){
 console.log(item)
 
@@ -209,16 +281,66 @@ console.log(item)
           }
 
         },
+
+        getPayResult(rid,payChannel){
+          clearTimeout(this.timer);
+          this.timer = setTimeout(() => {
+            postApi(`/aflc-pay/api/pay/shipper/common/v1/tradeQuery/${rid}`,payChannel).then(res=>{
+              if(res.status === 200){
+                // 支付成功
+                this.$router.replace("/OrderManage/already");
+              } else {
+                // 支付失败
+                this.getPayResult(rid,payChannel)
+              }
+
+            }).catch(err=>{
+              // 支付失败
+              this.getPayResult(rid,payChannel)
+            })
+          }, 3000)
+        },
+
         pay(){
           if(this.parm.distance < 0.1){
             this.$message.warning("距离必须大于0.1公里");
             return
           }
-          postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
-            console.log(res)
-            if(res !== '' || res !== null){
+
+          if(this.payTypeId === 1){
+            onlyApi(`/aflc-pay/pay/shipper/common/v1/scanPayOrder/${this.orderId}`,{payChannel:this.payChannel},{responseType:'blob'}).then((res)=>{//单独请求
+              if(this.payChannel === "wx"){
+                this.centerDialogVisible = true;
+              }
+              if(this.payChannel === "ali"){
+                this.centerDialogVisiblezfb = true
+              }
+              let fr=new FileReader();
+              fr.readAsDataURL(res);
+              fr.onload=(e)=>{
+                this.pfimg=e.target.result;
+                this.getPayResult(this.orderId,{payChannel:this.payChannel})
+              }
+            })
+          }
+          if(this.payTypeId === 4){
+            this.cashOnDelivery(4);
+          }
+          if(this.payTypeId === 3){
+            this.cashOnDelivery(3);
+          }
+
+        },
+        cashOnDelivery(id){
+          postApi(`/aflc-order/aflcOrderApi/cashOnDelivery?type=${id}&orderSerial=${this.orderId}`).then((res)=>{
+            if(res.status === 200){
+              this.$router.push({path: '/orderRouter/evaluateDriver',query: {
+                  tab: this.title,
+                  qy:{orderId:this.orderId},
+                  fn:null
+                }})
             }
-          });
+          })
         },
         selectPay(id){
           this.payTypeId = id;
@@ -318,7 +440,12 @@ console.log(item)
           this.kmPrice =  this.carItem.list[0].kmPrice;
 
           this.math();
-
+          postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
+            console.log(res)
+            if(res !== '' || res !== null){
+              this.orderId = res.data;
+            }
+          });
           let leftTime = result.routes[0].time;
           let d = parseInt(leftTime / 3600 / 24);
           let h = parseInt((leftTime / 3600) % 24);
@@ -334,9 +461,11 @@ console.log(item)
           }
 
         });
+
       },
       destroyed(){
-        this.$localStorage.remove("formDown");
+        console.log(123444)
+        //this.$localStorage.remove("formDown");
       },
     }
 </script>
@@ -368,7 +497,7 @@ console.log(item)
       font-size: 12px;
       color: #999999;
     }
-    .c-3{
+    .c-18{
     color: #1890ff;
   }
   }
@@ -486,4 +615,46 @@ console.log(item)
     box-sizing: content-box;
   }
 
+    .svg-icon{
+      width: 45px;
+      height: 45px;
+    }
+
+  .content{
+    .contLeft{
+      float: left;
+      margin: 40px 100px 120px 50px;
+      text-align: center;
+      p:first-of-type{
+        font-size: 12px;
+        color: #333333;
+      }
+      p:nth-of-type(2){
+        font-size: 16px;
+        color: #ff300d;
+        padding-top: 5px;
+      }
+      p:last-of-type{
+        font-size: 12px;
+        color: #333333;
+        padding-top: 10px;
+      }
+      img{
+        width: 154px;
+        height: 154px;
+      }
+    }
+    .contRight{
+      position: relative;
+      text-align: center;
+      img:nth-of-type(2){
+        position: absolute;
+        top: 50px;
+        left: 270px;
+        width: 100px;
+        height: 100px;
+      }
+      /*float: right;*/
+    }
+  }
 </style>

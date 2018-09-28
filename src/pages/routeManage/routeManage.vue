@@ -4,11 +4,11 @@
       <div class="padding_20" ref="getTop">
         <header class="flex_a f_f">
           <div class="flex_a m-r">
-            <span class="window-title-left">提货地：</span>
+            <span class="window-title-left c-3">提货地：</span>
             <el-input v-model="addressFrom" placeholder="请输入地址" size="small" class="address-width "></el-input>
           </div>
           <div class="flex_a m-r">
-            <span class="window-title-left">收货地：</span>
+            <span class="window-title-left c-3">收货地：</span>
             <el-input v-model="addressTo" placeholder="请输入联系人" size="small" class="address-width "></el-input>
           </div>
 
@@ -75,9 +75,9 @@
       <div class="add-route-item ">
         <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
           <div class="flex_sb">
-            <span v-if="index === 0" class="window-title-left">提货地</span>
-            <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left">途经地</span>
-            <span v-if="index + 1 === addRoute.length" class="window-title-left">目的地</span>
+            <span v-if="index === 0" class="window-title-left c-3">提货地</span>
+            <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left c-3">途经地</span>
+            <span v-if="index + 1 === addRoute.length" class="window-title-left c-3">目的地</span>
             <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
             <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
           </div>
@@ -293,7 +293,7 @@
         },
         getList(){
           getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
-            this.tableData = res;
+            this.tableData = res.data;
           });
         }
     },

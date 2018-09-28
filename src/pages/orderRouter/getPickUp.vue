@@ -7,13 +7,13 @@
      <div class="headerClass">
        <span>{{$route.query.tab}}</span>
        <span @click="gotoOrder"><i class="el-icon-close"></i>取消订单</span>
-       <!--<div class="btnClass">-->
-         <!--<el-button type="success" size="mini" icon="el-icon-close">成功按钮</el-button>-->
-       <!--</div>-->
      </div>
       <div class="contentClass">
         <div class="topClass">
-          司机距您<span>1.5</span>公里，稍后将电话联系您…
+          <p class="changeDriver">系统选择司机</p>
+          <p class="changeTime">00:20</p>
+          <p class="changeCar">倒计时结束后无应答将优先为您叫车</p>
+          <!--司机距您<span class="callClass">1.5</span>公里，稍后将电话联系您…-->
         </div>
         <div class="centClass">
           <!--<div id="panel"></div>-->
@@ -27,7 +27,7 @@
         <div class="footClass">
           <ul>
             <li><span class="dateClass">用车时间:</span><span class="timeClass">2018-09-12 09:08</span></li>
-            <li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>
+            <!--<li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>-->
             <li><span>付款方式:</span><span>发货人付款(现金付款)</span></li>
             <li><span>实际支付:</span><span>(已支付) &nbsp;￥99.00</span></li>
             <li><span>运输费用:</span><span>¥80.56 <el-button type="success" size="mini"  class="btnClass" @click="add">加小费</el-button></span></li>
@@ -46,15 +46,22 @@
           :visible.sync="centerDialogVisible"
           width="30%"
           center>
-          <ul>
-            <li>￥10</li>
-            <li>￥10</li>
-            <li>￥10</li>
-          </ul>
+          <div class="radioList">
+            <el-radio-group v-model="radio3">
+              <el-radio-button label="radioList[0].name">￥{{radioList[0].name}}元</el-radio-button>
+              <el-radio-button label="radioList[1].name">￥{{radioList[1].name}}元</el-radio-button>
+              <el-radio-button label="radioList[2].name">￥{{radioList[2].name}}元</el-radio-button>
+              <!--<el-radio-button label="北京"></el-radio-button>-->
+              <!--<el-radio-button label="广州"></el-radio-button>-->
+            </el-radio-group>
+          </div>
+          <div class="textarea">
+            <el-input type="type" placeholder="其他金额,在此输入,(最高200元)～" ></el-input>
+          </div>
           <!--<span>需要注意的是内容是默认不居中的</span>-->
           <span slot="footer" class="dialog-footer">
     <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
+    <el-button type="success" @click="centerDialogVisible = false">确 定</el-button>
   </span>
         </el-dialog>
       </div>
@@ -93,6 +100,7 @@
   import {loadJs} from '@/utils/'
 
   export default {
+
     props: {
       pos: {
         type: [String, Array],
@@ -118,6 +126,31 @@
         this.thepos = this.pos
       }
     },
+    data() {
+      return {
+        radio3: '10',
+        radioList:[
+          {name:10},
+          {name:20},
+          {name:30}
+        ],
+        jimInfo:{
+          appkey: "02c4b4f0341b60405b3c99e7",
+          key: "ce2f5588bd87f228b514e847",
+          random_str:new Date().getTime(),
+          timestamp:new Date().getTime(),
+        },
+        addList:[],
+        centerDialogVisible: false,
+        popVisibleTitle:'',
+        value5: 3.7,
+        noinfo: true,
+        dialogTableVisible: false,
+        thepos: '',
+        thename: '',
+        theobj: {}
+      }
+    },
     mounted() {
       console.log(this.$route.query)
       // if(this.$route.query.tab === '派单中'){
@@ -134,19 +167,7 @@
     destoryed() {
       this.exit()
     },
-    data() {
-      return {
-        addList:[],
-        centerDialogVisible: false,
-        popVisibleTitle:'',
-        value5: 3.7,
-        noinfo: true,
-        dialogTableVisible: false,
-        thepos: '',
-        thename: '',
-        theobj: {}
-      }
-    },
+
     methods: {
       add(){
         this.centerDialogVisible = true
@@ -177,15 +198,17 @@
         JIM.onDisconnect(function(){
           console.log("【disconnect】");
         }); //异常断线监听
-
+        const md5 = require("js-md5");
+        const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
         JIM.init({
-          "appkey":"02c4b4f0341b60405b3c99e7",
-          "random_str":  new Date().getTime(),
-          "signature":  '341be97d9aff90c9978347f66f945b77',
-          "timestamp":  new Date().getTime(),
-          "flag": 0
+          "appkey":this.jimInfo.appkey,
+          "random_str": this.jimInfo.random_str,
+          "signature":  signature,
+          "timestamp":  this.jimInfo.timestamp,
+          "flag": 1
         }).onSuccess(function(data) {
-          console.log('success:' + JSON.stringify(data));
+          // console.log('success:' + JSON.stringify(data));
+          console.log(data);
           JIM.onMsgReceive(function(data) {
             data = JSON.stringify(data);
             console.log('1msg_receive:' + data);
@@ -358,8 +381,8 @@
       right: 10px;
       background: #fff none repeat scroll 0 0;
       border: 1px solid #ccc;
-      margin: 10px auto;
-      padding:6px;
+      margin: 0 auto;
+
       font-family: "Microsoft Yahei", "微软雅黑", "Pinghei";
       font-size: 14px;
 
@@ -382,16 +405,31 @@
         .topClass{
           font-size: 16px;
           color: #333333;
-          padding: 40px 52px 45px 50px;
+          margin: 20px 0px  ;
           font-weight: 600;
           max-height: calc(100% - 20px);
           overflow: auto;
-          span{
+          text-align: center;
+          span.callClass{
             color: #ff300d;
           }
+          p.changeDriver{
+            font-size: 14px;
+            color: #333333;
+          }
+          p.changeTime{
+            font-size: 20px;
+            color: #3b99f0;
+            padding: 10px 0;
+          }
+          p.changeCar{
+            font-size: 12px;
+            color: #999999;
+          }
+
         }
         .centClass{
-          padding: 0 52px 46px 40px;
+          padding: 0 52px 0px 40px;
           overflow-y: auto;
           height: 120px;
           width: 350px;
@@ -406,7 +444,9 @@
                 font-size: 14px;
                 color: #333333;
                 padding-top: 8px;
-
+                overflow:hidden; //超出的文本隐藏
+                text-overflow:ellipsis; //溢出用省略号显示
+                white-space:nowrap; //溢出不换行
               }
 
               span{
@@ -415,18 +455,21 @@
                 padding-top: 2px;
               }
             }
-            /*li:not(:first-of-type):not(:last-of-type) {*/
-              /*content: '';*/
-              /*display: block;*/
-              /*position: absolute;*/
-              /*top: 12px;*/
-              /*left: 0;*/
-              /*background: #979797;*/
-              /*width: 2px;*/
-              /*height: 30px;*/
-            /*}*/
-            li:first-of-type {
+            li:not(:last-of-type) {
               p:before{
+                content: '';
+                display: block;
+                position: absolute;
+                top: 30px;
+                left: 4px;
+                background: #979797;
+                width: 2px;
+                height: 30px;
+              }
+
+            }
+            li:first-of-type:before {
+
                 content: '';
                 display: block;
                 position: absolute;
@@ -436,10 +479,10 @@
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
-              }
+
             }
-            li:not(:first-of-type):not(:last-of-type) {
-              p:before{
+            li:not(:first-of-type):not(:last-of-type):before {
+
                 content: '';
                 display: block;
                 position: absolute;
@@ -449,10 +492,10 @@
                 width: 6px;
                 height: 6px;
                 border-radius: 50%;
-              }
+
             }
-            li:last-of-type {
-              p:before{
+            li:last-of-type:before {
+
                 content: '';
                 display: block;
                 position: absolute;
@@ -462,12 +505,12 @@
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
-              }
+
             }
           }
         }
         .footClass{
-          padding: 0 52px 56px 40px;
+          padding: 20px 52px 56px 40px;
           ul{
             li{
               padding-top: 10px;
@@ -502,16 +545,48 @@
         }
       }
       .diaClass{
-        .el-dialog__wrapper{
-          .el-dialog__header{
-
-          }
-          .el-dialog__body{
-            ul{
+        .el-dialog.el-dialog--center{
+          margin-top: 30vh !important;
+          /*.el-dialog__wrapper{*/
+            .el-dialog__header{
 
             }
+            .el-dialog__body{
+
+              .radioList{
+                text-align: center;
+                .el-radio-group{
+                  .el-radio-button{
+                    margin-left: 10px;
+                    /*background: #ffe;*/
+                    .el-radio-button__inner{
+                      background: #ffe;
+                    }
+                  }
+                  .el-radio-button.is-active{
+                    .el-radio-button__inner{
+                      background: #67c23a;
+                    }
+                  }
+                }
+
+              }
+              .textarea{
+                text-align: center;
+                display: inline-block;
+                width: 100%;
+                margin-top: 10px;
+                .el-input{
+                  width: 50%;
+                }
+              }
+            }
+          .el-dialog__footer{
+
           }
+          /*}*/
         }
+
       }
     }
 

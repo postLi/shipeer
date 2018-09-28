@@ -32,8 +32,8 @@
             <ul>
               <li>
                <div class="liClass" >
-
-                 <img src="../../assets/main/fahuor.png" alt="">
+                 <span class="spanClass"><icon-svg iconClass="lll06yue" class="svg"></icon-svg></span>
+                 <!--<img src="../../assets/main/fahuor.png" alt="">-->
                  <p>账户余额</p>
                  <p>¥{{infoData.balance}}</p>
                  <p @click="gotoToPayCoupon">（充值特惠，去充值）</p>
@@ -44,7 +44,8 @@
             <ul>
               <li>
                 <div class="liClass" @click="gotoCoupon">
-                  <img src="../../assets/main/fahuor.png" alt="">
+                  <span class="spanClass"><icon-svg iconClass="lll04youhuij" class="svg"></icon-svg></span>
+                  <!--<img src="../../assets/main/fahuor.png" alt="">-->
                   <p>在线交易优惠金</p>
                   <p>¥{{infoData.rewardMax}}</p>
                   <p></p>
@@ -55,7 +56,8 @@
             <ul>
               <li>
                 <div class="liClass" @click="gotoCouponList">
-                  <img src="../../assets/main/fahuor.png" alt="">
+                  <span class="spanClass"><icon-svg iconClass="lll05youhuiq" class="svg"></icon-svg></span>
+                  <!--<img src="../../assets/main/fahuor.png" alt="">-->
                   <p>优惠券</p>
                   <p>{{infoData.nums}}张</p>
                   <p></p>
@@ -141,20 +143,26 @@
           </div>
         </el-main>
       </el-container>
+      <div class="info_tab_footer" ref="footer"> <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
     </div>
 </template>
 
 <script>
   import VueJsCookie from 'vue-js-cookie'
   import Vue from 'vue'
+  import Pager from '@/components/Pagination/index'
   // import {getUser} from '@/api/login'
   import {postFindMywallet,postFindAflcReward,getCouponCount,postFindSOPayment} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
 
     export default {
+      components:{
+        Pager
+
+      },
       data(){
         return{
-
+          total: 0,
           dataset:[],
           selected:[],
           infoData:{
@@ -214,6 +222,7 @@
         getPaymentList(){
           return postFindSOPayment(this.senDataList).then(res =>{
             this.dataset = res.data.list
+            this.total = res.data.totalPage
           }).catch(err => {
             this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
@@ -333,6 +342,13 @@
               vertical-align: middle;
               text-align: center;
               padding-top: 58px;
+              .spanClass{
+                /*display: inline-block;*/
+                .svg{
+                  width: 40px;
+                  height: 30px;
+                }
+              }
               img{
                 width: 32px;
                 height: 32px;
@@ -398,7 +414,17 @@
         ul:nth-of-type(2) li:hover,ul:nth-of-type(3) li:hover,ul:nth-of-type(4) li:hover {
           transform: 2s;
           box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+
+        }
+        ul:nth-of-type(3) li:hover,ul:nth-of-type(4) li:hover {
           cursor: pointer;
+        }
+        ul:nth-of-type(2) li:hover{
+          .liClass{
+            p:nth-of-type(3){
+              cursor: pointer;
+            }
+          }
         }
       }
 
@@ -447,6 +473,27 @@
           }
         }
       }
+    }
+
+    .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
     }
   }
 </style>

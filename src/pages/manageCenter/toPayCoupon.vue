@@ -128,36 +128,38 @@
                 <el-table-column
                   fixed
                   sortable
-                  prop="orderSerial"
+                  prop="rechargeSerial"
                   width="300"
-                  label="交易流水号">
+                  label="充值流水号">
                 </el-table-column>
                 <el-table-column
                   fixed
                   sortable
-                  prop="incomeExpendTypeName"
-                  width="300"
+                  width="400"
                   label="交易方式">
+                  <template slot-scope="scope">
+                    <span v-if="scope.row.rechargeWay === 0 ? '支付宝':'微信'"></span>
+                  </template>
                 </el-table-column>
                   <el-table-column
                     fixed
                     sortable
-                    prop="payWayName"
-                    width="300"
+                    prop="rechargeSum"
+                    width="400"
                     label="金额">
                   </el-table-column>
+                  <!--<el-table-column-->
+                    <!--fixed-->
+                    <!--sortable-->
+                    <!--prop="tradeTypeName"-->
+                    <!--width="300"-->
+                    <!--label="充值后余额">-->
+                  <!--</el-table-column>-->
                   <el-table-column
                     fixed
                     sortable
-                    prop="tradeTypeName"
-                    width="300"
-                    label="充值后余额">
-                  </el-table-column>
-                  <el-table-column
-                    fixed
-                    sortable
-                    prop="totalAmount"
-                    width="300"
+                    prop="createTime"
+                    width="400"
                     label="订单完成时间">
                   </el-table-column>
               </el-table>
@@ -165,18 +167,20 @@
           </div>
         </el-main>
       </el-container>
+      <div class="info_tab_footer" ref="footer"> <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
     </div>
 </template>
 
 <script>
 
-  import {getSysDictByCodesGet,postCreateAflcRecharge,postScanPay,postTradeQuery} from '@/api/concentrateAxios/manageCenter'
+  import {getSysDictByCodesGet,postCreateAflcRecharge,postScanPay,postTradeQuery,postFindAflcRecharge} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
-
+  import Pager from '@/components/Pagination/index'
     export default {
       data(){
         return{
+          total: 0,
           centerDialogVisible: false,
           centerDialogVisiblezfb: false,
           strVal:'',
@@ -217,15 +221,7 @@
             currentPage:1,
             pageSize:5,
             vo:{
-              carInfo:'',
-              incomeExpendType:'',
-              tradeEndTime:'',
-              tradeStartTime:'',
-              // "accountId": "string",
-              // "carInfo": "string",
-              // "incomeExpendType": "string",
-              // "tradeEndTime": "2018-09-20T07:05:11.259Z",
-              // "tradeStartTime": "2018-09-20T07:05:11.259Z"
+
             }
           },
           pfimg:'',
@@ -237,10 +233,12 @@
 
       },
       components:{
-        searchTime
+        searchTime,
+        Pager
       },
       mounted(){
         this.getPayment()
+        this.fetchAllList()
        this.senData={
           "accountId": this.userInfoData.shipperId,
             "giveSum": 0,
@@ -393,11 +391,13 @@
           })
         },
         getPaymentList(){
-          return getSysDictByCodesGet(this.sendAF011).then(res =>{
+          return postFindAflcRecharge(this.senDataList).then(res =>{
+            console.log(res,'充值礼包');
             if(res.status === 200){
-              this.dataset = res.data.AF011
+              this.dataset = res.data.list
+              this.total = res.data.totalPage
             }else{
-             // this.$message.info('')
+              this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
             }
 
           }).catch(err => {
@@ -405,7 +405,7 @@
           })
         },
         fetchAllList(){
-          // this.getPaymentList()
+          this.getPaymentList()
         },
         getSearchParam(obj){
           this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
@@ -433,7 +433,11 @@
         },
         gotoAllRecod(){
           this.$router.push({path: '/allRecod'})
-        }
+        },
+        handlePageChange(obj) {
+          this.senDataList.currentPage = obj.pageNum
+          this.senDataList.pageSize = obj.pageSize
+        },
       }
     }
 </script>
@@ -641,6 +645,26 @@
           }
         }
       }
+    }
+    .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
     }
   }
 </style>
