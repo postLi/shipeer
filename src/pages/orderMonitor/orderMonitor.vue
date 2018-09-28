@@ -5,7 +5,6 @@
       <div class="ctl">
         <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
         <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
-        <button class="btn" style="margin-left:5px;" @click="showInfoWindow">测试信息窗口</button>
       </div>
     </div>
     <div class="orderSearch">
@@ -365,35 +364,56 @@
                 联系电话
               </div>
               <div class="cell">
-                18028693660-18028693660-18028693660
+                18028693660
               </div>
             </div>
           </div>
           <p class="bar" style="margin-top: 20px">订单信息</p>
-          <div class="table">
-            <div class="row">
-              <div class="cellHeader">
-                用车时间
-              </div>
-              <div class="cell" style="width: 240px">
-                2018-09-28 10:00:05
-              </div>
-            </div>
-            <div class="row">
-              <div class="cellHeader">
-                车型
-              </div>
-              <div class="cell">
-                小面包
-              </div>
-              <div class="cellHeader">
-                联系电话
-              </div>
-              <div class="cell">
-                18028693660-18028693660
-              </div>
-            </div>
-          </div>
+          <table class="table2">
+            <tr>
+              <td class="label">用车时间</td>
+              <td colspan="3">2018-09-28 10:00:00</td>
+            </tr>
+            <tr>
+              <td class="label">需求车型</td>
+              <td>小面包</td>
+              <td class="label">货物名称</td>
+              <td>香油/3吨/3方</td>
+            </tr>
+            <tr>
+              <td class="label">额外服务</td>
+              <td colspan="3">需要回单，需要回款5000元</td>
+            </tr>
+            <tr>
+              <td class="label">备注</td>
+              <td colspan="3">需要坐2人</td>
+            </tr>
+            <tr>
+              <td class="label">预估价格</td>
+              <td>120元</td>
+              <td class="label">付款状态</td>
+              <td>待付款</td>
+            </tr>
+            <tr>
+              <td class="label">当前位置</td>
+              <td colspan="3">
+                <div id="mapAddr"></div>
+                <div style="margin-top: 5px"><a href="javascript:showTrack()">显示轨迹</a></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="label">提货地</td>
+              <td colspan="3"></td>
+            </tr>
+            <tr>
+              <td class="label">途径地</td>
+              <td colspan="3"></td>
+            </tr>
+            <tr>
+              <td class="label">目的地</td>
+              <td colspan="3"></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
@@ -412,7 +432,6 @@
         carUrl: require("../../assets/orderMonitor/car.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
-        infoWindow: null,
         infoWindow2: null,
         infoWindow2Init: false,
         geocoder: null,
@@ -438,7 +457,7 @@
         visible: true
       });
       mp.addControl(ctl);
-      var points = this.points = new Array();
+      var points = this.points = [];
       var carUrl = this.carUrl;
       var marker = new AMap.Marker({
         icon: carUrl,
@@ -483,15 +502,10 @@
 
       mp.setFitView(points);
 
-      this.infoWindow = new AMap.InfoWindow({
-        offset: new AMap.Pixel(0, -66),
-        size: new AMap.Size(260, 150),
-        showShadow: true,
-        isCustom: false
-      });
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
       window.checkTrack = this.checkTrack;
+      window.closeInfoWindow = this.closeInfoWindow;
       this.redball = new AMap.Marker({
         icon: this.redballUrl,
         offset: new AMap.Pixel(-16, -41),
@@ -523,7 +537,6 @@
         offset: new AMap.Pixel(0, -66),
         isCustom: true
       });
-      window.closeInfoWindow = this.closeInfoWindow;
     },
     methods: {
       subString(str, maxLength) {
@@ -535,20 +548,6 @@
       },
       closeInfoWindow() {
         this.infoWindow2.close();
-      },
-      showInfoWindow() {
-        var infoWindow = this.infoWindow2;
-        if (!this.infoWindow2Init) {
-          document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
-          var tempEle = document.getElementById("infoWindow");
-          infoWindow.setContent(tempEle.innerHTML);
-          tempEle.innerHTML = "";
-          this.infoWindow2Init = true;
-        } else {
-          document.getElementById("infoWindowTitle").innerText = this.subString("运输中运输中运输中运输中运输中运输中运输中运输中运输中", 16);
-        }
-        var pos = new AMap.LngLat(85.507199, 37.269658);
-        infoWindow.open(this.mp, pos);
       },
       clickOrderSearchResult() {
         if (this.showOrderSearchResultIcon == "el-icon-minus") {
@@ -572,19 +571,35 @@
       },
       markerClick(e) {
         var markerPoint = this.markerPoint = e.target;
-        var infoWindow = this.infoWindow;
-        infoWindow.setContent("<div>详细信息</div><div style=\"font-size: 12px\"><br>地址：<span id=\"mapAddr\"></span><br><br><a href=\"javascript:showTrack('" + markerPoint.content +
-          "')\">查看轨迹</a></div>");
+        var infoWindow = this.infoWindow2;
+        if (!this.infoWindow2Init) {
+          document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
+          var tempEle = document.getElementById("infoWindow");
+          infoWindow.setContent(tempEle.innerHTML);
+          tempEle.innerHTML = "";
+          this.infoWindow2Init = true;
+        } else
+          document.getElementById("infoWindowTitle").innerText = this.subString("运输中", 16);
+
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
-            document.getElementById("mapAddr").innerText = address;
+            var tempEle = document.getElementById("mapAddr");
+            if (tempEle != null)
+              tempEle.innerText = address;
           }
         });
       },
       showTrack(orderId) {
+        if (orderId == null) {
+          var markerPoint = this.markerPoint;
+          if (markerPoint == null)
+            return;
+          this.showTrack(markerPoint.content);
+          return;
+        }
         var mp = this.mp;
         mp.clearInfoWindow();
         var pois = this.genTrack(orderId);
@@ -600,9 +615,10 @@
         checkTrack();
       },
       genTrack(orderId) {
-        var pois = new Array();
+        var pois = [];
+        var point =null;
         if (orderId == "1") {
-          var point = new AMap.LngLat(113.279201, 23.079731);
+          point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
           point = new AMap.LngLat(113.298245, 23.070488);
           pois.push(point);
@@ -615,7 +631,7 @@
           point = new AMap.LngLat(113.28804, 23.086912);
           pois.push(point);
         } else if (orderId == "2") {
-          var point = new AMap.LngLat(116.383141, 39.923679);
+          point = new AMap.LngLat(116.383141, 39.923679);
           pois.push(point);
           point = new AMap.LngLat(116.389105, 39.929378);
           pois.push(point);
@@ -628,7 +644,7 @@
           point = new AMap.LngLat(116.395645, 39.924232);
           pois.push(point);
         } else if (orderId == "3") {
-          var point = new AMap.LngLat(106.554291, 29.597066);
+          point = new AMap.LngLat(106.554291, 29.597066);
           pois.push(point);
           point = new AMap.LngLat(106.520299, 29.585509);
           pois.push(point);
@@ -641,7 +657,7 @@
           point = new AMap.LngLat(106.546242, 29.585069);
           pois.push(point);
         } else if (orderId == "4") {
-          var point = new AMap.LngLat(103.79549, 36.095664);
+          point = new AMap.LngLat(103.79549, 36.095664);
           pois.push(point);
           point = new AMap.LngLat(103.815396, 36.09718);
           pois.push(point);
@@ -700,9 +716,8 @@
 <style scoped>
   .customInfoWindow {
     width: 328px;
-    max-height: 471px;
     background-color: #ffffff;
-    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
   }
 
   .customInfoWindow .title {
@@ -724,8 +739,9 @@
 
   .customInfoWindow .body {
     width: 100%;
-    height: 100%;
-    padding: 12px;
+    max-height: 500px;
+    overflow: auto;
+    padding: 12px 12px 16px 12px;
   }
 
   .customInfoWindow .body .bar {
@@ -741,6 +757,28 @@
     font-size: 12px;
     width: 100%;
     border-collapse: collapse;
+  }
+
+  .customInfoWindow .table2 {
+    font-size: 12px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .customInfoWindow .table2 td {
+    border: 1px solid gray;
+    padding-left: 4px;
+    vertical-align: middle;
+    width: 88px;
+  }
+
+  .customInfoWindow .table2 td.label {
+    background-color: #f2f2f2;
+    color: gray;
+    text-align: right;
+    padding-right: 4px;
+    width: 64px;
+    height: 32px;
   }
 
   .customInfoWindow .table .row {
@@ -811,7 +849,7 @@
     font-size: 14px;
     font-weight: bold;
     font-stretch: normal;
-    letter-spacing: 0px;
+    letter-spacing: 0;
     color: #333333;
   }
 
@@ -826,7 +864,7 @@
     top: 20px;
     width: 396px;
     background-color: #ffffff;
-    box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
+    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
     padding: 15px;
   }
 
