@@ -7,11 +7,13 @@
           <div class="rate">
             <span>司机评分</span>
             <el-rate
-              v-model="value5"
-              disabled
+              v-model="rateDrive.starLevel"
+
               show-score
               text-color="#ff9900"
-              score-template="{value}">
+              score-template="{value}"
+              @change="changeRate"
+            >
             </el-rate>
           </div>
           <div class="rateTitle">
@@ -23,10 +25,13 @@
               </template>
 
             </ul>
-            <el-input type="textarea" placeholder="师傅服务周到吗？输入评语为更多的小伙伴提供参考～"></el-input>
+
+          </div>
+          <div class="textarea">
+            <el-input type="textarea" placeholder="师傅服务周到吗？输入评语为更多的小伙伴提供参考～" v-model="rateDrive.rembel"></el-input>
           </div>
           <div class="btn">
-            <el-button type="success">评价</el-button>
+            <el-button type="success" @click="onSubmit">评价</el-button>
           </div>
           <!--<ul>-->
             <!--<li>评价司机<span>（您的评价将会被严格匿名）</span></li>-->
@@ -48,7 +53,7 @@
               <p></p>
               <span class="actClass">网显示</span>&nbsp;&nbsp;<span class="unClass">(外星人)</span>
               <el-rate
-                v-model="value5"
+                v-model="rateDetail.rateNum"
                 disabled
                 show-score
                 text-color="#ff9900"
@@ -118,13 +123,23 @@
 
 <script>
   import {getUserInfo} from '@/utils/auth'
+  import {postEvaluateShipper,getSysDictByCodesGet} from '@/api/concentrateAxios/orderManage'
 
   export default {
     data(){
       return{
+
         tabId:0,
         radio: '1',
-        value5: 3.7,
+        rateDrive:{
+          starLevel:5,
+          rembel:'',
+          evaluationType:''
+        },
+        rateDetail:{
+          rateNum:5,
+        },
+
         activeNames: '',
         changeItem: '',
         userData: getUserInfo(),
@@ -134,18 +149,75 @@
           {name:'服务态度好'},
           {name:'免费回单回款'},
           {name:'收费合理'}
-        ]
+        ],
+        senData:{
+          "evaluationDes": "",
+          "evaluationId": "",
+          "evaluationName": "",
+          "evaluationType": "",
+          "orderSerial": "",
+          "starLevel": "",
+          "userId": '',
+          "userName": ""
+          // getUserInfo().shipperId
+        },
+        sendCodes:{
+          codes:''
+        }
         // activeNames: ['1']
       }
     },
     mounted(){
-      console.log('userinfo":', window.USERDATA)
+      this.fetchRate('AF0042102')
+      // console.log(this.$route.query)
     },
     methods: {
+      onSubmit(){
+        this.senData = {
+          "evaluationDes": "",
+          "evaluationId": "",
+          "evaluationName": "",
+          "evaluationType": '',
+          "orderSerial": "",
+          "starLevel": this.rateDrive.starLevel,
+          "userId": '',
+          "userName": ''
+        }
+        if(this.tabId === 0){
+          this.senData.evaluationType = this.liList[0].name
+        }else{
+          this.senData.evaluationType = Object.assign(this.rateDrive.evaluationType)
+        }
+        console.log(this.senData)
+        let promiseObj
+        // promiseObj = postEvaluateShipper(this.senData)
+        // promiseObj.then(res =>{
+        //   console.log(res)
+        // })
+
+      },
+      fetchRate(codes){
+        return getSysDictByCodesGet(codes).then(res=>{
+          if(res.status === 200){
+            if(this.rateDrive.starLevel > 3.5){
+              this.liList = res.data.AF0042102
+            }else{
+              this.liList = res.data.AF0042101
+            }
+          }
+        })
+      },
+      changeRate(item){
+        this.rateDrive.starLevel = item
+        if(this.rateDrive.starLevel > 3.5){
+          this.fetchRate('AF0042102')
+        }else{
+          this.fetchRate('AF0042101')
+        }
+      },
       changeActive(item,index){
         this.tabId = index
-        this.changeItem = item
-
+        this.rateDrive.evaluationType = item.name
       },
       handleChange(val) {
         console.log(val);
@@ -219,11 +291,16 @@
               color: #ffffff;
             }
           }
+
+
+        }
+        .textarea{
+          width: 100%;
+          display: inline-block;
+          margin: 20px 0 20px 100px;
           .el-textarea{
             width: 50%;
-            margin: 20px 0 20px 100px;
           }
-
         }
         .btn{
           display: inline-block;

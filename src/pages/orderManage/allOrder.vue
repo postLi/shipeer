@@ -149,7 +149,7 @@
           <template slot-scope="scope">
             <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
             <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
-            <!--<el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.payStatus === 'AF00801'">确认回款</el-button>-->
+
             <el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.status === 'AF0080705'">确认回款</el-button>
             <el-button type="text" size="small" @click="handleClickMessage(scope.row)"  v-if="scope.row.status === 'AF0080703'">确认回单</el-button>
             <el-button @click="handleClickAgain(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF00807' && scope.row.payStatus === 'AF00802'">再下一单</el-button>
@@ -175,6 +175,9 @@
   export default{
     data(){
       return {
+        title:'派单中',
+        sendData:{},
+        sendFn:'',
         total: 0,
         totalCount: 0,
         height:0,
@@ -236,9 +239,6 @@
         this.fetchAllList()
       },
       handleClickToMap(row){
-        let title = '派单中'
-        let sendData = row
-        let sendFn = ''
         if(row.payStatus === 'AF00801'){
           if(row.isEnshrine === true){
 
@@ -247,9 +247,9 @@
 
         }
         this.$router.push({path: '/orderRouter/getPickUp',query: {
-            tab: title,
-            qy:sendData,
-            fn:sendFn
+            tab: this.title,
+            qy:this.sendData,
+            fn:this.sendFn
           }})
 
       },
@@ -263,7 +263,11 @@
       },
 
       handleClickEvaDriver(row){
-        this.$router.push({path: '/orderRouter/evaluateDriver'})
+        this.$router.push({path: '/orderRouter/evaluateDriver',query: {
+            tab: this.title,
+            qy:this.sendData,
+            fn:this.sendFn
+          }})
       },
       handleClickUnloadOrder(row) {
         this.$router.push({path: '/orderRouter/unloadOrder'})

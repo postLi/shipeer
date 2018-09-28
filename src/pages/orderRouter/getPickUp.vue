@@ -382,7 +382,7 @@
         .topClass{
           font-size: 16px;
           color: #333333;
-          padding: 40px 52px 45px 50px;
+          margin: 40px 52px 45px 50px;
           font-weight: 600;
           max-height: calc(100% - 20px);
           overflow: auto;
@@ -415,16 +415,19 @@
                 padding-top: 2px;
               }
             }
-            /*li:not(:first-of-type):not(:last-of-type) {*/
-              /*content: '';*/
-              /*display: block;*/
-              /*position: absolute;*/
-              /*top: 12px;*/
-              /*left: 0;*/
-              /*background: #979797;*/
-              /*width: 2px;*/
-              /*height: 30px;*/
-            /*}*/
+            li:not(:last-of-type) {
+              span:before{
+                content: '';
+                display: block;
+                position: absolute;
+                top: 30px;
+                left: 4px;
+                background: #979797;
+                width: 2px;
+                height: 30px;
+              }
+
+            }
             li:first-of-type {
               p:before{
                 content: '';
