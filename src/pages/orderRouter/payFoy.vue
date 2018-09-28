@@ -91,20 +91,65 @@
           <span class="titleClass">付款方式</span>
           <ul>
             <li>
-              <el-radio v-model="radio" label="1">余额支付 <span>(可用余额0.00元)</span><i>立即充值</i></el-radio>
+              <el-radio v-model="radio" label="1"><span class="spanClass">
+                  <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
+                  </span>
+                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>0.00</i>元)</span><i class="getup">立即充值</i></el-radio>
 
             </li>
             <li>
-              <el-radio v-model="radio" label="2">微信支付<span>搬运等额外费用可在司机装货后支付</span><i>（优惠8元）</i></el-radio>
+              <el-radio v-model="radio" label="2"><span class="spanClass">
+                  <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
+                  </span>
+                <span class="titleP">微信支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠8元）</i></span></el-radio>
+
             </li>
+            <!--<li>-->
+              <!--<el-radio v-model="radio" label="2">微信支付<span>搬运等额外费用可在司机装货后支付</span><i>（优惠8元）</i></el-radio>-->
+            <!--</li>-->
             <li>
-              <el-radio v-model="radio" label="3">支付宝支付<span>搬运等额外费用可在司机装货后支付</span><i>（优惠8元）</i></el-radio>
+              <el-radio v-model="radio" label="3"><span class="spanClass">
+                  <icon-svg iconClass="lll02zfb" class="svg"></icon-svg>
+                  </span>
+                <span class="titleP">支付宝支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠8元）</i></span></el-radio>
+
             </li>
+
           </ul>
+        </div>
+        <div class="openDialogw" >
+          <el-dialog
+            title="微信支付"
+            :visible.sync="centerDialogVisible"
+            width="30%"
+            center>
+            <div class="content">
+              <div class="contLeft">
+                <p>充值金额（元）</p>
+                <p>300元</p>
+                <!--<img :src="pfimg" alt="">-->
+                <img src="../../assets/login/code.png" alt="">
+                <p>二维码有效时长为2个小时<br>
+                  请尽快支付</p>
+                <div class="btn">
+                  <el-button type="success">完成支付</el-button>
+                </div>
+              </div>
+              <div class="contRight">
+                <img src="../../assets/myorder/lll-iPhone X.png" alt="">
+                <img src="../../assets/myorder/saoyisao.png" alt="">
+                <p>请使用微信扫一扫</p>
+              </div>
+            </div>
+            <!--<span slot="footer" class="dialog-footer">-->
+            <!--<el-button @click="centerDialogVisible = false">取 消</el-button>-->
+            <!--<el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>-->
+            <!--</span>-->
+          </el-dialog>
         </div>
       </el-main>
       <el-footer>
-        <el-button type="success">确认付款</el-button>
+        <el-button type="success" @click="onSubmit">确认付款</el-button>
       </el-footer>
     </el-container>
     <!--<div class="payFor-hearder">-->
@@ -119,6 +164,7 @@
   export default {
     data(){
       return{
+        centerDialogVisible: false,
         radio: '1',
         value5: 3.7,
         activeNames: '',
@@ -130,6 +176,21 @@
       console.log('userinfo":', window.USERDATA)
     },
     methods: {
+      onSubmit(){
+        if(this.radio == 1){
+          this.centerDialogVisible = true
+        }
+        // this.centerDialogVisible = false
+        // this.centerDialogVisiblezfb = false
+        // if(this.changPfId === 0){
+        //   this.centerDialogVisible = true
+        //   this.getCreateAflcRecharg()
+        //
+        // }else if(this.changPfId === 1){
+        //   this.centerDialogVisiblezfb = true
+        //   this.getCreateAflcRechargzfb()
+        // }
+      },
       handleChange(val) {
         console.log(val);
       }
@@ -243,7 +304,9 @@
         /*left: 750px;*/
         /*marfin-left: 65px;*/
         float: left;
-        margin-left: 50px;
+        margin:40px 0 0 50px;
+        /*min-width: 700px;*/
+        /*display: inline-block;*/
         li{
           padding-top: 10px;
           /*position: relative;*/
@@ -371,6 +434,99 @@
           color: #333333;
           font-weight: 600;
         }
+        ul{
+          margin: 10px 0 10px 60px;
+          li{
+            i{
+              font-style: normal;
+            }
+            .el-radio{
+              .el-radio__label{
+                .spanClass{
+                  display: inline-block;
+                  position: relative;
+                  .svg{
+                    width: 35px;
+                    height: 35px;
+                    position: absolute;
+                    top: -25px;
+                    left: 1px;
+                  }
+                }
+                .titleP{
+                  margin-left: 30px;
+                }
+                .yue{
+                  color: #999999;
+                  i{
+                    font-size: 12px;
+                    color: #e6454a;
+                  }
+                }
+                .youhui{
+                  color: #999999;
+                  i{
+                    font-size: 12px;
+                    color: #e6454a;
+                    margin-left: 10px;
+                  }
+                }
+                .getup{
+                  margin-left: 90px;
+                  color: #999999;
+                }
+              }
+            }
+          }
+          li:not(:first-of-type){
+            margin-top: 20px;
+          }
+        }
+      }
+      .openDialogw,.openDialogz{
+        .el-dialog__body{
+          .content{
+            .contLeft{
+              float: left;
+              margin: 40px 100px 120px 50px;
+              text-align: center;
+              p:first-of-type{
+                font-size: 12px;
+                color: #333333;
+              }
+              p:nth-of-type(2){
+                font-size: 16px;
+                color: #ff300d;
+                padding-top: 5px;
+              }
+              p:last-of-type{
+                font-size: 12px;
+                color: #333333;
+                padding-top: 10px;
+              }
+              img{
+                width: 154px;
+                height: 154px;
+              }
+              .btn{
+                margin-top: 40px;
+              }
+            }
+            .contRight{
+              position: relative;
+              text-align: center;
+              img:nth-of-type(2){
+                position: absolute;
+                top: 50px;
+                left: 270px;
+                width: 100px;
+                height: 100px;
+              }
+              /*float: right;*/
+            }
+          }
+        }
+
       }
 
     }

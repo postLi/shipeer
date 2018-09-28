@@ -18,13 +18,17 @@
           </div>
           <div class="rateTitle">
             <span>司机评语</span>
-            <ul>
-              <template v-for="(item,index) in liList">
-                <!--<li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">-->
-                <li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">{{item.name}}</li>
-              </template>
+            <div class="rateMess">
+              <el-checkbox-group v-model="checkboxGroup1" @change="changeActive">
+                <el-checkbox-button v-for="(item,index) in liList" :label="item.name" :key="item.name" :index="index">{{item.name}}</el-checkbox-button>
+              </el-checkbox-group>
+            </div>
+            <!--<ul>-->
+              <!--<template v-for="(item,index) in liList">-->
+                <!--<li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">{{item.name}}</li>-->
+              <!--</template>-->
 
-            </ul>
+            <!--</ul>-->
 
           </div>
           <div class="textarea">
@@ -111,6 +115,14 @@
             <p>猎德村复建房五区</p>
             <span>南山区兴南路10号</span>
           </li>
+          <li>
+            <p>猎德村复建房五区</p>
+            <span>南山区兴南路10号</span>
+          </li> <li>
+          <p>猎德村复建房五区</p>
+          <span>南山区兴南路10号</span>
+        </li>
+
         </ul>
       </el-main>
 
@@ -124,11 +136,12 @@
 <script>
   import {getUserInfo} from '@/utils/auth'
   import {postEvaluateShipper,getSysDictByCodesGet} from '@/api/concentrateAxios/orderManage'
-
+  const cityOptions = ['上海', '北京', '广州', '深圳'];
   export default {
     data(){
       return{
-
+        checkboxGroup1: [],
+        cities: cityOptions,
         tabId:0,
         radio: '1',
         rateDrive:{
@@ -144,11 +157,6 @@
         changeItem: '',
         userData: getUserInfo(),
         liList:[
-          {name:'认路准确活地图'},
-          {name:'师傅很守时'},
-          {name:'服务态度好'},
-          {name:'免费回单回款'},
-          {name:'收费合理'}
         ],
         senData:{
           "evaluationDes": "",
@@ -173,27 +181,38 @@
     },
     methods: {
       onSubmit(){
-        this.senData = {
-          "evaluationDes": "",
-          "evaluationId": "",
-          "evaluationName": "",
-          "evaluationType": '',
-          "orderSerial": "",
-          "starLevel": this.rateDrive.starLevel,
-          "userId": '',
-          "userName": ''
-        }
-        if(this.tabId === 0){
-          this.senData.evaluationType = this.liList[0].name
+
+        if(this.rateDrive.evaluationType.length === 0){
+          this.$message.info('请给司机评语~')
         }else{
-          this.senData.evaluationType = Object.assign(this.rateDrive.evaluationType)
+          let evaluationType = this.rateDrive.evaluationType.map(el => {
+
+            return el
+          })
+          evaluationType = evaluationType.length > 1 ? evaluationType.join(',') : evaluationType
+
+          this.senData = {
+            "evaluationDes": this.rateDrive.rembel,
+            "evaluationId":this.userData.shipperId,
+            "evaluationName": this.userData.contacts,
+            "evaluationType": evaluationType,
+            // this.$route.query.qy.orderSerial
+            "orderSerial": this.$route.query.qy.orderSerial,
+            "starLevel": this.rateDrive.starLevel,
+            "userId": '',
+            // this.$route.query.qy.driverName
+            "userName": this.$route.query.qy.driverName
+          }
         }
-        console.log(this.senData)
         let promiseObj
-        // promiseObj = postEvaluateShipper(this.senData)
-        // promiseObj.then(res =>{
-        //   console.log(res)
-        // })
+        promiseObj = postEvaluateShipper(this.senData)
+        promiseObj.then(res =>{
+          if(res.status===200){
+            this.$message.success('评价成功')
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+        })
 
       },
       fetchRate(codes){
@@ -215,12 +234,9 @@
           this.fetchRate('AF0042101')
         }
       },
-      changeActive(item,index){
-        this.tabId = index
-        this.rateDrive.evaluationType = item.name
-      },
-      handleChange(val) {
-        console.log(val);
+      changeActive(item){
+        this.rateDrive.evaluationType = item
+        console.log(item)
       }
     }
   }
@@ -274,24 +290,31 @@
             color: #999999;
             float: left;
           }
-          ul{
-            float: left;
-            li{
-              float: left;
-              background-color: #f2f2f2;
-              padding: 8px 20px;
-              margin-left: 40px;
-              font-size: 12px;
-              cursor: pointer;
-              color: #333333;
-            }
-            .active{
-              background-color: #ff300d;
-              opacity: 0.8;
-              color: #ffffff;
-            }
-          }
+          .rateMess{
+            display: inline-block;
+            margin-left: 40px;
+            .el-checkbox-group{
+              /*background: skyblue;*/
+              .el-checkbox-button{
+                margin-left: 20px;
+                .el-checkbox-button__inner{
+                  background-color: #f2f2f2;
+                  color: #333333;
+                  font-size: 12px;
+                }
 
+              }
+              .el-checkbox-button.is-checked{
+                .el-checkbox-button__inner{
+                  background-color: #ff300d;
+                  border-color: #ff300d ;
+                  color: #ffffff;
+                  font-size: 12px;
+                }
+              }
+            }
+
+          }
 
         }
         .textarea{
@@ -308,7 +331,6 @@
         }
       }
       .height-foot{
-
       }
 
     }
@@ -418,6 +440,9 @@
             font-size: 14px;
             color: #999999;
           }
+
+        }
+        li:not(:last-of-type){
           p:before{
             content: '';
             display: block;
@@ -433,19 +458,7 @@
         li:first-of-type{
           padding-top: 0;
         }
-        li:last-of-type{
-          p:before{
-            content: '';
-            display: block;
-            height: 30px;
-            /*width: 2px;*/
-            background: #fff;
-            position: absolute;
-            top: 24px;
-            left: -14px;
-            /*border: 2px solid #ddd;*/
-          }
-        }
+
         li:first-of-type:before{
           content: '';
           display: block;
@@ -458,9 +471,8 @@
           left: -18px;
 
 
-
         }
-        li:nth-of-type(2):before{
+        li:not(:first-of-type):not(:last-of-type):before{
           content: '';
           display: block;
           width: 8px;

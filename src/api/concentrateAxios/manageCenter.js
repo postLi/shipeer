@@ -11,6 +11,7 @@ let swg5 = 'aflcsmservice'
 let swg6 = '/aflcusercenterservice'
 let swg7 = '/aflc-pay'
 let swg8 = '/aflcusercenterservice'
+let swg9 = '/aflc-uc'
 // let swg3 = 'aflcsmservice-wtc/v2/api-docs'
 export function postFindMywallet() {
   return Axios.post('/aflcusercenterservice/aflcMywalletApi/findMywallet')
@@ -63,6 +64,13 @@ export function postScanPay(orderSerial,params) {
   })
   // return Axios.post(''+swg7+'/pay/shipper/common/v1/scanPay/'+orderSerial,params)
 }
+
+// /aflcRechargeApi/findAflcRecharge
+// 充值记录
+export function postFindAflcRecharge(params) {
+  return Axios.post(''+swg9+'/aflcRechargeApi/findAflcRecharge',params)
+}
+
 // /api/pay/shipper/common/v1/tradeQuery/{orderSerial}
 // 货主支付查询
 export function postTradeQuery(orderSerial,type) {
