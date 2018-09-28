@@ -5,7 +5,7 @@
       <div class="ctl">
         <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
         <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
-        <button class="btn" style="margin-left:5px;" @click="testInfoWindow">测试信息窗口</button>
+        <button class="btn" style="margin-left:5px;" @click="showInfoWindow">测试信息窗口</button>
       </div>
     </div>
     <div class="orderSearch">
@@ -335,7 +335,7 @@
       <div class="customInfoWindow">
         <div class="title">
           <div id="infoWindowTitle"></div>
-          <div class="el-icon-close" style="position: absolute;right: 7px;top:11px" onclick="closeInfoWindow()"></div>
+          <div class="el-icon-close" onclick="closeInfoWindow()"></div>
         </div>
       </div>
     </div>
@@ -356,6 +356,7 @@
         markerPoint: null,
         infoWindow: null,
         infoWindow2: null,
+        infoWindow2Init: false,
         geocoder: null,
         polyline: null,
         passedPolyline: null,
@@ -465,17 +466,30 @@
         size: new AMap.Size(260, 150),
         isCustom: true
       });
-      window.closeInfoWindow=this.closeInfoWindow;
+      window.closeInfoWindow = this.closeInfoWindow;
     },
     methods: {
-      closeInfoWindow(){
+      subString(str, maxLength) {
+        if (str == null)
+          return str;
+        if (str.length <= maxLength)
+          return str;
+        return (str.substr(0, maxLength) + "...");
+      },
+      closeInfoWindow() {
         this.infoWindow2.close();
       },
-      testInfoWindow() {
+      showInfoWindow() {
         var infoWindow = this.infoWindow2;
-        infoWindow.setContent("");
-        document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
-        infoWindow.setContent(document.getElementById("infoWindow").innerHTML);
+        if (!this.infoWindow2Init) {
+          document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
+          var tempEle = document.getElementById("infoWindow");
+          infoWindow.setContent(tempEle.innerHTML);
+          tempEle.innerHTML = "";
+          this.infoWindow2Init = true;
+        } else {
+          document.getElementById("infoWindowTitle").innerText = this.subString("运输中运输中运输中运输中运输中运输中运输中运输中运输中",16);
+        }
         var pos = new AMap.LngLat(85.507199, 37.269658);
         infoWindow.open(this.mp, pos);
       },
@@ -641,6 +655,14 @@
     vertical-align: middle;
     text-align: center;
     background-color: #2fb301;
+    color: white;
+  }
+
+  .customInfoWindow .el-icon-close {
+    position: absolute;
+    right: 7px;
+    top: 11px;
+    cursor: pointer;
   }
 
   #infoWindow {
