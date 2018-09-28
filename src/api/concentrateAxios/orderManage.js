@@ -44,3 +44,5 @@ export function getSysDictByCodesGet(codes) {
 
   return Axios.get(''+swg3+'/aflcCommonSysDistApi/getSysDictByCodesGet/'+'?codes='+codes)
 }
+// /api/pay/shipper/common/v1/tradeQuery/{orderSerial}
+// 货主支付查询
