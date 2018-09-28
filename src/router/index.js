@@ -28,6 +28,7 @@ import AddressManage from '@/pages/addressManage/addressManage.vue'
 import RouteManage from '@/pages/routeManage/routeManage.vue'
 
 import OrderMonitor from '@/pages/orderMonitor/orderMonitor.vue'
+import Track from '@/pages/orderMonitor/track.vue'
 
 Vue.use(Router);
 
@@ -43,6 +44,11 @@ export default new Router({
           path: '/orderMonitor',
           name: 'orderMonitor',
           component: OrderMonitor,
+        },
+        {
+          path: '/track',
+          name: 'track',
+          component: Track,
         },
         {
           path: '/order',
