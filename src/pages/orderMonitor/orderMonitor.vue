@@ -25,7 +25,7 @@
           </div>
           <div class="table">
             <div class="row">
-              <div class="cell">
+              <div class="cell" style="padding-top: 12px">
                 司机已接单
               </div>
               <div class="cell">
@@ -55,8 +55,8 @@
               </div>
             </div>
           </div>
-          <div style="max-height: 300px;overflow: auto">
-            <div class="table">
+          <div style="max-height: 300px;overflow: auto;margin-top: 12px">
+            <div class="table" style="width: 350px">
               <div class="row">
                 <div class="cellHeader">
                   序号
@@ -337,6 +337,64 @@
           <div id="infoWindowTitle"></div>
           <div class="el-icon-close" onclick="closeInfoWindow()"></div>
         </div>
+        <div class="body">
+          <p class="bar">车辆信息</p>
+          <div class="table">
+            <div class="row">
+              <div class="cellHeader">
+                车牌号
+              </div>
+              <div class="cell">
+                粤A12345
+              </div>
+              <div class="cellHeader">
+                司机
+              </div>
+              <div class="cell">
+                李世杰
+              </div>
+            </div>
+            <div class="row">
+              <div class="cellHeader">
+                车型
+              </div>
+              <div class="cell">
+                小面包
+              </div>
+              <div class="cellHeader">
+                联系电话
+              </div>
+              <div class="cell">
+                18028693660-18028693660-18028693660
+              </div>
+            </div>
+          </div>
+          <p class="bar" style="margin-top: 20px">订单信息</p>
+          <div class="table">
+            <div class="row">
+              <div class="cellHeader">
+                用车时间
+              </div>
+              <div class="cell" style="width: 240px">
+                2018-09-28 10:00:05
+              </div>
+            </div>
+            <div class="row">
+              <div class="cellHeader">
+                车型
+              </div>
+              <div class="cell">
+                小面包
+              </div>
+              <div class="cellHeader">
+                联系电话
+              </div>
+              <div class="cell">
+                18028693660-18028693660
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -463,7 +521,6 @@
       });
       this.infoWindow2 = new AMap.InfoWindow({
         offset: new AMap.Pixel(0, -66),
-        size: new AMap.Size(260, 150),
         isCustom: true
       });
       window.closeInfoWindow = this.closeInfoWindow;
@@ -488,7 +545,7 @@
           tempEle.innerHTML = "";
           this.infoWindow2Init = true;
         } else {
-          document.getElementById("infoWindowTitle").innerText = this.subString("运输中运输中运输中运输中运输中运输中运输中运输中运输中",16);
+          document.getElementById("infoWindowTitle").innerText = this.subString("运输中运输中运输中运输中运输中运输中运输中运输中运输中", 16);
         }
         var pos = new AMap.LngLat(85.507199, 37.269658);
         infoWindow.open(this.mp, pos);
@@ -643,13 +700,13 @@
 <style scoped>
   .customInfoWindow {
     width: 328px;
-    height: 471px;
+    max-height: 471px;
     background-color: #ffffff;
     box-shadow: 0px 2px 4px 0px rgba(153, 153, 153, 0.5);
   }
 
   .customInfoWindow .title {
-    width: 100%;
+    width: 329px;
     height: 38px;
     line-height: 38px;
     vertical-align: middle;
@@ -665,6 +722,52 @@
     cursor: pointer;
   }
 
+  .customInfoWindow .body {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+  }
+
+  .customInfoWindow .body .bar {
+    font-size: 14px;
+    width: 100%;
+    background-color: white;
+    color: black;
+    text-align: left;
+  }
+
+  .customInfoWindow .table {
+    display: table;
+    font-size: 12px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .customInfoWindow .table .row {
+    display: table-row
+  }
+
+  .customInfoWindow .table .cell {
+    display: table-cell;
+    width: 88px;
+    border: 1px solid gray;
+    text-align: left;
+    padding-left: 4px;
+    vertical-align: middle;
+  }
+
+  .customInfoWindow .table .cellHeader {
+    display: table-cell;
+    border: 1px solid gray;
+    text-align: right;
+    background-color: #f2f2f2;
+    color: gray;
+    width: 64px;
+    height: 32px;
+    padding-right: 4px;
+    vertical-align: middle;
+  }
+
   #infoWindow {
     display: none
   }
@@ -674,7 +777,8 @@
     font-size: 12px;
     width: 100%;
     padding: 12px;
-    vertical-align: center;
+    vertical-align: middle;
+    border-collapse: collapse;
   }
 
   .orderSearchResult .table .row {
