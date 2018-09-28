@@ -1,7 +1,7 @@
 <template>
   <div class="address-line flex_f" v-show="showAddress.show">
     <div class="title flex_sb margin_b_10">
-      <span class="window-title-left">选用常用地址</span>
+      <span class="window-title-left c-3">选用常用地址</span>
       <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="showAddress.show = false">
     </div>
     <div class="search flex_sb">
@@ -19,7 +19,7 @@
         <el-button size="small" @click="openWindow()" type="primary">新增常用地址</el-button>
         <div class="add-route" v-if="window">
           <div class="title flex_sb margin_b_10">
-            <span class="window-title-left">{{name}}常用地址</span>
+            <span class="window-title-left c-3">{{name}}常用地址</span>
             <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="close()">
           </div>
 
@@ -47,7 +47,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="flex height_100 window-title-left">还没有地址</div>
+      <div v-else class="flex height_100 window-title-left c-3">还没有地址</div>
     </div>
 
   </div>
@@ -98,7 +98,7 @@
           this.name= "编辑";
           this.window = !this.window;
           getApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/${id}`).then((res)=>{
-            this.form = res;
+            this.form = res.data;
           });
 
         },
@@ -185,7 +185,7 @@
             }
           };
           postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/list',parm).then((res)=>{
-            this.addressList = res.list;
+            this.addressList = res.data.list;
           });
         }
       },

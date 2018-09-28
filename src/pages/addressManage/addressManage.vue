@@ -4,7 +4,7 @@
       <div class="padding_20" ref="getTop">
         <header class="flex_a f_f">
           <div class="flex_a m-r">
-            <span class="window-title-left">地址类型：</span>
+            <span class="window-title-left c-3">地址类型：</span>
             <el-select v-model="addressIdSearch" placeholder="请选择" size="small" class="address-width" clearable>
               <el-option
                 v-for="item in options"
@@ -16,15 +16,15 @@
           </div>
 
           <div class="flex_a m-r">
-            <span class="window-title-left">地址：</span>
+            <span class="window-title-left c-3">地址：</span>
             <el-input v-model="addressSearch" placeholder="请输入地址" size="small" class="address-width "></el-input>
           </div>
           <div class="flex_a m-r">
-            <span class="window-title-left">联系人：</span>
+            <span class="window-title-left c-3">联系人：</span>
             <el-input v-model="contactsSearch" placeholder="请输入联系人" size="small" class="address-width "></el-input>
           </div>
           <div class="flex_a m-r">
-            <span class="window-title-left">联系电话：</span>
+            <span class="window-title-left c-3">联系电话：</span>
             <el-input v-model="contactsPhoneSearch" placeholder="请输入联系电话" size="small" class="address-width "></el-input>
           </div>
 
@@ -173,8 +173,8 @@
         this.name= "编辑";
         this.window = !this.window;
         getApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/${id}`).then((res)=>{
-          this.requestClick(res.type);
-          this.form = res;
+          this.requestClick(res.data.type);
+          this.form = res.data;
         });
       },
       save(){
@@ -186,9 +186,10 @@
           this.$message.warning("没有获取到坐标点，保存失败");
           return
         }
-        if(this.type === 1){
+        if(this.type === '0'){
           if(this.form.contactsPhone === ''){
             this.$message.warning("手机号码必填");
+            return
           }else {
             if(!REGEX.MOBILE.test(this.form.contactsPhone)){
               this.$message.warning("手机号码格式错误");
@@ -268,8 +269,8 @@
           }
         };
         postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/list',parm).then((res)=>{
-          this.tableData = res.list;
-          this.p.total = res.totalCount;
+          this.tableData = res.data.list;
+          this.p.total = res.data.totalCount;
         });
       }
     },

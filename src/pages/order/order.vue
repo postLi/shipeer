@@ -78,9 +78,9 @@
         <el-button size="small" @click="specClick(item.code)" v-for="(item,index) in specList" :key="item.id" :style="{'background-color':(item.code === form.specCode)?'#1890ff':'#f2f2f2','color':(item.code === form.specCode)?'white':'black'}">{{item.name}}</el-button>
       </div>
 
-    <!--提货地 目的地 -->
+    <!--发货地 目的地 -->
       <div class="item-margin item-4 flex_r" v-for="(item,index) in form.to">
-      <div v-if="index === 0" class="item-l"><span class="f_r">*</span>提货地：</div>
+      <div v-if="index === 0" class="item-l"><span class="f_r">*</span>发货地：</div>
       <div  v-if="index > 0 && index + 1 !== form.to.length" class="item-l"><span class="f_r">*</span>途经地：</div>
       <div  v-if="index + 1 ===  form.to.length"  class="item-l"><span class="f_r">*</span>目的地：</div>
       <div>
@@ -103,7 +103,7 @@
             <!--弹窗-->
             <div class="route-line flex_f" v-show="windowRoute">
               <div class="title flex_sb margin_b_10">
-                <span class="window-title-left">选用常用路线</span>
+                <span class="window-title-left c-3">选用常用路线</span>
                 <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="windowRoute = false">
               </div>
               <div class="search flex_sb">
@@ -126,7 +126,7 @@
                   <route-line :data="item" from="order" @selectLine="getSelectLine"></route-line>
                 </div>
               </div>
-              <div v-else class="flex height_100 window-title-left">
+              <div v-else class="flex height_100 window-title-left c-3">
                 还没有路线
               </div>
 
@@ -166,7 +166,7 @@
         <!--</el-autocomplete>-->
         <div class="p_r" style="width: 140px" >
           <div class="select-drop flex_sb pointer" @click="goodsWindow = !goodsWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(form.goodsName === '')?"（选填）":form.goodsName}}</div>
+            <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.goodsName === '')?"（选填）":form.goodsName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" style="width: 400px" v-if="goodsWindow">
@@ -201,7 +201,7 @@
       <div class="item-5-1 flex_a">
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="wightWindow = !wightWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(form.wightName === '不填' || form.wightName === '')?"（选填）":form.wightName}}</div>
+            <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.wightName === '不填' || form.wightName === '')?"（选填）":form.wightName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="wightWindow">
@@ -230,7 +230,7 @@
       <div  class="item-5-1 flex_a">
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="volumeWindow = !volumeWindow">
-            <div class="flex_1 window-title-12 padding_l_10">{{(form.volumeName === '不填' || form.volumeName === '')?"（选填）":form.volumeName}}</div>
+            <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.volumeName === '不填' || form.volumeName === '')?"（选填）":form.volumeName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="volumeWindow">
@@ -291,7 +291,7 @@
         <div  class="margin_r_10">
           <div class="p_r">
             <div class="select-drop flex_sb pointer" @click="tipWindow = !tipWindow">
-              <div class="flex_1 window-title-12 padding_l_10">{{(form.tipName === '')?"（选填）":form.tipName}}</div>
+              <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.tipName === '')?"（选填）":form.tipName}}</div>
               <i class="flex el-input__icon el-icon-arrow-down"></i>
             </div>
             <!--弹窗-->
@@ -496,7 +496,7 @@
         },
         getAddRoute(data){
           getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
-            this.searchRouteList = res;
+            this.searchRouteList = res.data;
           });
         },
           routeClick(){
@@ -652,16 +652,16 @@
           getApi(`/aflc-sm/aflcPriceApi/getPriceByArea/${code}`).then((res)=>{
 
             // if(res[0].serviceName === "同城"){
-              res[0].list.forEach((item)=>{
+              res.data[0].list.forEach((item)=>{
                 item.list[0].show = false;
               });
-              this.form.carList = res[0].list;
-              getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res[0].serviceCode}`).then((res1)=>{
-                res1.forEach((item)=>{
+              this.form.carList = res.data[0].list;
+              getApi(`/aflc-sm/aflcExtraPriceApi/findExtraPrice/${res.data[0].serviceCode}`).then((res1)=>{
+                res1.data.forEach((item)=>{
                   item.selected = false;
                   item.remark = ''
                 });
-                this.requestList = res1;
+                this.requestList = res1.data;
               })
             // }
           })
@@ -797,18 +797,18 @@
                 let city = result.city;
                 //城市列表
                 getApi('/aflc-common/aflcCommonAddressApi/cityList').then((res)=>{
-                  res.forEach((item)=>{
+                  res.data.forEach((item)=>{
                     item.code = item.pinyin;
                     item.name = item.pinyin;
                   });
-                  res.unshift({code: "当前定位城市", name: "当前定位城市", pinyin: "当前定位城市",cities:[{
+                  res.data.unshift({code: "当前定位城市", name: "当前定位城市", pinyin: "当前定位城市",cities:[{
                       code: adcode,
                       name: city,
                       parentCode: 1,
                       pinyin: "当前定位城市",
                     }]});
                   this.form.code = ["当前定位城市",adcode];
-                  this.cityList = res;
+                  this.cityList = res.data;
                   this.getPriceList(adcode)
                 });
               }
@@ -862,26 +862,26 @@
 
         //车辆规格
         getApi('/aflcsmservice/sm/aflcSysDict/v1/getCarSpecList').then((res)=>{
-          this.specList = res
+          this.specList = res.data
         });
 
         //货物名称
         getApi('/aflccommonservice/sysDict/getSysDictByCodeGet/AF034').then((res)=>{
-          this.goodsList = res
+          this.goodsList = res.data
         });
 
         //重量
         getApi('/aflc-common/sysDict/getSysDictByCodeGet/AF00403').then((res)=>{
-          this.wightList = res
+          this.wightList = res.data
         });
         //体积
         getApi('/aflc-common/sysDict/getSysDictByCodeGet/AF00404').then((res)=>{
-          this.volumeList = res
+          this.volumeList = res.data
         });
 
         //小费
         getApi('/aflc-common/sysDict/getSysDictByCodeGet/AF00405').then((res)=>{
-          this.tipList = res
+          this.tipList = res.data
         });
       }
     }
