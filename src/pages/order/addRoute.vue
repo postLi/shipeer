@@ -1,16 +1,16 @@
 <template>
   <div class="add-route" v-if="window">
   <div class="title flex_sb margin_b_10">
-  <span class="window-title-left">新增常用路线</span>
+  <span class="window-title-left c-3">新增常用路线</span>
   <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="window = false">
   </div>
 
   <div class="add-route-item ">
     <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
         <div class="flex_sb">
-         <span v-if="index === 0" class="window-title-left">提货地</span>
-          <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left">途经地</span>
-          <span v-if="index + 1 === addRoute.length" class="window-title-left">目的地</span>
+         <span v-if="index === 0" class="window-title-left c-3">提货地</span>
+          <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left c-3">途经地</span>
+          <span v-if="index + 1 === addRoute.length" class="window-title-left c-3">目的地</span>
           <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
           <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
         </div>
@@ -105,7 +105,7 @@
             "shipperLineName": new Date() * 1
           };
           postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine' ,parm).then((res)=>{
-            if(res){
+            if(res.data){
               this.$emit("addRoute", "addRoute");
               this.$message.success('操作成功');
               this.window = false;

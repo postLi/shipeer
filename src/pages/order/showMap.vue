@@ -2,7 +2,7 @@
   <div class="content-top" v-show="dialogVisible">
     <div class="content" >
       <div class="window" >
-        <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort === 0">提货地</div>
+        <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort === 0">发货地</div>
         <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort !== 0">目的地</div>
         <div class="margin_10">
           <span>你可以拖动地图选择位置</span>
@@ -17,15 +17,15 @@
             style="width: 220px"
             class="margin_t_10"
             autosize
-            :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
+            placeholder="楼层及门牌号（选填）"
             size="small"
-            v-model="data.consigneeMobile">
+            v-model="data.floorHousenum">
           </el-input>
           <el-input
             style="width: 220px"
             class="margin_t_10"
             autosize
-            :placeholder="(data.shipperSort === 0)?'提货联系人（选填）':'收货联系人（选填）'"
+            :placeholder="(data.shipperSort === 0)?'发货联系人（选填）':'收货联系人（选填）'"
             size="small"
             v-model="data.consignee">
           </el-input>
@@ -33,9 +33,9 @@
             style="width: 220px"
             class="margin_t_10"
             autosize
-            placeholder="楼层及门牌号（选填）"
+            :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
             size="small"
-            v-model="data.floorHousenum">
+            v-model="data.consigneeMobile">
           </el-input>
           <el-checkbox v-model="checked">保存为常用地址</el-checkbox>
           <div class="flex">

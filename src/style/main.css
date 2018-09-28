@@ -50,19 +50,46 @@
 }
 .o_f{overflow: auto;}
 .p_r{position: relative}
+
 .window-title-left{
   font-size: 14px;
-  color: #333333;
 }
 .window-title-12{
   font-size: 12px;
-  color: #333333;
 }
 .window-title-10{
   font-size: 10px;
+}
+
+.window-title-16{
+  font-size: 16px;
+}
+
+.window-title-22{
+  font-size: 22px;
+}
+.window-title-29{
+  font-size: 29px;
+}
+.window-title-32{
+  font-size: 32px;
+}
+.c-3{
+  color: #333333;
+}
+.c-9{
   color: #999999;
+}
+.c-f{
+  color: #ff300d
+}
+.c-0{
+  color: #000000;
 }
 
 .myForm .el-form-item .el-form-item__content{
   line-height:0
+}
+.myInput .el-input__inner{
+ border-radius: 0;
 }
