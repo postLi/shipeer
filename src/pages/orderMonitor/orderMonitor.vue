@@ -395,10 +395,10 @@
               <td>待付款</td>
             </tr>
             <tr>
-              <td class="label" style="height: 57px">当前位置</td>
+              <td class="label">当前位置</td>
               <td colspan="3">
                 <div id="mapAddr"></div>
-                <div style="position: relative;margin-top: 5px;height: 17px">
+                <div class="track">
                   <div style="position: absolute;right: 5px">
                     <a href="javascript:showTrack()">显示轨迹</a>
                   </div>
@@ -809,6 +809,18 @@
     height: 32px;
     padding-right: 4px;
     vertical-align: middle;
+  }
+
+  .customInfoWindow #mapAddr {
+    height: 35px;
+    margin: 5px;
+    overflow: auto;
+  }
+
+  .customInfoWindow .track {
+    position: relative;
+    margin: 5px;
+    height: 17px
   }
 
   #infoWindow {
