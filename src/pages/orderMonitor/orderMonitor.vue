@@ -19,13 +19,17 @@
           </el-button>
         </el-input>
         <div class="orderSearchResult">
-          <div class="title" style="float: none">
-            全部服务中
-          </div>
+          <el-badge :value="9999999" class="item">
+            <div class="title" style="float: none;margin-bottom: 12px">
+              全部服务中
+            </div>
+          </el-badge>
           <div class="table">
             <div class="row">
-              <div class="cell" style="padding-top: 12px">
-                司机已接单
+              <div class="cell3">
+                <el-badge :value="9999" class="item">
+                  司机已接单
+                </el-badge>
               </div>
               <div class="cell">
                 司机赶往提货地
@@ -35,7 +39,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="cell" style="padding-top: 12px">
+              <div class="cell3">
                 司机已装货
               </div>
               <div class="cell">
@@ -46,7 +50,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="cell" style="padding-top: 12px">
+              <div class="cell3">
                 司机已卸货
               </div>
               <div class="cell">
@@ -716,6 +720,10 @@
     border-color: #67c23a;
     color: #fff;
   }
+
+  .orderSearchResult .el-badge__content {
+    top: -3px
+  }
 </style>
 
 <style scoped>
@@ -855,6 +863,11 @@
     border: 1px solid gray;
     text-align: center;
     color: gray;
+  }
+
+  .orderSearchResult .table .cell3 {
+    display: table-cell;
+    padding-bottom: 12px;
   }
 
   .orderSearchInput {
