@@ -1,6 +1,6 @@
 <template>
   <div class="height_100 flex_r">
-    <div class="margin_10 flex_1 b_c_w o_f" >
+    <div class="margin_10 flex_1 b_c_w o_f b-s" >
       <div class="tip">
         <span class="title">小提示</span>
         <span class="title1">（<span>*</span>号为必填项）</span>
@@ -8,7 +8,7 @@
       <el-form :model="form"  ref="Rules" class="myForm">
       <div class="item-margin item-1 flex_r">
         <div class="item-l"><span class="f_r">*</span>选择城市：</div>
-        <el-cascader placeholder="请选择城市" size="small"
+        <el-cascader placeholder="请选择城市" size="small" style="width: 121px"
         :props="defaultProps"
         :options="cityList"
         v-model="form.code"
@@ -88,10 +88,10 @@
           <div class="item-4-1 flex_sb p_r">
             <div class="flex_1 input flex_a" @click="showMap1(item,index)">
               <img src="../../assets/main/tihuod.png" alt="">
-              <span>{{(item.origin === '')?'必填':item.origin}}</span>
+              <span class="window-title-12" :class="[(item.origin === '')?'c-9':'c-0']">{{(item.origin === '')?'必填':item.origin}}</span>
 
             </div>
-            <div class="address" @click="selectDistAddress(item,index)">常用地址</div>
+            <div class="address pointer" @click="selectDistAddress(item,index)">常用地址</div>
             <show-map :data="item" :ref="index"></show-map>
             <show-address :showAddress="item" :ref="index" :type="(index ===0)?'0':'1'" @selectAddress="(data)=>{
                 return getSelectAddress1(item,data)
@@ -165,7 +165,7 @@
           <!--</template>-->
         <!--</el-autocomplete>-->
         <div class="p_r" style="width: 140px" >
-          <div class="select-drop flex_sb pointer" @click="goodsWindow = !goodsWindow">
+          <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;wightWindow = false;volumeWindow = false;goodsWindow = !goodsWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.goodsName === '')?"（选填）":form.goodsName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
@@ -200,7 +200,7 @@
       </div>
       <div class="item-5-1 flex_a">
         <div class="p_r" >
-          <div class="select-drop flex_sb pointer" @click="wightWindow = !wightWindow">
+          <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;goodsWindow = false;volumeWindow = false;wightWindow = !wightWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.wightName === '不填' || form.wightName === '')?"（选填）":form.wightName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
@@ -225,11 +225,11 @@
             </div>
           </div>
         </div>
-        <span>吨</span>
+        <span class="window-title-12 margin_l_10">吨</span>
       </div>
       <div  class="item-5-1 flex_a">
         <div class="p_r" >
-          <div class="select-drop flex_sb pointer" @click="volumeWindow = !volumeWindow">
+          <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;goodsWindow = false;wightWindow = false;volumeWindow = !volumeWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.volumeName === '不填' || form.volumeName === '')?"（选填）":form.volumeName}}</div>
             <i class="flex el-input__icon el-icon-arrow-down"></i>
           </div>
@@ -254,7 +254,7 @@
             </div>
           </div>
         </div>
-        <span>方</span>
+        <span class="window-title-12 margin_l_10">方</span>
       </div>
     </div>
 
@@ -290,7 +290,10 @@
       <div class="flex_a">
         <div  class="margin_r_10">
           <div class="p_r">
-            <div class="select-drop flex_sb pointer" @click="tipWindow = !tipWindow">
+            <div class="select-drop flex_sb pointer" @click="()=>{
+            goodsWindow = false;wightWindow = false;volumeWindow = false
+            tipWindow = !tipWindow
+            }">
               <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.tipName === '')?"（选填）":form.tipName}}</div>
               <i class="flex el-input__icon el-icon-arrow-down"></i>
             </div>
@@ -668,6 +671,13 @@
         },
 
         selectDistAddress(item,i){
+          this.tipWindow = false;
+          this.goodsWindow = false;
+          this.wightWindow = false;
+          this.volumeWindow = false;
+          this.form.to.forEach((item)=>{
+            item.show = false;
+          });
           item.show = !item.show;
           if(item.show === true){
             this.$refs[i][1].getList();
@@ -785,10 +795,18 @@
 
         },
         showMap1(item,i){
+          this.tipWindow = false;
+          this.goodsWindow = false;
+          this.wightWindow = false;
+          this.volumeWindow = false;
+          this.form.to.forEach((item,i)=>{
+            this.$refs[i][0].dialogVisible = false;
+            item.show = false;
+          });
           this.$refs[i][0].ok();
         },
         createMap(){
-          var citysearch = new AMap.CitySearch();
+          let citysearch = new AMap.CitySearch();
           citysearch.getLocalCity((status, result) =>{
             if (status === 'complete' && result.info === 'OK') {
               if (result && result.city && result.bounds) {
@@ -973,18 +991,14 @@
       border-radius: 2px;
       border: solid 1px #dcdfe6;
       box-sizing: border-box;
-      .input{
-        font-size: 12px;
 
-        color: #999999;
-      }
       .address{
         font-size: 12px;
         color: #46a6ff;
         padding-right: 10px;
       }
       img{
-        padding: 0 10px 0 3px;
+        margin: 0 10px 0 3px;
       }
     }
   }

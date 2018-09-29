@@ -26,7 +26,7 @@ import ChargeStandard from '@/pages/chargeStandard/chargeStandard.vue'
 
 import AddressManage from '@/pages/addressManage/addressManage.vue'
 import RouteManage from '@/pages/routeManage/routeManage.vue'
-
+import PassWordEdit from '@/pages/passWordEdit/passWordEdit.vue'
 import OrderMonitor from '@/pages/orderMonitor/orderMonitor.vue'
 import Track from '@/pages/orderMonitor/track.vue'
 
@@ -158,6 +158,9 @@ export default new Router({
     },
     {
       path: '/register', component: Register,name:'Register'
+    },
+    {
+      path: '/passWordEdit', component: PassWordEdit,name:'PassWordEdit'
     },
     {
       path: '/order1',

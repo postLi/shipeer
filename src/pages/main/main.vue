@@ -54,7 +54,7 @@
   }
   .b-c{
     position: relative;
-    background-color: rgb(250, 250, 250);
+    background-color: #f2f2f2;
   }
 </style>
 

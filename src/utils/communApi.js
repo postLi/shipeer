@@ -1,5 +1,5 @@
 
-
+import {REGEX} from '@/utils/valiRegex.js'
 
 let checkPhone = (rule, value, callback) => {
   let re = /^1[3|4|5|7|8|9]\d{9}$/;
@@ -123,4 +123,18 @@ let checkTel = (rule, value, callback,name1,name2) => {
   }
 };
 
-export {checkTel,checkPhone,checkNumber0,checkNumber,checkTime,checkNumberOfTime,checkPercent,checkOrder,checkPositiveInteger}
+//6-20位英文字母、数字
+let checkEngNum = (rule, value, callback) => {
+  let re = REGEX.ENGLISH_AND_NUMBER20;
+  if (value === '') {
+    callback(new Error("请输入新密码"));
+  }else {
+    if(re.test(value)){
+      callback()
+    }else {
+      callback(new Error('必须是6-20位英文字母、数字'));
+    }
+  }
+};
+
+export {checkTel,checkPhone,checkNumber0,checkNumber,checkTime,checkNumberOfTime,checkPercent,checkOrder,checkPositiveInteger,checkEngNum}

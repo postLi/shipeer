@@ -26,6 +26,7 @@
 .margin_20{margin:20px}
 .margin_t_10{margin-top:10px}
 .margin_t_20{margin-top:20px}
+.margin_b_20{margin-bottom:20px}
 .margin_b_10{margin-bottom:10px}
 .margin_tm_10{margin:10px 0}
 .margin_l_10{margin-left:10px !important}
@@ -85,6 +86,10 @@
 }
 .c-0{
   color: #000000;
+}
+
+.b-s{
+  box-shadow: 0 0 10px 0 grey;
 }
 
 .myForm .el-form-item .el-form-item__content{

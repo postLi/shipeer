@@ -63,6 +63,8 @@ export const REGEX = {
   NUM_POINT2: /^0\.\d\d?$/,
   // 支持百分比
   NUM_PERCENTAGE: /^([1-9]{1}[0-9]{0,1}|0|100)(.\d{1,2}){0,1}%$/,
+
+  ENGLISH_AND_NUMBER20:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$/,
   /**
    * 获取字符长度
    */

@@ -83,7 +83,7 @@
               </li>
               <li @click="gotoRegister"> 注册</li>
 
-              <li v-show="tabId===0">忘记密码 <span>|</span></li>
+              <li v-show="tabId===0" @click="$router.push('/passWordEdit')">忘记密码 <span>|</span></li>
 
             </ul>
           </div>

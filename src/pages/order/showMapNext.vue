@@ -49,8 +49,8 @@
                   <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="windowExchange = false">
                 </div>
                   <div class="o_f flex_1 margin_t_10" >
-                    <div class="exchange-item flex_a margin_b_10 pointer" :class="[parm.couponId === item.id?'select-exchange':'']" v-for="(item,index) in couponList" :key="item.id" @click="selectExchange(item)">
-                      <div class="exchange-item-left flex" :style="{'background-image':backgroundImg}">
+                    <div v-if="couponList.length > 0" class="exchange-item flex_a margin_b_10 pointer" v-for="(item,index) in couponList" :key="item.id" @click="selectExchange(item)">
+                      <div class="exchange-item-left flex" :style="{'background-image':backgroundImg,'filter':(parm.couponId === item.id)?'brightness(100%)':'brightness(70%)'}">
                         <div v-if="item.couponType === 'AF046201'">
                           <div class="exchange-item-font1 flex">￥{{item.remissionDiscount}}</div>
                           <div class="exchange-item-font2">满{{item.conditionDeduction}}可用</div>
@@ -67,6 +67,9 @@
                           <div class="window-title-left c-3" style="padding: 0 7px;">{{item.endTime}}</div>
                         </div>
                       </div>
+                    </div>
+                    <div v-else class="flex window-title-left">
+                      还没有优惠卷
                     </div>
                   </div>
 
@@ -179,7 +182,7 @@
 </template>
 
 <script>
-  import { getApi ,postApi,onlyApi} from "@/api/api.js";
+  import { getApi ,postApi,imgApi} from "@/api/api.js";
 
   import routeLine from './routeLine.vue'
     export default {
@@ -227,7 +230,7 @@
         },
         selectExchange(item){
 console.log(item)
-
+this.windowExchange = false;
          if(this.parm.couponId !== item.id){
            this.math();
            if(item.couponType === "AF046201"){
@@ -275,7 +278,7 @@ console.log(item)
             postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
               console.log(res)
               if(res !== '' || res !== null){
-                this.couponList = res.list;
+                this.couponList = res.data.list;
               }
             });
           }
@@ -308,7 +311,7 @@ console.log(item)
           }
 
           if(this.payTypeId === 1){
-            onlyApi(`/aflc-pay/pay/shipper/common/v1/scanPayOrder/${this.orderId}`,{payChannel:this.payChannel},{responseType:'blob'}).then((res)=>{//单独请求
+            imgApi(`/aflc-pay/pay/shipper/common/v1/scanPayOrder/${this.orderId}`,{payChannel:this.payChannel}).then((res)=>{//单独请求
               if(this.payChannel === "wx"){
                 this.centerDialogVisible = true;
               }
