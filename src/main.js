@@ -109,7 +109,7 @@ Axios.interceptors.response.use(
 
         Message({
           type: 'info',
-          message: '登录信息已失效，请重新登录',
+          message: '登录信息已失效，请重新登录. ',
           onClose: ()=>{
             location.href = '/#/'
           }

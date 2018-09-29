@@ -12,9 +12,11 @@
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
         </el-button>
       </el-input>
-      <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">{{showOrderSearchResultIcon}}</div>
+      <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">
+        {{showOrderSearchResultIcon}}
+      </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
-        <el-badge :value="9999999" class="item">
+        <el-badge :value="allOrderNum" class="item">
           <div class="title" style="float: none;margin-bottom: 12px">
             全部服务中
           </div>
@@ -332,7 +334,7 @@
               :total="1000">
             </el-pagination>
           </div>
-          <div style="padding-left: 4px">
+          <div style="padding-left: 4px;font-size: 12px">
             <el-pagination
               background
               layout="total, sizes, jumper"
@@ -437,7 +439,7 @@
 </template>
 
 <script>
-  import {postApi} from '@/api/api';
+  import {postApi} from '@/api/api.js';
 
   export default {
     name: "orderMonitor",
@@ -457,8 +459,8 @@
         polyline: null,
         passedPolyline: null,
         redball: null,
-        orderStatus: ""
-
+        orderStatus: "",
+        allOrderNum: ""
       }
     },
     mounted() {
@@ -558,10 +560,21 @@
         isCustom: true,
         autoMove: true
       });
+
+      this.getOrderNum();
     },
     methods: {
-      getOrderNum(orderStatus){
-postApi("/aflc-order/aflcMyOrderApi/myOrderList",{currentPage:1,pageSize:1}.then((res)=>{}))
+      getOrderNum(orderStatus) {
+        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1&status=" + orderStatus).then((res) => {
+          try {
+            this.allOrderNum = res.data.totalCount;
+          } catch (e) {
+            this.logError();
+          }
+        });
+      },
+      logError() {
+        this.$message.error("有错误产生. ");
       },
       subString(str, maxLength) {
         if (str == null)
@@ -577,11 +590,11 @@ postApi("/aflc-order/aflcMyOrderApi/myOrderList",{currentPage:1,pageSize:1}.then
         if (this.showOrderSearchResultIcon == "收起") {
           this.showOrderSearchResult = false;
           this.showOrderSearchResultIcon = "展开";
-          this.showOrderSearchResultStyle="right:-12px";
+          this.showOrderSearchResultStyle = "right:-12px";
         } else {
           this.showOrderSearchResult = true;
           this.showOrderSearchResultIcon = "收起";
-          this.showOrderSearchResultStyle="right:396px";
+          this.showOrderSearchResultStyle = "right:396px";
         }
       },
       displayAllMarkers() {
