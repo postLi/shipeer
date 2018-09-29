@@ -437,6 +437,8 @@
 </template>
 
 <script>
+  import {postApi} from '@/api/api';
+
   export default {
     name: "orderMonitor",
     data() {
@@ -456,6 +458,7 @@
         passedPolyline: null,
         redball: null,
         orderStatus: ""
+
       }
     },
     mounted() {
@@ -557,6 +560,9 @@
       });
     },
     methods: {
+      getOrderNum(orderStatus){
+postApi("/aflc-order/aflcMyOrderApi/myOrderList",{currentPage:1,pageSize:1}.then((res)=>{}))
+      },
       subString(str, maxLength) {
         if (str == null)
           return str;

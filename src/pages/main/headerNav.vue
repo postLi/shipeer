@@ -72,7 +72,7 @@
               this.userInfoData = res.data
               setUserInfo(this.userInfoData)
             }else{
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+              //this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
             }
 
           })

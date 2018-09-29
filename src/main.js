@@ -109,7 +109,7 @@ Axios.interceptors.response.use(
 
         Message({
           type: 'info',
-          message: 'Token 过期了',
+          message: '登录信息已失效，请重新登录',
           onClose: ()=>{
             location.href = '/#/'
           }
