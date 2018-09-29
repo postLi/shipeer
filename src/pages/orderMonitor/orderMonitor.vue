@@ -407,10 +407,10 @@
             </tr>
             <tr>
               <td class="label">当前位置</td>
-              <td colspan="3">
+              <td colspan="3" style="padding: 4px">
                 <div id="mapAddr"></div>
                 <div class="track">
-                  <div style="position: absolute;right: 5px">
+                  <div style="position: absolute;right: 0">
                     <a href="javascript:showTrack()">显示轨迹</a>
                   </div>
                 </div>
@@ -832,13 +832,11 @@
 
   .customInfoWindow #mapAddr {
     height: 35px;
-    margin: 5px;
     overflow: auto;
   }
 
   .customInfoWindow .track {
     position: relative;
-    margin: 5px;
     height: 17px
   }
 
