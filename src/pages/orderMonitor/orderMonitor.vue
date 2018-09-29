@@ -8,12 +8,6 @@
       </div>
     </div>
     <div class="orderSearch">
-      <div align="right">
-        <div class="title" style="font-size: 16px">在途监控
-        </div>
-        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult" style="vertical-align: middle;"></div>
-      </div>
-      <div class="orderBox" v-show="showOrderSearchResult">
         <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
           <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
           </el-button>
@@ -60,7 +54,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="cell3">
+              <div class="cell">
                 <el-badge :value="9999" class="item">
                   司机已卸货
                 </el-badge>
@@ -72,7 +66,7 @@
               </div>
             </div>
           </div>
-          <div style="max-height: 300px;overflow: auto;margin-top: 12px">
+          <div style="max-height: 280px;overflow: auto;margin-top: 12px">
             <div class="table" style="width: 350px">
               <div class="row">
                 <div class="cellHeader">
@@ -346,7 +340,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
     <div id="infoWindow">
       <div class="customInfoWindow">
@@ -901,7 +894,10 @@
 
   .orderSearchResult {
     margin-top: 12px;
+    padding: 12px;
     height: 500px;
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
   }
 
   .orderSearch {
@@ -909,9 +905,6 @@
     right: 12px;
     top: 20px;
     width: 396px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
-    padding: 15px;
   }
 
   .topLayer {
