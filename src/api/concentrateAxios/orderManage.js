@@ -1,12 +1,14 @@
 import Axios from 'axios'
-let swg1 = 'aflcorderservice'
-let swg2 = 'aflc-order'
-let swg3 = 'aflc-common'
+let swg1 = '/aflcorderservice'
+let swg2 = '/aflc-order'
+let swg3 = '/aflc-common'
+let swg4 = '/aflc-pay'
+let swg5 = '/aflc-uc'
   // /aflcMyOrderApi/myOrderList
 // 订单状态(此值不传(null或空字符串)则为查询全部，待付款(AF00801),服务中(AF00806HZ),已取消(AF00808),派单中(AF00804))
 // 我的订单(货主)
 export function postMyOrderList(currentPage,pageSize,status) {
-  return Axios.post(''+swg1+'/aflcMyOrderApi/myOrderList/'+'?currentPage='+currentPage +'&pageSize='+pageSize+'&status='+status)
+  return Axios.post(''+swg1+'/aflcMyOrderApi/myOrderList'+'?currentPage='+currentPage +'&pageSize='+pageSize+'&status='+status)
 }
 // //同城状态订单状态
 // WAIT_PAY("AF00801","待付款"),
@@ -44,5 +46,39 @@ export function getSysDictByCodesGet(codes) {
 
   return Axios.get(''+swg3+'/aflcCommonSysDistApi/getSysDictByCodesGet/'+'?codes='+codes)
 }
-// /api/pay/shipper/common/v1/tradeQuery/{orderSerial}
-// 货主支付查询
+
+
+// /common/aflcMemberCenter/v1/getAuroraSignature
+// 获取极光签名
+// 用户类型（1：车主；2：货主）
+export function getAuroraSignature(type ) {
+
+  return Axios.get(''+swg3+'/common/aflcMemberCenter/v1/getAuroraSignature/'+'?type='+type)
+}
+
+
+// /pay/shipper/common/v1/scanPayOrder/{orderSerial}
+// 货主WEB扫码支付
+
+export function postScanPayOrder(orderSerial,params) {
+  return Axios.request({
+    url:''+swg4+'/pay/shipper/common/v1/scanPayOrder/'+orderSerial,
+    responseType:'blob',
+    method: 'post',
+    data: params
+  })
+
+}
+// /aflcMywalletApi/mywalletPay/{orderSerial}
+// 货主端-钱包支付
+
+export function postMywalletPay(orderSerial ) {
+
+  return Axios.post(''+swg5+'/aflcMywalletApi/mywalletPay/'+orderSerial)
+}
+// /aflcMyOrderApi/myOrderDetail
+// 我的订单详情(货主)
+export function postMyOrderDetail(orderSerial ) {
+
+  return Axios.post(''+swg2+'/aflcMyOrderApi/myOrderDetail/'+'?orderSerial='+orderSerial)
+}

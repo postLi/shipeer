@@ -5,7 +5,7 @@ let swg1 = 'aflcsmservice'
 let swg2 = '/aflcsmservice'
 
 // let swg3 = 'aflcorderservice-lyc'
-let swg3 = 'aflcorderservice'
+let swg3 = '/aflcorderservice'
 let swg4 = 'aflccommonservice'
 let swg5 = 'aflcsmservice'
 let swg6 = '/aflcusercenterservice'
@@ -72,12 +72,14 @@ export function postFindAflcRecharge(params) {
 }
 
 // /api/pay/shipper/common/v1/tradeQuery/{orderSerial}
-// 货主支付查询
+// 货主支付查询 支付渠道（wx ali）
 export function postTradeQuery(orderSerial,type) {
   return Axios.post(''+swg7+'/api/pay/shipper/common/v1/tradeQuery/'+orderSerial,{
     payChannel: type
   })
 }
+// /pay/shipper/common/v1/scanPayOrder/{orderSerial}
+// 货主WEB扫码支付
 // /aflcUserRewardApi/findAflcReward
 // 优惠金明细表列表
 export function postFlcReward(params) {

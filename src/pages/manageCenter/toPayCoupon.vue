@@ -78,7 +78,8 @@
                 <div class="contLeft">
                   <p>充值金额（元）</p>
                   <p>{{changeItem.name}}</p>
-                  <img src="../../assets/login/code.png" alt="">
+                  <!--<img src="../../assets/login/code.png" alt="">-->
+                  <img :src="pfimg" alt="">
                   <p>二维码有效时长为2个小时<br>
                     请尽快支付</p>
                 </div>
@@ -392,7 +393,6 @@
         },
         getPaymentList(){
           return postFindAflcRecharge(this.senDataList).then(res =>{
-            console.log(res,'充值礼包');
             if(res.status === 200){
               this.dataset = res.data.list
               this.total = res.data.totalPage

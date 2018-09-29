@@ -98,7 +98,7 @@
 </template>
 <script>
   import {loadJs} from '@/utils/'
-
+  import {getAuroraSignature} from '@/api/concentrateAxios/orderManage'
   export default {
 
     props: {
@@ -139,6 +139,7 @@
           key: "ce2f5588bd87f228b514e847",
           random_str:new Date().getTime(),
           timestamp:new Date().getTime(),
+          signature:''
         },
         addList:[],
         centerDialogVisible: false,
@@ -195,27 +196,32 @@
           debug : true
         })
 
+
+
         JIM.onDisconnect(function(){
           console.log("【disconnect】");
         }); //异常断线监听
+
+        this.getSignature()
+        console.log(this.jimInfo,'几率')
         const md5 = require("js-md5");
         const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
         JIM.init({
           "appkey":this.jimInfo.appkey,
           "random_str": this.jimInfo.random_str,
-          "signature":  signature,
+          "signature":  md5(this.jimInfo.signature),
           "timestamp":  this.jimInfo.timestamp,
           "flag": 1
         }).onSuccess(function(data) {
           // console.log('success:' + JSON.stringify(data));
-          console.log(data);
+          console.log(data,'成功了');
           JIM.onMsgReceive(function(data) {
             data = JSON.stringify(data);
-            console.log('1msg_receive:' + data);
+            console.log('1msg_receive:' + data,'成功了1');
 
           });
         }).onFail(function(data) {
-          console.log('error:' + JSON.stringify(data))
+          console.log('error成功了2:' + JSON.stringify(data))
         });
       },
       loadMsg(){
@@ -285,6 +291,7 @@
           // document.getElementById('panel').innerText = JSON.stringify(result)
 
         });
+
       },
 // 设置获取到的信息
       setData(pos, addr, obj) {
@@ -297,6 +304,16 @@
       submitForm() {
         this.$emit('success', this.thepos, this.thename, this.theobj)
         this.close()
+      },
+      getSignature(){
+        return getAuroraSignature(2).then(res => {
+          if(res.status===200){
+            this.jimInfo.signature =res.data
+            console.log(this.jimInfo.signature,'请求的');
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+        })
       }
     }
   }

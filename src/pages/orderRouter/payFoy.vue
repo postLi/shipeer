@@ -94,7 +94,7 @@
               <el-radio v-model="radio" label="1"><span class="spanClass">
                   <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>0.00</i>元)</span><i class="getup">立即充值</i></el-radio>
+                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>0.00</i>元)</span><i class="getup" @click="gotoCoupon">立即充值</i></el-radio>
 
             </li>
             <li>
@@ -127,12 +127,12 @@
               <div class="contLeft">
                 <p>充值金额（元）</p>
                 <p>300元</p>
-                <!--<img :src="pfimg" alt="">-->
-                <img src="../../assets/login/code.png" alt="">
+                <img :src="pfimg" alt="">
+                <!--<img src="../../assets/login/code.png" alt="">-->
                 <p>二维码有效时长为2个小时<br>
                   请尽快支付</p>
-                <div class="btn">
-                  <el-button type="success">完成支付</el-button>
+                <div class="btn" >
+                  <el-button type="success" @click="donePy1">完成支付</el-button>
                 </div>
               </div>
               <div class="contRight">
@@ -141,12 +141,39 @@
                 <p>请使用微信扫一扫</p>
               </div>
             </div>
+          </el-dialog>
+        </div>
+        <div class="openDialogz" >
+          <el-dialog
+            title="支付宝支付"
+            :visible.sync="centerDialogVisiblezfb"
+            width="30%"
+            center>
+            <div class="content">
+              <div class="contLeft">
+                <p>充值金额（元）</p>
+                <p>300元</p>
+                <img :src="pfimg" alt="">
+                <!--<img src="../../assets/login/code.png" alt="">-->
+                <p>二维码有效时长为2个小时<br>
+                  请尽快支付</p>
+                <div class="btn" >
+                  <el-button type="success" plain @click="donePyzfb">完成支付</el-button>
+                </div>
+              </div>
+              <div class="contRight">
+                <img src="../../assets/myorder/iPhoneXzhifub.png" alt="">
+                <img src="../../assets/myorder/zhifub_saoyisao.png" alt="">
+                <p>请使用支付宝扫一扫</p>
+              </div>
+            </div>
             <!--<span slot="footer" class="dialog-footer">-->
-            <!--<el-button @click="centerDialogVisible = false">取 消</el-button>-->
-            <!--<el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>-->
+            <!--<el-button @click="centerDialogVisiblezfb = false">取 消</el-button>-->
+            <!--<el-button type="primary" @click="centerDialogVisiblezfb = false">确 定</el-button>-->
             <!--</span>-->
           </el-dialog>
         </div>
+
       </el-main>
       <el-footer>
         <el-button type="success" @click="onSubmit">确认付款</el-button>
@@ -160,39 +187,147 @@
 
 <script>
   import {getUserInfo} from '@/utils/auth'
-
+  import {postScanPayOrder,postMywalletPay,postMyOrderDetail} from '@/api/concentrateAxios/orderManage'
+  import {postTradeQuery} from '@/api/concentrateAxios/manageCenter'
+  import {setOrderDtaial} from '@/utils/auth'
   export default {
     data(){
       return{
         centerDialogVisible: false,
+        centerDialogVisiblezfb: false,
+        centerDialogVisibleye: false,
         radio: '1',
         value5: 3.7,
         activeNames: '',
-        userData: getUserInfo()
+        userData: getUserInfo(),
+        pfimg:'',
+        getDetail:{
+          // addresses:[],
+        }
         // activeNames: ['1']
       }
     },
+    watch:{
+      centerDialogVisible(n){
+        this.donePy1()
+        // console.log(document.getElementById('xiaoli'))
+        if(!n){
+          clearTimeout(this.timer)
+
+        }else{
+
+        }
+      },
+      centerDialogVisiblezfb(n){
+        this.donePyzfb()
+        if(!n){
+          clearTimeout(this.timer)
+
+        }else{
+
+        }
+      },
+      centerDialogVisibleye(n){
+        if(!n){
+          // clearTimeout(this.timer)
+        }
+      }
+    },
     mounted(){
+      console.log(this.$route.query)
       console.log('userinfo":', window.USERDATA)
+      this.fetchOrderDetail()
     },
     methods: {
+      fetchOrderDetail(){
+        return postMyOrderDetail(this.$route.query.qy.orderSerial).then(res =>{
+          if(res.status === 200){
+            this.getDetail = res.data
+            setOrderDtaial(res.data)
+            // console.log(this.getDetail,'所以')
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+        })
+      },
       onSubmit(){
         if(this.radio == 1){
+          // this.centerDialogVisibleye = true
+          this.fetchMywall()
+        }else if(this.radio == 2){
           this.centerDialogVisible = true
+          // this.fetctScanPayOrder()
+        }else{
+          this.centerDialogVisiblezfb = true
+          this.fetctScanPayOrderzfb()
         }
-        // this.centerDialogVisible = false
-        // this.centerDialogVisiblezfb = false
-        // if(this.changPfId === 0){
-        //   this.centerDialogVisible = true
-        //   this.getCreateAflcRecharg()
-        //
-        // }else if(this.changPfId === 1){
-        //   this.centerDialogVisiblezfb = true
-        //   this.getCreateAflcRechargzfb()
-        // }
+
+      },
+      fetchMywall(){
+        return postMywalletPay(this.$route.query.qy.orderSerial).then(res => {
+          if(res.status ===200){
+            this.$message.success('支付成功')
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+          console.log(res,'车型')
+        })
+      },
+      fetctScanPayOrder(){
+        let data = {
+          "payChannel": "wx"
+        }
+        return postScanPayOrder(this.$route.query.qy.orderSerial,data).then(res =>{
+            var fr = new FileReader();
+            fr.readAsDataURL(res);
+            fr.onload=(e)=>{
+              this.pfimg = e.target.result;
+              // this.getPayResult(this.$route.query.qy.orderSerial,"wx")
+            }
+        })
+      },
+      fetctScanPayOrderzfb(){
+        let data = {
+          "payChannel": "ali"
+        }
+        return postScanPayOrder(this.$route.query.qy.orderSerial,data).then(res =>{
+            var fr = new FileReader();
+            fr.readAsDataURL(res);
+            fr.onload=(e)=>{
+              this.pfimg = e.target.result;
+              // this.getPayResult(this.$route.query.qy.orderSerial,"ali")
+            }
+        })
+      },
+
+      getPayResult(rid,type){
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          postTradeQuery(rid,type).then(res=>{
+            if(res.status ===200){
+              this.$message.success('支付成功')
+            }else{
+              this.getPayResult(rid,type)
+            }
+          }).catch(err=>{
+            this.getPayResult(rid,type)
+          })
+        },3000)
       },
       handleChange(val) {
         console.log(val);
+      },
+      donePy1(event){
+        // this.centerDialogVisible = true
+        // console.log('00000000')
+        this.getPayResult(this.$route.query.qy.orderSerial,"wx")
+      },
+      donePyzfb(){
+        // alert('2222')
+        this.getPayResult(this.$route.query.qy.orderSerial,"ali")
+      },
+      gotoCoupon(){
+        this.$router.push({path: '/toPayCoupon'})
       }
     }
   }
@@ -408,9 +543,12 @@
         }
         ul{
           background-color: #f2f2f2;
+          display: flex;
+          max-width: 900px;
+          min-width: 1000px;
           li{
 
-            float: left;
+            /*float: left;*/
             padding: 20px 70px 20px 70px;
             div{
               span:first-of-type{
@@ -418,11 +556,19 @@
                 font-size: 14px;
                 padding-right: 50px;
               }
+              span:last-of-type{
+                font-size: 14px;
+              }
               .redClass{
                 color: #ff300d;
               }
               .greenClass{
                 color: #2fb301;
+              }
+            }
+            div:last-of-type{
+              span:first-of-type{
+                padding-right: 25px;
               }
             }
           }
@@ -455,6 +601,7 @@
                 }
                 .titleP{
                   margin-left: 30px;
+                  color: #333333;
                 }
                 .yue{
                   color: #999999;
@@ -474,6 +621,7 @@
                 .getup{
                   margin-left: 90px;
                   color: #999999;
+                  border-bottom: 1px solid #999;
                 }
               }
             }
@@ -483,7 +631,7 @@
           }
         }
       }
-      .openDialogw,.openDialogz{
+      .openDialogw,.openDialogz,.openDialogy{
         .el-dialog__body{
           .content{
             .contLeft{

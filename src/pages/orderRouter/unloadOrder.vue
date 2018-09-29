@@ -4,12 +4,17 @@
       <el-header class="clearfix">
         <div class="height-top">
           <div class="unLeft">
-            <ul>
-              <li><img src="../../assets/login/code.png" alt=""></li>
-              <li><img src="../../assets/login/code.png" alt=""></li>
-              <li><img src="../../assets/login/code.png" alt=""></li>
-              <li><img src="../../assets/login/code.png" alt=""></li>
-            </ul>
+
+            <div class="clearfix uploadcard">
+              <upload :title="'本地上传'" :showFileList="true" :limit="4" listtype="picture" v-model="liList.img"
+                      />
+            </div>
+            <!--<ul>-->
+              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
+              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
+              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
+              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
+            <!--</ul>-->
 
 
           </div>
@@ -107,6 +112,7 @@
 
 <script>
   import {getUserInfo} from '@/utils/auth'
+  import Upload from '@/components/Upload/singleImage2'
 
   export default {
     data(){
@@ -117,15 +123,14 @@
         activeNames: '',
         changeItem: '',
         userData: getUserInfo(),
-        liList:[
-          {name:'认路准确活地图'},
-          {name:'师傅很守时'},
-          {name:'服务态度好'},
-          {name:'免费回单回款'},
-          {name:'收费合理'}
-        ]
+        liList:{
+          img:''
+        }
         // activeNames: ['1']
       }
+    },
+    components: {
+      Upload
     },
     mounted(){
       console.log('userinfo":', window.USERDATA)
@@ -166,17 +171,43 @@
           /*display: inline-block;*/
           /*padding-right: 50px;*/
           border-right: 2px solid #ddd;
-          ul:first-of-type{
-
-            li{
-              float: left;
-              padding-left: 10px;
-              img{
-                width: 195px;
-                height: 158px;
+          .el-dialog{
+            margin-top:10vh !important;
+            margin: 0 auto 20px !important;
+          }
+          .uploadcard {
+            /*padding: 20px 20px 20px 90px;*/
+            //上传图片
+            .el-upload-list--picture-card .el-upload-list__item {
+              width: 195px;
+              height: 158px;
+            }
+            .el-upload-dragger {
+              width: 195px;
+            }
+            .el-upload--picture-card {
+              width: 195px;
+              height: 158px;
+              line-height: 30px;
+            }
+            .upload__tip {
+              line-height: 30px;
+            }
+            .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+              margin-top: 8px;
+            }
+            //上传图片end
+            .uploadlist {
+              width: 100%;
+              margin-left: 80px;
+              li {
+                float: left;
+                width: 100px;
+                margin-right: 10px;
               }
             }
           }
+
         }
         .unRight{
           float: left;

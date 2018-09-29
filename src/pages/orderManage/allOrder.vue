@@ -1,165 +1,144 @@
 <template>
-  <div class="table-lll-al" ref="getTableWH">
+  <div class="table-lll-al" ref="getTableWH" v-loading="loading">
     <Search @change="getSearchParam" ref="getTop"></Search>
-    <div class="info-table">
-      <el-table
-        ref="multipleTable"
-        :data="dataset"
-        stripe
-        border
-        @row-dblclick="getDbClick"
-        @row-click="clickDetails"
-        @selection-change="getSelection"
-        tooltip-effect="dark"
-        :default-sort = "{prop: 'id', order: 'ascending'}"
-        :style="{'width': getBodyWidth + 'px'}"
-      >
-        <!--:height="heightComputer"-->
-        <el-table-column
-          fixed
-          sortable
-          prop="id"
-          label="序号"
-          width="80">
-          <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          width="200"
-          label="订单号" class="blueClass">
-          <template slot-scope="scope">
-            <!--<el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">{{scope.row.orderSerial}}</el-button>-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">{{scope.row.orderSerial}}</el-button>
-            <!--派单中-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00804'">{{scope.row.orderSerial}}</el-button>
-            <!--司机已接单-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080601HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--司机赶往提货地-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080602HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--司机已到提货地-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080603HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--司机已卸货-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080607HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--运输中-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080605HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--司机已到目的地-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080606HZ'">{{scope.row.orderSerial}}</el-button>
-            <!--司机已卸货-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF0080607HZ'">{{scope.row.orderSerial}}</el-button>
+    <div class="tab_info">
+      <div class="info_tab">
+        <el-table
+          ref="multipleTable"
+          :data="dataset"
+          stripe
+          border
+          @row-dblclick="getDbClick"
+          @row-click="clickDetails"
+          @selection-change="getSelection"
+          tooltip-effect="dark"
+          :default-sort = "{prop: 'id', order: 'ascending'}"
+          :style="{'width': getBodyWidth + 'px'}"
+          style="overflow-x: scroll"
+        >
+          <!--:height="heightComputer"-->
+          <el-table-column
+            fixed
+            sortable
+            prop="id"
+            label="序号"
+            width="80">
+            <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}</template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            width="200"
+            label="订单号">
+            <template slot-scope="scope"><template></template>
+              <!--已取消-->
+              <el-button @click="handleClickToMap(scope.row)" type="text" size="small" >{{scope.row.orderSerial}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="belongCityName"
+            width="100"
+            label="城市">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="carType"
+            width="110"
+            label="需求车型">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="abnormalNo"
+            width="110"
+            label="运费总额">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
 
-            <!--已完成-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00807'">{{scope.row.orderSerial}}</el-button>
-            <!--已取消-->
-            <el-button @click="handleClickToMap(scope.row)" type="text" size="small" v-if="scope.row.status === 'AF00808'">{{scope.row.orderSerial}}</el-button>
+            width="160"
+            label="用车时间" >
+            <template slot-scope="scope"><span class="redClass">{{ scope.row.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span></template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
 
+            width="110"
+            label="订单状态" >
+            <template slot-scope="scope">
+              <span class="greenClass">{{ scope.row.status }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
 
+            width="110"
+            label="付款状态">
+            <template slot-scope="scope">
+              <span class="greenClass">{{ scope.row.payStatus }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="abnormalNo"
+            width="110"
+            label="提货地">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="abnormalNo"
+            width="110"
+            label="目的地">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="carNumber"
+            width="100"
+            label="车牌号">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="driverName"
+            width="100"
+            label="司机">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            prop="mobile"
+            width="130"
+            label="司机联系电话">
+          </el-table-column>
+          <el-table-column
+            fixed
+            sortable
+            width="150"
+            label="操作">
+            <template slot-scope="scope">
+              <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
+              <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
+              <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
 
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="belongCityName"
-          width="100"
-          label="城市">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="carType"
-          width="110"
-          label="需求车型">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="abnormalNo"
-          width="110"
-          label="运费总额">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
+              <el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.status === 'AF0080705'">确认回款</el-button>
+              <el-button type="text" size="small" @click="handleClickMessage(scope.row)"  v-if="scope.row.status === 'AF0080703'">确认回单</el-button>
+              <el-button @click="handleClickAgain(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF00807' && scope.row.payStatus === 'AF00802'">再下一单</el-button>
+              <el-button type="text" size="small" @click="handleClickAgain(scope.row)" v-if="scope.row.status === 'AF00808'">重新下单</el-button>
+              <el-button @click="handleClickUnloadOrder(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080607HZ'">确认收货</el-button>
 
-          width="160"
-          label="用车时间" >
-          <template slot-scope="scope"><span class="redClass">{{ scope.row.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span></template>
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-
-          width="110"
-          label="订单状态" >
-          <template slot-scope="scope">
-            <span class="greenClass">{{ scope.row.status }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-
-          width="110"
-          label="付款状态">
-          <template slot-scope="scope">
-            <span class="greenClass">{{ scope.row.payStatus }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="abnormalNo"
-          width="110"
-          label="提货地">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="abnormalNo"
-          width="110"
-          label="目的地">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="carNumber"
-          width="100"
-          label="车牌号">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="driverName"
-          width="100"
-          label="司机">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          prop="mobile"
-          width="130"
-          label="司机联系电话">
-        </el-table-column>
-        <el-table-column
-          fixed
-          sortable
-          width="150"
-          label="操作">
-          <template slot-scope="scope">
-            <!--<el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
-            <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
-            <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
-
-            <el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.status === 'AF0080705'">确认回款</el-button>
-            <el-button type="text" size="small" @click="handleClickMessage(scope.row)"  v-if="scope.row.status === 'AF0080703'">确认回单</el-button>
-            <el-button @click="handleClickAgain(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF00807' && scope.row.payStatus === 'AF00802'">再下一单</el-button>
-            <el-button type="text" size="small" @click="handleClickAgain(scope.row)" v-if="scope.row.status === 'AF00808'">重新下单</el-button>
-            <el-button @click="handleClickUnloadOrder(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080607HZ'">确认收货</el-button>
-
-          </template>
-        </el-table-column>
-      </el-table>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
 
     <div class="info_tab_footer" ref="footer"> <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
@@ -176,6 +155,7 @@
   export default{
     data(){
       return {
+        loading:false,
         title:'派单中',
         sendData:{},
         sendFn:'',
@@ -260,7 +240,13 @@
       //     }})
       // },
       handleClickPy(row) {
-        this.$router.push({path: '/orderRouter/payFoy'})
+        this.title = '去支付'
+        this.sendData = row
+        this.$router.push({path: '/orderRouter/payFoy',query: {
+            tab: this.title,
+            qy:this.sendData,
+            fn:this.sendFn
+          }})
       },
 
       handleClickEvaDriver(row){
@@ -331,40 +317,56 @@
   .table-lll-al{
     margin-top: 10px;
     background: #fff;
-    .info-table{
-      /*display: flex;*/
-      /*padding-top: 20px;*/
-        padding: 10px 10px 40px;
-        height: 100%;
-        -ms-flex-positive: 1;
-        flex-grow: 1;
-      .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
-        background-color: #fafafa;
-      }
-      .el-table th>.cell{
-        text-align: center;
-        color: #333;
-        .el-button--text{
-          border-bottom: 1px solid #409EFF;
-        }
-
-      }
-      .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
-        text-align: center;
-      }
-      .el-table__row{
-        .el-button{
-          color: #1890ff;
-        }
-        .redClass{
-          color: #ff300d;
-        }
-        .greenClass{
-          color: #2fb301;
-        }
-      }
-
+    .el-table__body-wrapper .is-scrolling-middle{
+      /*overflow-x: none !important;*/
     }
+    .tab_info{
+      padding: 10px 10px 40px;
+      height: 100%;
+      -ms-flex-positive: 1;
+      flex-grow: 1;
+      .info_tab{
+        width: 100%;
+        height: calc(100% - 38px);
+          /*display: flex;*/
+          /*padding-top: 20px;*/
+          /*padding: 10px 10px 40px;*/
+          /*height: 100%;*/
+          /*-ms-flex-positive: 1;*/
+          /*flex-grow: 1;*/
+          .el-table__body-wrapper{
+            overflow-x: hidden;
+          }
+          .el-select-dropdown__item.hover, .el-select-dropdown__item:hover, .el-table thead th, .el-table thead tr {
+            background-color: #fafafa;
+          }
+          .el-table th>.cell{
+            text-align: center;
+            color: #333;
+            .el-button--text{
+              border-bottom: 1px solid #409EFF;
+            }
+
+          }
+          .el-table .cell, .el-table th div, .el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+            text-align: center;
+          }
+          .el-table__row{
+            .el-button{
+              color: #1890ff;
+            }
+            .redClass{
+              color: #ff300d;
+            }
+            .greenClass{
+              color: #2fb301;
+            }
+          }
+
+
+      }
+    }
+
    .info_tab_footer {
       padding-left: 20px;
       background: #fff;
