@@ -32,29 +32,43 @@
                 </el-badge>
               </div>
               <div class="cell">
-                司机赶往提货地
+                <el-badge :value="9999" class="item">
+                  司机赶往提货地
+                </el-badge>
               </div>
               <div class="cell">
-                司机已到提货地
+                <el-badge :value="9999" class="item">
+                  司机已到提货地
+                </el-badge>
               </div>
             </div>
             <div class="row">
               <div class="cell3">
-                司机已装货
+                <el-badge :value="9999" class="item">
+                  司机已装货
+                </el-badge>
               </div>
               <div class="cell">
-                运输中
+                <el-badge :value="9999" class="item">
+                  运输中
+                </el-badge>
               </div>
               <div class="cell">
-                司机已到目的地
+                <el-badge :value="9999" class="item">
+                  司机已到目的地
+                </el-badge>
               </div>
             </div>
             <div class="row">
               <div class="cell3">
-                司机已卸货
+                <el-badge :value="9999" class="item">
+                  司机已卸货
+                </el-badge>
               </div>
               <div class="cell">
-                司机改派
+                <el-badge :value="9999" class="item">
+                  司机改派
+                </el-badge>
               </div>
             </div>
           </div>
@@ -849,7 +863,8 @@
   }
 
   .orderSearchResult .table .cell {
-    display: table-cell
+    display: table-cell;
+    text-align: center;
   }
 
   .orderSearchResult .table .cellHeader {
@@ -868,6 +883,7 @@
   .orderSearchResult .table .cell3 {
     display: table-cell;
     padding-bottom: 12px;
+    text-align: center;
   }
 
   .orderSearchInput {
