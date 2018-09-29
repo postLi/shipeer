@@ -12,7 +12,8 @@
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
         </el-button>
       </el-input>
-      <div class="orderSearchResult">
+      <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">{{showOrderSearchResultIcon}}</div>
+      <div class="orderSearchResult" v-show="showOrderSearchResult">
         <el-badge :value="9999999" class="item">
           <div class="title" style="float: none;margin-bottom: 12px">
             全部服务中
@@ -441,7 +442,8 @@
     data() {
       return {
         showOrderSearchResult: true,
-        showOrderSearchResultIcon: "el-icon-minus",
+        showOrderSearchResultIcon: "收起",
+        showOrderSearchResultStyle: "right: 396px",
         mp: null,
         points: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
@@ -566,12 +568,14 @@
         this.infoWindow2.close();
       },
       clickOrderSearchResult() {
-        if (this.showOrderSearchResultIcon == "el-icon-minus") {
+        if (this.showOrderSearchResultIcon == "收起") {
           this.showOrderSearchResult = false;
-          this.showOrderSearchResultIcon = "el-icon-plus";
+          this.showOrderSearchResultIcon = "展开";
+          this.showOrderSearchResultStyle="right:-12px";
         } else {
           this.showOrderSearchResult = true;
-          this.showOrderSearchResultIcon = "el-icon-minus";
+          this.showOrderSearchResultIcon = "收起";
+          this.showOrderSearchResultStyle="right:396px";
         }
       },
       displayAllMarkers() {
@@ -907,6 +911,18 @@
     right: 12px;
     top: 20px;
     width: 396px;
+  }
+
+  .orderSearch .showOrderSearchResult {
+    position: absolute;
+    right: 396px;
+    top: 200px;
+    background-color: white;
+    padding: 60px 2px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 20px;
+    text-align: center;
   }
 
   .topLayer {
