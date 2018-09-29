@@ -395,10 +395,14 @@
               <td>待付款</td>
             </tr>
             <tr>
-              <td class="label">当前位置</td>
+              <td class="label" style="height: 57px">当前位置</td>
               <td colspan="3">
                 <div id="mapAddr"></div>
-                <div style="margin-top: 5px"><a href="javascript:showTrack()">显示轨迹</a></div>
+                <div style="position: relative;margin-top: 5px;height: 17px">
+                  <div style="position: absolute;right: 5px">
+                    <a href="javascript:showTrack()">显示轨迹</a>
+                  </div>
+                </div>
               </td>
             </tr>
             <tr>
@@ -534,8 +538,9 @@
         showDir: true
       });
       this.infoWindow2 = new AMap.InfoWindow({
-        offset: new AMap.Pixel(0, -66),
-        isCustom: true
+        offset: new AMap.Pixel(190, 400),
+        isCustom: true,
+        autoMove: true
       });
     },
     methods: {
@@ -616,7 +621,7 @@
       },
       genTrack(orderId) {
         var pois = [];
-        var point =null;
+        var point = null;
         if (orderId == "1") {
           point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
