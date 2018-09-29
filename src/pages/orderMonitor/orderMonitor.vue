@@ -8,324 +8,336 @@
       </div>
     </div>
     <div class="orderSearch">
-      <div align="right">
-        <div class="title" style="font-size: 16px">在途监控
-        </div>
-        <div :class="[showOrderSearchResultIcon]" @click="clickOrderSearchResult" style="vertical-align: middle;"></div>
-      </div>
-      <div class="orderBox" v-show="showOrderSearchResult">
-        <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
-          <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
-          </el-button>
-        </el-input>
-        <div class="orderSearchResult">
-          <div class="title" style="float: none">
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
+        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+        </el-button>
+      </el-input>
+      <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">{{showOrderSearchResultIcon}}</div>
+      <div class="orderSearchResult" v-show="showOrderSearchResult">
+        <el-badge :value="9999999" class="item">
+          <div class="title" style="float: none;margin-bottom: 12px">
             全部服务中
           </div>
-          <div class="table">
-            <div class="row">
-              <div class="cell" style="padding-top: 12px">
+        </el-badge>
+        <div class="table">
+          <div class="row">
+            <div class="cell3">
+              <el-badge :value="9999" class="item">
                 司机已接单
-              </div>
-              <div class="cell">
+              </el-badge>
+            </div>
+            <div class="cell">
+              <el-badge :value="9999" class="item">
                 司机赶往提货地
-              </div>
-              <div class="cell">
+              </el-badge>
+            </div>
+            <div class="cell">
+              <el-badge :value="9999" class="item">
                 司机已到提货地
-              </div>
+              </el-badge>
             </div>
-            <div class="row">
-              <div class="cell" style="padding-top: 12px">
+          </div>
+          <div class="row">
+            <div class="cell3">
+              <el-badge :value="9999" class="item">
                 司机已装货
-              </div>
-              <div class="cell">
+              </el-badge>
+            </div>
+            <div class="cell">
+              <el-badge :value="9999" class="item">
                 运输中
-              </div>
-              <div class="cell">
+              </el-badge>
+            </div>
+            <div class="cell">
+              <el-badge :value="9999" class="item">
                 司机已到目的地
+              </el-badge>
+            </div>
+          </div>
+          <div class="row">
+            <div class="cell">
+              <el-badge :value="9999" class="item">
+                司机已卸货
+              </el-badge>
+            </div>
+            <div class="cell">
+              <el-badge :value="9999" class="item">
+                司机改派
+              </el-badge>
+            </div>
+          </div>
+        </div>
+        <div style="max-height: 280px;overflow: auto;margin-top: 12px">
+          <div class="table" style="width: 350px">
+            <div class="row">
+              <div class="cellHeader">
+                序号
+              </div>
+              <div class="cellHeader">
+                车牌号
+              </div>
+              <div class="cellHeader">
+                司机
+              </div>
+              <div class="cellHeader">
+                联系电话
               </div>
             </div>
             <div class="row">
-              <div class="cell" style="padding-top: 12px">
-                司机已卸货
+              <div class="cell2">
+                1
               </div>
-              <div class="cell">
-                司机改派
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                2
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                3
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                4
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                5
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                6
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                7
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                8
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                9
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                10
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                11
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                12
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                13
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                14
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                15
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                16
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
+              </div>
+            </div>
+            <div class="row">
+              <div class="cell2">
+                17
+              </div>
+              <div class="cell2">
+                粤A123456
+              </div>
+              <div class="cell2">
+                李世杰
+              </div>
+              <div class="cell2">
+                18028693660
               </div>
             </div>
           </div>
-          <div style="max-height: 300px;overflow: auto;margin-top: 12px">
-            <div class="table" style="width: 350px">
-              <div class="row">
-                <div class="cellHeader">
-                  序号
-                </div>
-                <div class="cellHeader">
-                  车牌号
-                </div>
-                <div class="cellHeader">
-                  司机
-                </div>
-                <div class="cellHeader">
-                  联系电话
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  1
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  2
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  3
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  4
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  5
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  6
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  7
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  8
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  9
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  10
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  11
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  12
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  13
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  14
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  15
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  16
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-              <div class="row">
-                <div class="cell2">
-                  17
-                </div>
-                <div class="cell2">
-                  粤A123456
-                </div>
-                <div class="cell2">
-                  李世杰
-                </div>
-                <div class="cell2">
-                  18028693660
-                </div>
-              </div>
-            </div>
+        </div>
+        <div style="position: absolute;bottom: 12px">
+          <div>
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :pager-count="4"
+              :total="1000">
+            </el-pagination>
           </div>
-          <div style="position: absolute;bottom: 12px">
-            <div>
-              <el-pagination
-                background
-                layout="prev, pager, next"
-                :pager-count="4"
-                :total="1000">
-              </el-pagination>
-            </div>
-            <div style="padding-left: 4px">
-              <el-pagination
-                background
-                layout="total, sizes, jumper"
-                :total="1000">
-              </el-pagination>
-            </div>
+          <div style="padding-left: 4px">
+            <el-pagination
+              background
+              layout="total, sizes, jumper"
+              :total="1000">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -396,9 +408,13 @@
             </tr>
             <tr>
               <td class="label">当前位置</td>
-              <td colspan="3">
+              <td colspan="3" style="padding: 4px">
                 <div id="mapAddr"></div>
-                <div style="margin-top: 5px"><a href="javascript:showTrack()">显示轨迹</a></div>
+                <div class="track">
+                  <div style="position: absolute;right: 0">
+                    <a href="javascript:showTrack()">显示轨迹</a>
+                  </div>
+                </div>
               </td>
             </tr>
             <tr>
@@ -421,12 +437,15 @@
 </template>
 
 <script>
+  import {postApi} from '@/api/api';
+
   export default {
     name: "orderMonitor",
     data() {
       return {
         showOrderSearchResult: true,
-        showOrderSearchResultIcon: "el-icon-minus",
+        showOrderSearchResultIcon: "收起",
+        showOrderSearchResultStyle: "right: 396px",
         mp: null,
         points: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
@@ -439,6 +458,7 @@
         passedPolyline: null,
         redball: null,
         orderStatus: ""
+
       }
     },
     mounted() {
@@ -534,11 +554,15 @@
         showDir: true
       });
       this.infoWindow2 = new AMap.InfoWindow({
-        offset: new AMap.Pixel(0, -66),
-        isCustom: true
+        offset: new AMap.Pixel(190, 400),
+        isCustom: true,
+        autoMove: true
       });
     },
     methods: {
+      getOrderNum(orderStatus){
+postApi("/aflc-order/aflcMyOrderApi/myOrderList",{currentPage:1,pageSize:1}.then((res)=>{}))
+      },
       subString(str, maxLength) {
         if (str == null)
           return str;
@@ -550,12 +574,14 @@
         this.infoWindow2.close();
       },
       clickOrderSearchResult() {
-        if (this.showOrderSearchResultIcon == "el-icon-minus") {
+        if (this.showOrderSearchResultIcon == "收起") {
           this.showOrderSearchResult = false;
-          this.showOrderSearchResultIcon = "el-icon-plus";
+          this.showOrderSearchResultIcon = "展开";
+          this.showOrderSearchResultStyle="right:-12px";
         } else {
           this.showOrderSearchResult = true;
-          this.showOrderSearchResultIcon = "el-icon-minus";
+          this.showOrderSearchResultIcon = "收起";
+          this.showOrderSearchResultStyle="right:396px";
         }
       },
       displayAllMarkers() {
@@ -583,12 +609,16 @@
 
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
+        var mapAddr = document.getElementById("mapAddr");
+        if (mapAddr != null)
+          mapAddr.innerText = "";
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
-            var tempEle = document.getElementById("mapAddr");
-            if (tempEle != null)
-              tempEle.innerText = address;
+            if (mapAddr == null)
+              mapAddr = document.getElementById("mapAddr");
+            if (mapAddr != null)
+              mapAddr.innerText = address;
           }
         });
       },
@@ -616,7 +646,7 @@
       },
       genTrack(orderId) {
         var pois = [];
-        var point =null;
+        var point = null;
         if (orderId == "1") {
           point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
@@ -710,6 +740,10 @@
     background-color: #67c23a;
     border-color: #67c23a;
     color: #fff;
+  }
+
+  .orderSearchResult .el-badge__content {
+    top: -3px
   }
 </style>
 
@@ -806,6 +840,16 @@
     vertical-align: middle;
   }
 
+  .customInfoWindow #mapAddr {
+    height: 35px;
+    overflow: auto;
+  }
+
+  .customInfoWindow .track {
+    position: relative;
+    height: 17px
+  }
+
   #infoWindow {
     display: none
   }
@@ -824,7 +868,8 @@
   }
 
   .orderSearchResult .table .cell {
-    display: table-cell
+    display: table-cell;
+    text-align: center;
   }
 
   .orderSearchResult .table .cellHeader {
@@ -838,6 +883,12 @@
     border: 1px solid gray;
     text-align: center;
     color: gray;
+  }
+
+  .orderSearchResult .table .cell3 {
+    display: table-cell;
+    padding-bottom: 12px;
+    text-align: center;
   }
 
   .orderSearchInput {
@@ -855,7 +906,10 @@
 
   .orderSearchResult {
     margin-top: 12px;
+    padding: 12px;
     height: 500px;
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
   }
 
   .orderSearch {
@@ -863,9 +917,18 @@
     right: 12px;
     top: 20px;
     width: 396px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px 0 rgba(153, 153, 153, 0.5);
-    padding: 15px;
+  }
+
+  .orderSearch .showOrderSearchResult {
+    position: absolute;
+    right: 396px;
+    top: 200px;
+    background-color: white;
+    padding: 60px 2px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 20px;
+    text-align: center;
   }
 
   .topLayer {
