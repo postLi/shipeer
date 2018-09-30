@@ -16,54 +16,65 @@
         {{showOrderSearchResultIcon}}
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
-        <el-badge :value="allOrderNum" class="item">
-          <div class="title" style="float: none;margin-bottom: 12px">
+        <el-badge :value="allOrderNum">
+          <div ref="ttt" class="title allOrder"
+               :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
+               @click="clickOrder('全部服务中')">
             全部服务中
           </div>
         </el-badge>
         <div class="table">
           <div class="row">
-            <div class="cell3">
-              <el-badge :value="9999" class="item">
+            <div class="cell3" @click="clickOrder('司机已接单')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机赶往提货地')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已到提货地')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
               </el-badge>
             </div>
           </div>
           <div class="row">
-            <div class="cell3">
-              <el-badge :value="9999" class="item">
+            <div class="cell3" @click="clickOrder('司机已装货')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('运输中')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已到目的地')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
               </el-badge>
             </div>
           </div>
           <div class="row">
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已卸货')">
+              <el-badge
+                :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
+                :value="9999" :max="maxNum">
                 司机已卸货
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机改派')">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
               </el-badge>
             </div>
@@ -325,20 +336,20 @@
             </div>
           </div>
         </div>
-        <div style="position: absolute;bottom: 12px">
+        <div class="carPager">
           <div>
             <el-pagination
               background
               layout="prev, pager, next"
-              :pager-count="4"
-              :total="1000">
+              :pager-count="4" @current-change="currentPageChange" :current-page.sync="currentPage"
+              :total="totalCount" :page-size="pageSize" @size-change="pageSizeChange">
             </el-pagination>
           </div>
-          <div style="padding-left: 4px;font-size: 12px">
+          <div class="carPager2">
             <el-pagination
               background
-              layout="total, sizes, jumper"
-              :total="1000">
+              layout="total, sizes, jumper" @current-change="currentPageChange" :current-page.sync="currentPage"
+              :total="totalCount" :page-size="pageSize" @size-change="pageSizeChange">
             </el-pagination>
           </div>
         </div>
@@ -459,8 +470,12 @@
         polyline: null,
         passedPolyline: null,
         redball: null,
-        orderStatus: "",
-        allOrderNum: ""
+        orderStatus: "全部服务中",
+        allOrderNum: "",
+        totalCount: 0,
+        pageSize: 10,
+        currentPage: 1,
+        maxNum: 999
       }
     },
     mounted() {
@@ -560,21 +575,39 @@
         isCustom: true,
         autoMove: true
       });
-
-      this.getOrderNum();
+      this.getOrderNum(null, true);
     },
     methods: {
-      getOrderNum(orderStatus) {
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1&status=" + orderStatus).then((res) => {
+      pageSizeChange(val) {
+        this.pageSize = val;
+      },
+      currentPageChange(val) {
+        this.currentPage = val;
+      },
+      getOrderNum(orderStatus, flag,) {
+        var s = "";
+        if (orderStatus != null)
+          s = "&status=" + orderStatus;
+        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
+          var c = "";
           try {
-            this.allOrderNum = res.data.totalCount;
+            c = res.data.totalCount;
           } catch (e) {
             this.logError();
           }
+          if (c === "" || c == null || isNaN(c))
+            return;
+          if (orderStatus == null)
+            this.allOrderNum = c;
+          if (flag)
+            this.totalCount = c;
         });
       },
       logError() {
-        this.$message.error("有错误产生. ");
+        this.$message.error("无法获取服务端数据. ");
+      },
+      clickOrder(ordStatus) {
+        this.orderStatus = ordStatus;
       },
       subString(str, maxLength) {
         if (str == null)
@@ -587,7 +620,7 @@
         this.infoWindow2.close();
       },
       clickOrderSearchResult() {
-        if (this.showOrderSearchResultIcon == "收起") {
+        if (this.showOrderSearchResultIcon === "收起") {
           this.showOrderSearchResult = false;
           this.showOrderSearchResultIcon = "展开";
           this.showOrderSearchResultStyle = "right:-12px";
@@ -660,7 +693,7 @@
       genTrack(orderId) {
         var pois = [];
         var point = null;
-        if (orderId == "1") {
+        if ("1" === orderId) {
           point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
           point = new AMap.LngLat(113.298245, 23.070488);
@@ -673,7 +706,7 @@
           pois.push(point);
           point = new AMap.LngLat(113.28804, 23.086912);
           pois.push(point);
-        } else if (orderId == "2") {
+        } else if (orderId === "2") {
           point = new AMap.LngLat(116.383141, 39.923679);
           pois.push(point);
           point = new AMap.LngLat(116.389105, 39.929378);
@@ -686,7 +719,7 @@
           pois.push(point);
           point = new AMap.LngLat(116.395645, 39.924232);
           pois.push(point);
-        } else if (orderId == "3") {
+        } else if (orderId === "3") {
           point = new AMap.LngLat(106.554291, 29.597066);
           pois.push(point);
           point = new AMap.LngLat(106.520299, 29.585509);
@@ -699,7 +732,7 @@
           pois.push(point);
           point = new AMap.LngLat(106.546242, 29.585069);
           pois.push(point);
-        } else if (orderId == "4") {
+        } else if (orderId === "4") {
           point = new AMap.LngLat(103.79549, 36.095664);
           pois.push(point);
           point = new AMap.LngLat(103.815396, 36.09718);
@@ -757,6 +790,17 @@
 
   .orderSearchResult .el-badge__content {
     top: -3px
+  }
+
+  .carPager .el-pager li,
+  .carPager .el-pagination button, .el-pagination span:not([class*=suffix]),
+  .carPager .el-input__inner,
+  .carPager .el-pagination__sizes .el-input .el-input__inner {
+    font-size: 12px
+  }
+
+  .carPager .el-pagination__jump {
+    margin-left: unset;
   }
 </style>
 
@@ -865,6 +909,25 @@
 
   #infoWindow {
     display: none
+  }
+
+  .carPager {
+    position: absolute;
+    bottom: 12px;
+    font-size: 12px;
+  }
+
+  .carPager2 {
+    padding-left: 4px;
+  }
+
+  .allOrder {
+    float: none;
+    margin-bottom: 12px;
+  }
+
+  .el-badge {
+    cursor: pointer;
   }
 
   .orderSearchResult .table {
