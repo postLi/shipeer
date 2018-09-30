@@ -16,7 +16,7 @@
         {{showOrderSearchResultIcon}}
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
-        <el-badge :value="allOrderNum">
+        <el-badge :value="orderNum[0]">
           <div ref="ttt" class="title allOrder"
                :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
                @click="clickOrder('全部服务中')">
@@ -26,19 +26,19 @@
         <div class="table">
           <div class="row">
             <div class="cell3" @click="clickOrder('司机已接单')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[1]" :max="maxNum"
                         :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机赶往提货地')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[2]" :max="maxNum"
                         :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机已到提货地')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[3]" :max="maxNum"
                         :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
               </el-badge>
@@ -46,19 +46,19 @@
           </div>
           <div class="row">
             <div class="cell3" @click="clickOrder('司机已装货')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[4]" :max="maxNum"
                         :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('运输中')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[5]" :max="maxNum"
                         :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机已到目的地')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[6]" :max="maxNum"
                         :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
               </el-badge>
@@ -68,12 +68,12 @@
             <div class="cell" @click="clickOrder('司机已卸货')">
               <el-badge
                 :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
-                :value="9999" :max="maxNum">
+                :value="orderNum[7]" :max="maxNum">
                 司机已卸货
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机改派')">
-              <el-badge :value="9999" :max="maxNum"
+              <el-badge :value="orderNum[8]" :max="maxNum"
                         :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
               </el-badge>
@@ -81,10 +81,10 @@
           </div>
         </div>
         <div style="max-height: 280px;overflow: auto;margin-top: 12px">
-          <div class="table" style="width: 350px">
+          <div class="table" style="width: 360px">
             <div class="row">
               <div class="cellHeader">
-                序号
+                订单号
               </div>
               <div class="cellHeader">
                 车牌号
@@ -96,242 +96,18 @@
                 联系电话
               </div>
             </div>
-            <div class="row">
-              <div class="cell2">
-                1
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                2
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                3
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                4
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                5
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                6
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                7
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                8
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                9
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                10
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                11
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                12
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                13
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                14
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                15
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                16
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                17
+            <div class="row" v-for="(item,i) in carList" :key="item.orderSerial">
+              <div class="cell4">
+                {{item.orderSerial}}
               </div>
               <div class="cell2">
-                粤A123456
+
               </div>
               <div class="cell2">
-                李世杰
+                {{item.driverName}}
               </div>
               <div class="cell2">
-                18028693660
+                {{item.mobile}}
               </div>
             </div>
           </div>
@@ -471,11 +247,13 @@
         passedPolyline: null,
         redball: null,
         orderStatus: "全部服务中",
-        allOrderNum: "",
+        orderStatusCode: "",
+        orderNum:["","","","","","","","",""],
         totalCount: 0,
         pageSize: 10,
         currentPage: 1,
-        maxNum: 999
+        maxNum: 999,
+        carList: []
       }
     },
     mounted() {
@@ -575,16 +353,27 @@
         isCustom: true,
         autoMove: true
       });
-      this.getOrderNum(null, true);
+      this.getOrder("", true);
+      this.getOrder("AF0080601HZ", false);
+      this.getOrder("AF0080602HZ", false);
+      this.getOrder("AF0080603HZ", false);
+      this.getOrder("AF0080604HZ", false);
+      this.getOrder("AF0080605HZ", false);
+      this.getOrder("AF0080606HZ", false);
+      this.getOrder("AF0080607HZ", false);
+      this.getOrder("AF0080608HZ", false);
     },
     methods: {
       pageSizeChange(val) {
         this.pageSize = val;
+        this.currentPage = 1;
+        this.getOrder(this.orderStatusCode, true);
       },
       currentPageChange(val) {
         this.currentPage = val;
+        this.getOrder(this.orderStatusCode, true);
       },
-      getOrderNum(orderStatus, flag,) {
+      getOrder(orderStatus, flag) {
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
@@ -595,12 +384,35 @@
           } catch (e) {
             this.logError();
           }
+
           if (c === "" || c == null || isNaN(c))
             return;
-          if (orderStatus == null)
-            this.allOrderNum = c;
-          if (flag)
+          if (orderStatus === "")
+            this.orderNum[0] = c;
+          else if (orderStatus === "AF0080601HZ")
+            this.orderNum[1]=c;
+          else if (orderStatus === "AF0080602HZ")
+            this.orderNum[2]=c;
+          else if (orderStatus === "AF0080603HZ")
+            this.orderNum[3]=c;
+          else if (orderStatus === "AF0080604HZ")
+            this.orderNum[4]=c;
+          else if (orderStatus === "AF0080605HZ")
+            this.orderNum[5]=c;
+          else if (orderStatus === "AF0080606HZ")
+            this.orderNum[6]=c;
+          else if (orderStatus === "AF0080607HZ")
+            this.orderNum[7]=c;
+          else if (orderStatus === "AF0080608HZ")
+            this.orderNum[8]=c;
+
+          if (flag) {
             this.totalCount = c;
+            var l = res.data.list;
+            if (l == null)
+              l = [];
+            this.carList = l;
+          }
         });
       },
       logError() {
@@ -608,6 +420,26 @@
       },
       clickOrder(ordStatus) {
         this.orderStatus = ordStatus;
+        this.currentPage = 1;
+        if (ordStatus === "全部服务中")
+          this.orderStatusCode = null;
+        else if (ordStatus === "司机已接单")
+          this.orderStatusCode = "AF0080601HZ";
+        else if (ordStatus === "司机赶往提货地")
+          this.orderStatusCode = "AF0080602HZ";
+        else if (ordStatus === "司机已到提货地")
+          this.orderStatusCode = "AF0080603HZ";
+        else if (ordStatus === "司机已装货")
+          this.orderStatusCode = "AF0080604HZ";
+        else if (ordStatus === "运输中")
+          this.orderStatusCode = "AF0080605HZ";
+        else if (ordStatus === "司机已到目的地")
+          this.orderStatusCode = "AF0080606HZ";
+        else if (ordStatus === "司机已卸货")
+          this.orderStatusCode = "AF0080607HZ";
+        else if (ordStatus === "司机改派")
+          this.orderStatusCode = "AF0080608HZ";
+        this.getOrder(this.orderStatusCode, true);
       },
       subString(str, maxLength) {
         if (str == null)
@@ -959,12 +791,25 @@
     border: 1px solid gray;
     text-align: center;
     color: gray;
+    width: 89px;
+    max-width: 89px;
+    word-wrap: break-word;
   }
 
   .orderSearchResult .table .cell3 {
     display: table-cell;
     padding-bottom: 12px;
     text-align: center;
+  }
+
+  .orderSearchResult .table .cell4 {
+    display: table-cell;
+    border: 1px solid gray;
+    text-align: center;
+    color: gray;
+    width: 93px;
+    max-width: 93px;
+    word-wrap: break-word;
   }
 
   .orderSearchInput {
