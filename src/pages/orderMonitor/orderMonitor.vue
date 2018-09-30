@@ -26,35 +26,40 @@
         <div class="table">
           <div class="row">
             <div class="cell3" @click="clickOrder('司机已接单')">
-              <el-badge :value="9999"
+              <el-badge :value="9999" :max="maxNum"
                         :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机赶往提货地')">
-              <el-badge :value="9999" :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机已到提货地')">
-              <el-badge :value="9999" :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
               </el-badge>
             </div>
           </div>
           <div class="row">
             <div class="cell3" @click="clickOrder('司机已装货')">
-              <el-badge :value="9999" :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('运输中')">
-              <el-badge :value="9999" :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机已到目的地')">
-              <el-badge :value="9999" :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
               </el-badge>
             </div>
@@ -63,12 +68,13 @@
             <div class="cell" @click="clickOrder('司机已卸货')">
               <el-badge
                 :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
-                :value="9999">
+                :value="9999" :max="maxNum">
                 司机已卸货
               </el-badge>
             </div>
             <div class="cell" @click="clickOrder('司机改派')">
-              <el-badge :value="9999" :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
+              <el-badge :value="9999" :max="maxNum"
+                        :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
               </el-badge>
             </div>
@@ -465,7 +471,9 @@
         passedPolyline: null,
         redball: null,
         orderStatus: "全部服务中",
-        allOrderNum: ""
+        allOrderNum: "",
+        totalCount: "",
+        maxNum: 999
       }
     },
     mounted() {
@@ -565,20 +573,24 @@
         isCustom: true,
         autoMove: true
       });
-
-      this.getOrderNum();
+      this.getOrderNum(null, true);
     },
     methods: {
-      getOrderNum(orderStatus) {
+      getOrderNum(orderStatus, flag) {
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
         postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1" + s).then((res) => {
+          var c = "";
           try {
-            this.allOrderNum = res.data.totalCount;
+            c = res.data.totalCount;
           } catch (e) {
             this.logError();
           }
+          if (orderStatus == null)
+            this.allOrderNum = c;
+          if (flag)
+            this.totalCount = c;
         });
       },
       logError() {
