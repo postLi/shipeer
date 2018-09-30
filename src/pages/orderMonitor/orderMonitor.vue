@@ -574,7 +574,7 @@
         });
       },
       logError() {
-        this.$message.error("有错误产生. ");
+        this.$message.error("无法获取服务端数据. ");
       },
       subString(str, maxLength) {
         if (str == null)
