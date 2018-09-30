@@ -17,7 +17,7 @@
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
         <el-badge :value="allOrderNum" class="item">
-          <div class="title" style="float: none;margin-bottom: 12px">
+          <div class="title allOrder" style="color: red;text-decoration: underline" @click="clickAllOrder">
             全部服务中
           </div>
         </el-badge>
@@ -440,6 +440,7 @@
 
 <script>
   import {postApi} from '@/api/api.js';
+  import $ from 'jquery';
 
   export default {
     name: "orderMonitor",
@@ -565,7 +566,10 @@
     },
     methods: {
       getOrderNum(orderStatus) {
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1").then((res) => {
+        var s = "";
+        if (orderStatus != null)
+          s = "&status=" + orderStatus;
+        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1" + s).then((res) => {
           try {
             this.allOrderNum = res.data.totalCount;
           } catch (e) {
@@ -575,6 +579,10 @@
       },
       logError() {
         this.$message.error("无法获取服务端数据. ");
+      },
+      clickAllOrder() {
+        alert("deng");
+        alert($(".allOrder").css("color"));
       },
       subString(str, maxLength) {
         if (str == null)
@@ -886,6 +894,12 @@
 
   .carPager2 {
     padding-left: 4px;
+  }
+
+  .allOrder {
+    float: none;
+    margin-bottom: 12px;
+    cursor: pointer
   }
 
   .orderSearchResult .table {
