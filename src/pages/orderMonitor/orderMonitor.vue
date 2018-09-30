@@ -565,7 +565,7 @@
     },
     methods: {
       getOrderNum(orderStatus) {
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1&status=" + orderStatus).then((res) => {
+        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1").then((res) => {
           try {
             this.allOrderNum = res.data.totalCount;
           } catch (e) {
