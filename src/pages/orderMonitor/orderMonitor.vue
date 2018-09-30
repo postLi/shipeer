@@ -17,7 +17,9 @@
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
         <el-badge :value="allOrderNum" class="item">
-          <div class="title allOrder" style="color: red;text-decoration: underline" @click="clickAllOrder">
+          <div ref="ttt" class="title allOrder"
+               :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
+               @click="clickOrder('全部服务中')">
             全部服务中
           </div>
         </el-badge>
@@ -57,8 +59,10 @@
             </div>
           </div>
           <div class="row">
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已卸货')">
+              <el-badge
+                :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
+                :value="9999" class="item">
                 司机已卸货
               </el-badge>
             </div>
@@ -440,7 +444,6 @@
 
 <script>
   import {postApi} from '@/api/api.js';
-  import $ from 'jquery';
 
   export default {
     name: "orderMonitor",
@@ -460,7 +463,7 @@
         polyline: null,
         passedPolyline: null,
         redball: null,
-        orderStatus: "",
+        orderStatus: "全部服务中",
         allOrderNum: ""
       }
     },
@@ -580,9 +583,8 @@
       logError() {
         this.$message.error("无法获取服务端数据. ");
       },
-      clickAllOrder() {
-        alert("deng");
-        alert($(".allOrder").css("color"));
+      clickOrder(ordStatus) {
+        this.orderStatus = ordStatus;
       },
       subString(str, maxLength) {
         if (str == null)
