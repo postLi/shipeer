@@ -325,7 +325,7 @@
             </div>
           </div>
         </div>
-        <div style="position: absolute;bottom: 12px">
+        <div class="carPager">
           <div>
             <el-pagination
               background
@@ -334,7 +334,7 @@
               :total="1000">
             </el-pagination>
           </div>
-          <div style="padding-left: 4px;font-size: 12px">
+          <div class="carPager2">
             <el-pagination
               background
               layout="total, sizes, jumper"
@@ -758,6 +758,17 @@
   .orderSearchResult .el-badge__content {
     top: -3px
   }
+
+  .carPager .el-pager li,
+  .carPager .el-pagination button, .el-pagination span:not([class*=suffix]),
+  .carPager .el-input__inner,
+  .carPager .el-pagination__sizes .el-input .el-input__inner {
+    font-size: 12px
+  }
+
+  .carPager .el-pagination__jump {
+    margin-left: unset;
+  }
 </style>
 
 <style scoped>
@@ -865,6 +876,16 @@
 
   #infoWindow {
     display: none
+  }
+
+  .carPager {
+    position: absolute;
+    bottom: 12px;
+    font-size: 12px;
+  }
+
+  .carPager2 {
+    padding-left: 4px;
   }
 
   .orderSearchResult .table {
