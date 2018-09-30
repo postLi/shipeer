@@ -341,15 +341,15 @@
             <el-pagination
               background
               layout="prev, pager, next"
-              :pager-count="4"
-              :total="1000">
+              :pager-count="4" @current-change="currentPageChange" :current-page.sync="currentPage"
+              :total="totalCount" :page-size="pageSize" @size-change="pageSizeChange">
             </el-pagination>
           </div>
           <div class="carPager2">
             <el-pagination
               background
-              layout="total, sizes, jumper"
-              :total="1000">
+              layout="total, sizes, jumper" @current-change="currentPageChange" :current-page.sync="currentPage"
+              :total="totalCount" :page-size="pageSize" @size-change="pageSizeChange">
             </el-pagination>
           </div>
         </div>
@@ -472,7 +472,9 @@
         redball: null,
         orderStatus: "全部服务中",
         allOrderNum: "",
-        totalCount: "",
+        totalCount: 0,
+        pageSize: 10,
+        currentPage: 1,
         maxNum: 999
       }
     },
@@ -576,17 +578,25 @@
       this.getOrderNum(null, true);
     },
     methods: {
-      getOrderNum(orderStatus, flag) {
+      pageSizeChange(val) {
+        this.pageSize = val;
+      },
+      currentPageChange(val) {
+        this.currentPage = val;
+      },
+      getOrderNum(orderStatus, flag,) {
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=1&pageSize=1" + s).then((res) => {
+        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
           var c = "";
           try {
             c = res.data.totalCount;
           } catch (e) {
             this.logError();
           }
+          if (c === "" || c == null || isNaN(c))
+            return;
           if (orderStatus == null)
             this.allOrderNum = c;
           if (flag)
