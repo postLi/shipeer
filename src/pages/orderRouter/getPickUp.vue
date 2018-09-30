@@ -209,7 +209,7 @@
         JIM.init({
           "appkey":this.jimInfo.appkey,
           "random_str": this.jimInfo.random_str,
-          "signature":  md5(this.jimInfo.signature),
+          "signature":  this.jimInfo.signature,
           "timestamp":  this.jimInfo.timestamp,
           "flag": 1
         }).onSuccess(function(data) {

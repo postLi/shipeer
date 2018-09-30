@@ -7,7 +7,8 @@
               <li>
                 <div class="liImg">
                   <!--<span style="color: red"><icon-svg iconClass="baobiao2_yingyeehzb"></icon-svg></span>-->
-                  <img :src="userInfoData.shipperCardFile?userInfoData.shipperCardFile:'../../assets/role.png'" alt="">
+                  <img v-if="userInfoData.shipperCardFile===''|| userInfoData.shipperCardFile === null " class="user-avatar" src="../../assets/default_tx.png">
+                  <img class="user-avatar" :src="userInfoData.shipperCardFile" v-else>
                 </div>
                 <div class="liMessage">
                   <span>欢迎您,&nbsp;&nbsp;{{userInfoData.mobile}}</span>
@@ -24,7 +25,7 @@
                 <div class="liOther">
                   <span>企业认证:</span>
                   <span>{{userInfoData.shipperStatusName}}</span>
-                  <span class="spanClass" v-if="userInfoData.shipperStatus === AF0010403">去认证</span>
+                  <span class="spanClass" v-if="userInfoData.shipperStatus === 'AF0010403'">去认证</span>
                 </div>
               </li>
 
@@ -82,9 +83,6 @@
                 ref="multipleTable"
                 :data="dataset"
                 border
-                @row-dblclick="getDbClick"
-                @row-click="clickDetails"
-                @selection-change="getSelection"
                 :default-sort = "{prop: 'id', order: 'ascending'}"
                 style="width: 100%">
 
@@ -203,44 +201,42 @@
         getWallet(){
 
           return postFindMywallet(this.userInfoData.userToken).then(res =>{
-              this.infoData.balance = res.mywallet.mywallet
+              if(res.status ===200){
+                this.infoData.balance = res.data.mywallet.balance
+              }else{
+                this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
+              }
           })
         },
         getRewardInfo(){
           return postFindAflcReward(this.senData).then(res => {
-            this.infoData.rewardMax = res.list[0].rewardMax
+           if(res.status === 200){
+             this.infoData.rewardMax = res.data.list[0].rewardMax
+           }else{
+             this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
+           }
           })
         },
         getCouponCountInfo(){
           return getCouponCount().then(res => {
-              this.infoData.nums = res.data
+              if(res.status ===200){
+                this.infoData.nums = res.data
+              }else{
+                this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err) || '无法获取服务端数据'))
+              }
 
-          }).catch(err => {
-            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
           })
         },
         getPaymentList(){
           return postFindSOPayment(this.senDataList).then(res =>{
-            this.dataset = res.data.list
-            this.total = res.data.totalPage
-          }).catch(err => {
-            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
+            if(res.status ===200){
+              this.dataset = res.data.list
+              this.total = res.data.totalPage
+            }else{
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
+            }
           })
         },
-        // getUserInfo(){
-        //   let uPhone = VueJsCookie.get('28kyuPhone')
-        //   return getUser(uPhone).then(res=>{
-        //     if(res.status===200){
-        //       this.userInfoData = res.data
-        //       this.$store.commit('setUserInfo', res.data)
-        //       window.USERDATA = res.data
-        //       setUserInfo(this.userInfoData)
-        //     }else{
-        //       this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-        //     }
-        //
-        //   })
-        // },
         getDbClick(){
 
         },
@@ -261,7 +257,11 @@
         },
         gotoCouponList(){
           this.$router.push({path: '/couponList'})
-        }
+        },
+        handlePageChange(obj) {
+          this.senDataList.currentPage = obj.pageNum
+          this.senDataList.pageSize = obj.pageSize
+        },
       }
     }
 </script>

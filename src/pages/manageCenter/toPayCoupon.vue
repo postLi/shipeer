@@ -368,6 +368,13 @@
               if(res.status === 200){
                 // 支付成功
                 this.$message.success('支付成功')
+                if(type ==='wx'){
+                  this.centerDialogVisible = false
+                }else{
+                  this.centerDialogVisiblezfb = false
+                }
+                // this.centerDialogVisiblezfb
+
               } else {
                 // 支付失败
                 this.getPayResult(rid,type)
@@ -384,11 +391,9 @@
             if(res.status === 200){
               this.datasetList = res.data.AF011
             }else{
-              // this.$message.info('')
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
             }
 
-          }).catch(err => {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
         },
         getPaymentList(){
