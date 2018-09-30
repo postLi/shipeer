@@ -16,7 +16,7 @@
         {{showOrderSearchResultIcon}}
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
-        <el-badge :value="allOrderNum" class="item">
+        <el-badge :value="allOrderNum">
           <div ref="ttt" class="title allOrder"
                :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
                @click="clickOrder('全部服务中')">
@@ -25,35 +25,36 @@
         </el-badge>
         <div class="table">
           <div class="row">
-            <div class="cell3">
-              <el-badge :value="9999" class="item">
+            <div class="cell3" @click="clickOrder('司机已接单')">
+              <el-badge :value="9999"
+                        :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机赶往提货地')">
+              <el-badge :value="9999" :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已到提货地')">
+              <el-badge :value="9999" :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
               </el-badge>
             </div>
           </div>
           <div class="row">
-            <div class="cell3">
-              <el-badge :value="9999" class="item">
+            <div class="cell3" @click="clickOrder('司机已装货')">
+              <el-badge :value="9999" :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('运输中')">
+              <el-badge :value="9999" :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机已到目的地')">
+              <el-badge :value="9999" :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
               </el-badge>
             </div>
@@ -62,12 +63,12 @@
             <div class="cell" @click="clickOrder('司机已卸货')">
               <el-badge
                 :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
-                :value="9999" class="item">
+                :value="9999">
                 司机已卸货
               </el-badge>
             </div>
-            <div class="cell">
-              <el-badge :value="9999" class="item">
+            <div class="cell" @click="clickOrder('司机改派')">
+              <el-badge :value="9999" :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
               </el-badge>
             </div>
@@ -670,7 +671,7 @@
       genTrack(orderId) {
         var pois = [];
         var point = null;
-        if ( "1"===orderId) {
+        if ("1" === orderId) {
           point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
           point = new AMap.LngLat(113.298245, 23.070488);
@@ -901,7 +902,10 @@
   .allOrder {
     float: none;
     margin-bottom: 12px;
-    cursor: pointer
+  }
+
+  .el-badge {
+    cursor: pointer;
   }
 
   .orderSearchResult .table {
