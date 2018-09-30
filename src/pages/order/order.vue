@@ -1,6 +1,7 @@
 <template>
   <div class="height_100 flex_r">
-    <div class="margin_10 flex_1 b_c_w o_f b-s" >
+    <!--margin_10暂时不要-->
+    <div class="flex_1 b_c_w o_f" >
       <div class="tip">
         <span class="title">小提示</span>
         <span class="title1">（<span>*</span>号为必填项）</span>
@@ -19,7 +20,7 @@
         <el-form-item label="" label-width="">
         <div class="item-1-2">
           <span>选择用车时间：</span>
-          <el-date-picker
+          <el-date-picker :clearable="false"
             prefix-icon="el-icon-date"
             style="width: 250px"
             size="small"
@@ -190,7 +191,7 @@
                 v-model="inputGoods">
               </el-input>
               <el-button size="mini" @click="closeGoods()" type="success">
-                确实
+                确定
               </el-button>
             </div>
           </div>
@@ -220,7 +221,7 @@
                 v-model="inputWight">
               </el-input>
               <el-button size="mini" @click="closeWight()" type="success">
-                确实
+                确定
               </el-button>
             </div>
           </div>
@@ -249,7 +250,7 @@
                 v-model="inputVolume">
               </el-input>
               <el-button size="mini" @click="closeVolume()" type="success">
-                确实
+                确定
               </el-button>
             </div>
           </div>
@@ -275,6 +276,7 @@
           <div class="aa">/60</div>
         </div>
         <el-input
+          style="font-size: 12px"
           maxlength="60"
           type="textarea"
           autosize
@@ -320,7 +322,7 @@
                   v-model="inputTip">
                 </el-input>
                 <el-button size="mini" @click="closeTip()" type="success">
-                  确实
+                  确定
                 </el-button>
               </div>
             </div>
@@ -408,7 +410,7 @@
           form:{//主页表单
             carList:[],//车辆列表
             code:[],//城市code
-            date:'',//选择日期
+            date: new Date(),//选择日期
             time:'',//选择的时间
             city:'',
             carId:"AF01801",
@@ -635,13 +637,15 @@
               for(let i=ii;i>=0;i--){
                 timeList.push({time:EndTime - t1 * i,timeShow:new Date(EndTime - t1 * i).format("hh:mm")})
               }
-              this.timeList = timeList
+              this.timeList = timeList;
+              this.form.time = timeList[0].time
             }else {
               let ii = 86400000/t1;
               for(let i=0;i<ii;i++){
                 timeList.push({time:startTime + t1 * i,timeShow:new Date(startTime + t1 * i).format("hh:mm")})
               }
-              this.timeList = timeList
+              this.timeList = timeList;
+              this.form.time = timeList[0].time
             }
           }else {
             this.timeList = [];
@@ -871,6 +875,10 @@
       },
 
       mounted(){
+        let  timeStamp = new Date(new Date().setHours(0, 0, 0, 0)) * 1;
+
+        this.changeDate(timeStamp);
+
         this.createMap();
 
         //选择车型
@@ -1060,7 +1068,7 @@
     .search{
       .search-body{
         width: 298px;
-        height: 35px;
+        height: 32px;
         border-radius: 3px;
         .search-left{
           background-color: #f2f2f2;

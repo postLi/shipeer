@@ -86,9 +86,8 @@
 
                   </el-form-item>
                   <div class="flex_a h-40">
-                    <span class="t pointer margin_l_10" @click="changeVcode">必须是6-20位英文字母、数字</span>
+                    <span class="t margin_l_10">必须是6-20位英文字母、数字</span>
                   </div>
-
                 </div>
 
                 <div class="item flex_as">
@@ -222,7 +221,7 @@
           this.$refs['Rules2'].validate((valid) => {
             if (valid) {
               let parm ={
-                memberType:"AF00102",
+                memberType:"AF0010101",
                 mobile:this.form.mobile,
                 imageCode:this.form1.imageCode,
                 smsCode:this.form1.smsCode,

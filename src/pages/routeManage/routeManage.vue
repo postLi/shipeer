@@ -1,6 +1,6 @@
 <template>
   <div class="height_100 flex_r">
-    <div class="margin_10 flex_1 b_c_w o_f flex_f" ref="getTableWH">
+    <div class="flex_1 b_c_w o_f flex_f" ref="getTableWH">
       <div class="padding_20" ref="getTop">
         <header class="flex_a f_f">
           <div class="flex_a m-r">
@@ -154,7 +154,6 @@
         }
       },
       methods:{
-
         edit(item){
           this.name= "编辑";
           this.window = !this.window;
@@ -207,16 +206,18 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            postApi(`/aflc-uc/aflcShipperLineApi/deleteAflcShipperLine/${item[0].shipperNo}`).then(() => {
-              this.$message.info('删除成功');
-              this.getList();
+            postApi(`/aflc-uc/aflcShipperLineApi/deleteAflcShipperLine/${item[0].shipperNo}`).then((res) => {
+              if(res.status === 200){
+                this.$message.info('删除成功');
+                this.getList();
+              }else {
+                this.$message.warning(res.errorInfo)
+              }
             })
-
           })
         },
 
         save(){
-
           console.log(this.addRoute)
           let check =  this.addRoute.some((item)=>{
             return item.originCoordinate === ''
@@ -232,10 +233,12 @@
               "shipperLineName": this.addRoute[0].lineName
             };
             postApi(`/aflc-uc/aflcShipperLineApi/updateAflcShipperLine/${this.addRoute[0].shipperNo}`,parm).then((res)=>{
-              if(res !== '' || res !== null){
+              if(res.status === 200){
                 this.$message.success("修改成功");
                 this.window = false;
                 this.getList();
+              } else {
+                this.$message.warning(res.errorInfo)
               }
             });
           }else {
@@ -244,10 +247,12 @@
               "shipperLineName": new Date() * 1
             };
             postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine',parm).then((res)=>{
-              if(res !== '' || res !== null){
+              if(res.status === 200){
                 this.$message.success("新增成功");
                 this.window = false;
                 this.getList();
+              } else {
+                this.$message.warning(res.errorInfo)
               }
             });
           }
@@ -293,7 +298,11 @@
         },
         getList(){
           getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
-            this.tableData = res.data;
+            if(res.status === 200){
+              this.tableData = res.data;
+            }else{
+              this.$message.warning(res.errorInfo)
+            }
           });
         }
     },

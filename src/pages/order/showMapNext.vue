@@ -1,10 +1,13 @@
 <template>
-  <div class="p_r margin_10 height_100 b_c_w o_f">
+  <div class="p_r height_100 b_c_w o_f">
     <div class="width_100 height_100" ref="allMapNext"></div>
     <div class="order flex_f">
       <div class="title flex_sb">
         <div class="left">确认订单信息</div>
-        <div class="right pointer" @click="toOrderManage()">修改订单</div>
+        <div class="right pointer flex_a" @click="toOrderManage()">
+          <img src="../../assets/order/xiugaidd.png" alt="">
+         <span>修改订单</span> 
+        </div>
       </div>
 
       <div class="order-body flex_1">
@@ -29,8 +32,6 @@
         <div class="margin_t_10 order-key">若产生高速费、停车费和搬运费,根据实际费用由用户支付 若涉及逾时等候费,请按照收费标准支付</div>
 
         <div class="order-route">
-
-
 
           <route-line :data="parm.shipperLineDtoList" from="showMapNext"></route-line>
 
@@ -72,13 +73,11 @@
                       还没有优惠卷
                     </div>
                   </div>
-
-
               </div>
             </div>
           </div>
 
-          <div class="margin_l_10 font-2">收费标准</div>
+          <div class="margin_l_10 font-2 pointer" @click="$router.push('/chargeStandard')">收费标准</div>
 
         </div>
 
@@ -93,11 +92,13 @@
           </div>
 
           <div class="padding_10" v-if="payTypeId === 1">
-            <!--<div class="flex_a pay-select">-->
-              <!--<el-radio class="flex" style="margin-top: 2px;" v-model="payChannel" :label="1">&nbsp; </el-radio>-->
-              <!--<div class="pay-select-name">余额支付</div>-->
-              <!--<div class="order-key">（可用余额<span class="c-r">0.00</span>元）</div>-->
-            <!--</div>-->
+            <div class="flex_a pay-select">
+              <el-radio class="flex" style="margin-top: 2px;" v-model="payChannel" label="ye" @change="radioChange">&nbsp; </el-radio>
+              <icon-svg iconClass="ddqr_yue" class="svg" style="width: 45px;height: 32px"></icon-svg>
+              <div class="pay-select-name">余额支付</div>
+              <div class="order-key">（可用余额<span class="c-r">{{balance}}</span>元）</div>
+              <div class="window-title-12 c-9 pointer" style="margin-left: 100px" @click="$router.push('/toPayCoupon')">立即充值</div>
+            </div>
 
             <div class="flex_a pay-select">
               <el-radio class="flex" style="margin-top: 2px;"  v-model="payChannel" label="wx">&nbsp;</el-radio>
@@ -129,9 +130,7 @@
             <span v-else>去叫车</span>
           </el-button>
         </div>
-
       </div>
-
     </div>
 
 
@@ -142,7 +141,7 @@
       center>
       <div class="content">
         <div class="contLeft">
-          <p>金额（元）</p>
+          <p>充值金额（元）</p>
           <p>{{parm._totalAmount}}</p>
           <img :src="pfimg" alt="">
 
@@ -164,7 +163,7 @@
       center>
       <div class="content">
         <div class="contLeft">
-          <p>金额（元）</p>
+          <p>充值金额（元）</p>
           <p>{{parm._totalAmount}}</p>
           <img :src="pfimg" alt="">
           <p>二维码有效时长为2个小时<br>
@@ -177,6 +176,8 @@
         </div>
       </div>
     </el-dialog>
+
+
   </div>
 
 </template>
@@ -216,21 +217,53 @@
             carItem:{},
             time:'',
             carTypeName:'',
+            serivceCode:'',
             price:0,//标准起步价(元)
             kmPrice:0,//标准起步价(公里)
             outstripPrice:0,//超里程费
             couponList:[],
             reduce:0,//已减免
-            orderId:''//订单Id
+            orderId:'',//订单Id
+            balance:0//充值金额
           }
       },
       methods:{
+        findMywallet(){
+          //我的钱包
+          postApi('/aflc-uc/aflcMywalletApi/findMywallet').then((res)=>{
+            if(res.status === 200){
+              this.balance = res.data.mywallet.balance
+            } else {
+
+            }
+          });
+        },
+        balanceCheck(){
+          this.$confirm(`账户余额不足，还需要充值${this.parm._totalAmount - this.balance}元`, '提示', {
+            confirmButtonText: '去充值',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$router.push('/toPayCoupon')
+          }).catch(() => {
+            //
+          });
+        },
+
+       async radioChange(e){
+          if(e === 'ye'){
+           await this.findMywallet();
+           if(this.balance < this.parm._totalAmount){
+             await this.balanceCheck()
+           }
+          }
+        },
         toOrderManage(){
           this.$router.push('/OrderManage/allOrder');
         },
         selectExchange(item){
-console.log(item)
-this.windowExchange = false;
+        console.log(item)
+        this.windowExchange = false;
          if(this.parm.couponId !== item.id){
            this.math();
            if(item.couponType === "AF046201"){
@@ -276,8 +309,7 @@ this.windowExchange = false;
               }
             };
             postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
-              console.log(res)
-              if(res !== '' || res !== null){
+              if(res.status === 200){
                 this.couponList = res.data.list;
               }
             });
@@ -303,28 +335,60 @@ this.windowExchange = false;
             })
           }, 3000)
         },
-
-        pay(){
+        fr(res){
+          let fr=new FileReader();
+          fr.readAsDataURL(res);
+          fr.onload=(e)=>{
+            this.pfimg=e.target.result;
+            this.getPayResult(this.orderId,{payChannel:this.payChannel})
+          }
+        },
+       async pay(){
           if(this.parm.distance < 0.1){
             this.$message.warning("距离必须大于0.1公里");
             return
           }
 
           if(this.payTypeId === 1){
-            imgApi(`/aflc-pay/pay/shipper/common/v1/scanPayOrder/${this.orderId}`,{payChannel:this.payChannel}).then((res)=>{//单独请求
-              if(this.payChannel === "wx"){
-                this.centerDialogVisible = true;
+            if(this.payChannel === "ye"){
+            await this.findMywallet();
+              if(this.balance < this.parm._totalAmount){
+                await this.balanceCheck()
+              }else {
+                this.$confirm(`确定支付${this.parm._totalAmount}元的运费吗？`, '', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                  type: ''
+                }).then(() => {
+                  postApi(`/aflc-uc/aflcMywalletApi/mywalletPay/${this.orderId}`).then((res)=>{
+                    if(res.status === 200){
+                      this.$message.success("支付成功");
+                      this.$router.replace('/OrderManage/already')
+                    } else {
+
+                    }
+                  });
+                }).catch(() => {
+            //
+                });
               }
-              if(this.payChannel === "ali"){
-                this.centerDialogVisiblezfb = true
-              }
-              let fr=new FileReader();
-              fr.readAsDataURL(res);
-              fr.onload=(e)=>{
-                this.pfimg=e.target.result;
-                this.getPayResult(this.orderId,{payChannel:this.payChannel})
-              }
-            })
+
+            }else{
+
+             await this.createOrder();//3.加上优惠金优惠卷创建订单
+             await imgApi(`/aflc-pay/pay/shipper/common/v1/scanPayOrder/${this.orderId}`,{payChannel:this.payChannel}).then((res)=>{//单独请求
+                if(this.payChannel === "wx"){
+                  this.centerDialogVisible = true;
+                  this.fr(res);
+                }
+                if(this.payChannel === "ali"){
+                  this.centerDialogVisiblezfb = true;
+                  this.fr(res);
+                }
+
+              })
+
+            }
           }
           if(this.payTypeId === 4){
             this.cashOnDelivery(4);
@@ -337,10 +401,9 @@ this.windowExchange = false;
         cashOnDelivery(id){
           postApi(`/aflc-order/aflcOrderApi/cashOnDelivery?type=${id}&orderSerial=${this.orderId}`).then((res)=>{
             if(res.status === 200){
-              this.$router.push({path: '/orderRouter/evaluateDriver',query: {
-                  tab: this.title,
+              this.$router.push({path: '/orderRouter/getPickUp',query: {
+                  tab: "派单中",
                   qy:{orderId:this.orderId},
-                  fn:null
                 }})
             }
           })
@@ -348,11 +411,46 @@ this.windowExchange = false;
         selectPay(id){
           this.payTypeId = id;
         },
+       async getPreferential(){
+          let parm = {
+            areaCode: this.form.code[1],
+            carType: this.form.carId,
+            discountLevel: this.$localStorage.get("28ky-userdata").discountLevel,
+            serivceCode: this.serivceCode,
+            totalAmount: this.parm.orderPrice,//总价格(起步价+超里程费)
+            userId: this.$localStorage.get("28ky-userdata").shipperId
+          };
+          //获取优惠金及优惠券(司机端)
+          await postApi('/aflc-order/aflcOrderApi/getPreferential',parm).then((res)=>{
+            console.log(res)
+            if(res.status === 200){
+              // this.parm.couponId = ""
+              // this.parm.preferentialAmountId = ''
+            } else {
+              this.$message.warning(res.errorInfo)
+            }
+          });
+        },
+       async createOrder(){
+         await postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
+            console.log(res)
+            if(res.status === 200){
+              this.orderId = res.data;
+            } else {
+              this.$message.warning(res.errorInfo)
+            }
+          });
+        },
         math(){
           let outstripPrice =  this.carItem.list[0].outstripPrice;
           if(this.parm.distance - this.kmPrice > 0){
             let distance = this.parm.distance - this.kmPrice;
-            this.outstripPrice = (distance * outstripPrice).toFixed(0) * 1;
+            // console.log(distance)
+            // console.log( outstripPrice)
+            // console.log(distance * outstripPrice)
+            this.outstripPrice = Math.ceil(distance * outstripPrice);
+
+            // console.log(this.outstripPrice)
             this.parm.orderPrice =  this.price + this.outstripPrice;
           }else {
             this.parm.orderPrice =  this.price;
@@ -365,13 +463,13 @@ this.windowExchange = false;
       mounted(){
         this.form = this.$localStorage.get("formDown");
 
-        let priceId,priceType,serivceCode,carType;
+        let priceId,priceType,carType;
         this.form.carList.forEach((item)=>{
           if(item.carType === this.form.carId){
             this.carItem = item;
             priceId = item.list[0].id;
             priceType = item.list[0].priceType;
-            serivceCode = item.list[0].serivceCode;
+            this.serivceCode = item.list[0].serivceCode;
             carType = item.carType;
             this.carTypeName = item.carTypeName
           }
@@ -396,14 +494,14 @@ this.windowExchange = false;
           isFirst: (this.form.isFirst)?1:0 ,//我的司机优先接单(1为true，0为false)
           orderFrom: "web",//订单来源(ios,android)
           orderPrice: 0,//订单原价格(未减优惠券，优惠金的金额)
-          _orderPrice:0,//订单原价格(未减优惠券，优惠金的金额)(地图计算,不是接口字段)
-          "preferentialAmountId": "",//优惠金id
+          _orderPrice:0,//订单原价格(未减优惠券，优惠金的金额)(计算,不是接口字段)
+          preferentialAmountId: "",//优惠金id
           remark: this.form.remark,//给司机捎句话
-          serviceCode: serivceCode,//服务分类（同城，省际,零担）
+          serviceCode: this.serivceCode,//服务分类（同城，省际,零担）
           shipperId:  this.$localStorage.get("28ky-userdata").shipperId,//货主id(app端不用传)
           shipperLineDtoList: this.form.to,//路线列表
           totalAmount: 0,//总价格
-          _totalAmount: 0,//总价格(地图计算,不是接口字段)
+          _totalAmount: 0,//总价格(计算,不是接口字段)
           useCarTime: new Date(this.form.time).format("yyyy-MM-dd hh:mm:ss"),//用车时间(yyyy-MM-dd HH:mm:ss)
           usedCarType: carType//用车类型（车辆类型）
         };
@@ -441,14 +539,9 @@ this.windowExchange = false;
           this.parm.distance = result.routes[0].distance/1000;
           this.price =  this.carItem.list[0].price;
           this.kmPrice =  this.carItem.list[0].kmPrice;
+          this.math();//1.计算总金额
+          this.getPreferential();//2.获取优惠金优惠卷
 
-          this.math();
-          postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
-            console.log(res)
-            if(res !== '' || res !== null){
-              this.orderId = res.data;
-            }
-          });
           let leftTime = result.routes[0].time;
           let d = parseInt(leftTime / 3600 / 24);
           let h = parseInt((leftTime / 3600) % 24);
@@ -466,8 +559,24 @@ this.windowExchange = false;
         });
 
       },
+      created(){
+        this.findMywallet();
+        let parm = {
+          currentPage: 1,
+          pageSize: 100,
+          vo: {}
+        };
+        postApi('/aflc-uc/aflcUserRewardApi/findAflcReward',parm).then((res)=>{
+          console.log(res)
+          if(res.status === 200){
+            
+          } else {
+            this.$message.warning(res.errorInfo)
+          }
+        });
+
+      },
       destroyed(){
-        console.log(123444)
         //this.$localStorage.remove("formDown");
       },
     }

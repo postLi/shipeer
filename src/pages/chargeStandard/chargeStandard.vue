@@ -46,18 +46,18 @@
                 let city = result.city;
                 //城市列表
                 getApi('/aflc-common/aflcCommonAddressApi/cityList').then((res)=>{
-                  res.forEach((item)=>{
+                  res.data.forEach((item)=>{
                     item.code = item.pinyin;
                     item.name = item.pinyin;
                   });
-                  res.unshift({code: "当前定位城市", name: "当前定位城市", pinyin: "当前定位城市",cities:[{
+                  res.data.unshift({code: "当前定位城市", name: "当前定位城市", pinyin: "当前定位城市",cities:[{
                       code: adcode,
                       name: city,
                       parentCode: 1,
                       pinyin: "当前定位城市",
                     }]});
                   this.form.code = ["当前定位城市",adcode];
-                  this.cityList = res;
+                  this.cityList = res.data;
                   this.src = `http://h5.2856pt.com/areaprice/?areaCode=${adcode}&serivceCode=AF01701`
                 });
               }

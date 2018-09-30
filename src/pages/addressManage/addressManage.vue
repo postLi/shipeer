@@ -1,6 +1,6 @@
 <template>
   <div class="height_100 flex_r">
-    <div class="margin_10 flex_1 b_c_w o_f flex_f" ref="getTableWH">
+    <div class="flex_1 b_c_w o_f flex_f" ref="getTableWH">
       <div class="padding_20" ref="getTop">
         <header class="flex_a f_f">
           <div class="flex_a m-r">
@@ -161,10 +161,14 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/delete/${id}`).then(() => {
-            this.$message.info('删除成功');
-            this.p.page = 1;
-            this.getList();
+          deleteApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/delete/${id}`).then((res) => {
+            if(res.status === 200){
+              this.$message.info('删除成功');
+              this.p.page = 1;
+              this.getList();
+            } else {
+              this.$message.warning(res.errorInfo)
+            }
           })
 
         })
@@ -173,8 +177,12 @@
         this.name= "编辑";
         this.window = !this.window;
         getApi(`/aflc-uc/usercenter/aflcShipperContacts/v1/${id}`).then((res)=>{
-          this.requestClick(res.data.type);
-          this.form = res.data;
+          if(res.status === 200){
+            this.requestClick(res.data.type);
+            this.form = res.data;
+          }else {
+            this.$message.warning(res.errorInfo)
+          }
         });
       },
       save(){
@@ -206,19 +214,23 @@
         this.form.type = this.type;
         if(this.form.id){
           putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
-            if(res !== '' || res !== null){
+            if(res.status === 200){
               this.$message.success("修改成功");
               this.window = false;
               this.getList();
+            } else {
+              this.$message.warning(res.errorInfo)
             }
           });
         }else {
           postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
-            if(res !== '' || res !== null){
+            if(res.status === 200){
               this.$message.success("新增成功");
               this.window = false;
               this.p.page = 1;
               this.getList();
+            }else {
+              this.$message.warning(res.errorInfo)
             }
           });
         }
@@ -248,6 +260,7 @@
         };
       },
       search(){
+        this.p = {page: 1, size: 10, total: 0 };
         this.getList(this.addressIdSearch)
       },
       reset(){
@@ -269,8 +282,13 @@
           }
         };
         postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/list',parm).then((res)=>{
-          this.tableData = res.data.list;
-          this.p.total = res.data.totalCount;
+          if(res.status === 200){
+            this.tableData = res.data.list;
+            this.p.total = res.data.totalCount;
+          }else{
+            this.$message.warning(res.errorInfo)
+          }
+
         });
       }
     },

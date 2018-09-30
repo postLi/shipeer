@@ -7,6 +7,7 @@
         <div class="margin_10">
           <span>你可以拖动地图选择位置</span>
           <el-input
+            style="font-size: 12px"
             type="textarea"
             autosize
             placeholder="详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
