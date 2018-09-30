@@ -597,7 +597,7 @@
         this.infoWindow2.close();
       },
       clickOrderSearchResult() {
-        if (this.showOrderSearchResultIcon == "收起") {
+        if (this.showOrderSearchResultIcon === "收起") {
           this.showOrderSearchResult = false;
           this.showOrderSearchResultIcon = "展开";
           this.showOrderSearchResultStyle = "right:-12px";
@@ -670,7 +670,7 @@
       genTrack(orderId) {
         var pois = [];
         var point = null;
-        if (orderId == "1") {
+        if (orderId === "1") {
           point = new AMap.LngLat(113.279201, 23.079731);
           pois.push(point);
           point = new AMap.LngLat(113.298245, 23.070488);
