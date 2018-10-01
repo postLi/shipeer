@@ -168,7 +168,7 @@
         <div class="p_r" style="width: 140px" >
           <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;wightWindow = false;volumeWindow = false;goodsWindow = !goodsWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.goodsName === '')?"（选填）":form.goodsName}}</div>
-            <i class="flex el-input__icon el-icon-arrow-down"></i>
+            <i style="line-height: 100%;" class="el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" style="width: 400px" v-if="goodsWindow">
             <div class="f_f">
@@ -203,7 +203,7 @@
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;goodsWindow = false;volumeWindow = false;wightWindow = !wightWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.wightName === '不填' || form.wightName === '')?"（选填）":form.wightName}}</div>
-            <i class="flex el-input__icon el-icon-arrow-down"></i>
+            <i style="line-height: 100%;" class="el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="wightWindow">
             <div class="f_f">
@@ -232,7 +232,7 @@
         <div class="p_r" >
           <div class="select-drop flex_sb pointer" @click="()=>{tipWindow= false;goodsWindow = false;wightWindow = false;volumeWindow = !volumeWindow}">
             <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.volumeName === '不填' || form.volumeName === '')?"（选填）":form.volumeName}}</div>
-            <i class="flex el-input__icon el-icon-arrow-down"></i>
+            <i style="line-height: 100%;" class="el-input__icon el-icon-arrow-down"></i>
           </div>
           <div class="small-window" v-if="volumeWindow">
             <div class="f_f">
@@ -297,7 +297,7 @@
             tipWindow = !tipWindow
             }">
               <div class="flex_1 window-title-12 c-3 padding_l_10">{{(form.tipName === '')?"（选填）":form.tipName}}</div>
-              <i class="flex el-input__icon el-icon-arrow-down"></i>
+              <i style="line-height: 100%;" class="el-input__icon el-icon-arrow-down"></i>
             </div>
             <!--弹窗-->
             <div class="small-window" v-if="tipWindow">
