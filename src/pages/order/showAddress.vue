@@ -37,9 +37,9 @@
       <div v-if="addressList.length > 0">
         <div  class="address-item flex_a" v-for="(item,index) in addressList" :key="item.id">
           <div class="height_100 address-item-left flex_1 flex_f_c" @click="selectAddress(item)" title="点击选择地址">
-            <div>{{item.summary}}</div>
-            <div>{{item.address}}</div>
-            <div>{{item.contacts}} {{item.contactsPhone}}</div>
+            <div class="pointer width_max">{{item.summary}}</div>
+            <div class="pointer width_max">{{item.address}}</div>
+            <div class="pointer width_max">{{item.contacts}} {{item.contactsPhone}}</div>
           </div>
           <div class="height_100 flex_a address-item-right margin_r_10">
             <div class="edit pointer" @click="edit(item.id)">编辑</div>
@@ -225,7 +225,7 @@
     .search{
       .search-body{
         width: 298px;
-        height: 35px;
+        height: 32px;
         border-radius: 3px;
         .search-left{
           background-color: #f2f2f2;

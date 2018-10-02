@@ -8,6 +8,8 @@
   import tree from './tree'
     export default {
         name: "leftNav",
+      watch: {
+        '$route': 'routeChange'},
       data() {
         return {
           leftData:[
@@ -38,6 +40,29 @@
         tree,
       },
       methods:{
+        routeChange(){
+          this.recur(this.leftData,"clear");
+          this.recur(this.leftData,"clearOk")
+        },
+
+        recur(data,arg) {
+          data.forEach((map) => {
+
+            // let path = `/${this.$route.path.split("/")[1]}`;
+            // let router = `/${map.router.split("/")[1]}`;
+
+            if(this.$route.path === map.router && arg === "clearOk"){
+              this.$set(map, "selected", true);
+            }
+            if (map.children) {
+              if(arg === "clear"){
+                this.$set(map, "selected", false);
+              }
+              this.recur(map.children,arg)
+            }
+          })
+        },
+
         recurPid(data,pid){
           data.forEach((map) => {
             if(map.id === pid){

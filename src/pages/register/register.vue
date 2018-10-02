@@ -154,7 +154,7 @@
               let parm = {
                 areaCode: "",
                 cityCode: "",
-                memberType: "AF00101",
+                memberType: "AF0010101",
                 mobile: this.form.mobile,
                 password: "",
                 provinceCode: "",
@@ -173,6 +173,8 @@
                       this.$router.replace("/")
                     }
                   },1000)
+                }else {
+                  this.$message.warning(res.errorInfo)
                 }
               })
             } else {
@@ -187,7 +189,7 @@
           this.$refs['Rules'].validate((valid) => {
             if (valid) {
               let parm = {
-                memberType:'AF00102',
+                memberType:'AF0010101',
                 mobile:this.form.mobile
               };
               pustApiX('/aflc-common/common/aflcMemberCenter/v1/checkMobileIsRegister',parm).then((res)=>{
@@ -203,7 +205,7 @@
                     }
                   })
                 }else {
-                  this.$message.warning('手机已经注册了~',)
+                  this.$message.warning(res.errorInfo)
                 }
               });
             } else {
@@ -234,7 +236,7 @@
          },1000)
         },
         user(){
-         window.open("http://163.com")
+         window.open("http://h5.2856pt.com/ServicAgreement/")
         }
       },
       mounted() {
@@ -242,7 +244,7 @@
 
       },
       destroyed(){
-        clearInterval(this.time)
+        clearInterval(this.time);
         this.time = null
       }
     }
