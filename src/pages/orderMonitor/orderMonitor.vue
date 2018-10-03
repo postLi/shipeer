@@ -863,9 +863,8 @@
   .topLayer {
     position: relative;
     width: 100%;
-    min-width: 900px;
     height: 100%;
-    min-height: 900px;
+    overflow: auto;
   }
 
   #monitor_map {
