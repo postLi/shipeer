@@ -237,6 +237,7 @@
         showOrderSearchResultStyle: "right: 396px",
         mp: null,
         points: null,
+        markerOffset: new AMap.Pixel(-28, -68),
         carUrl: require("../../assets/orderMonitor/car.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
@@ -248,15 +249,15 @@
         redball: null,
         orderStatus: "全部服务中",
         orderStatusCode: "",
-        orderNumAll:"",
-        orderNumJiedan:"",
-        orderNumGanwangtwd:"",
-        orderNumYidaotwd:"",
-        orderNumYizhuanghuo:"",
-        orderNumYunshuzhong:"",
-        orderNumYidaomdd:"",
-        orderNumYixiehuo:"",
-        orderNumGaipai:"",
+        orderNumAll: "",
+        orderNumJiedan: "",
+        orderNumGanwangtwd: "",
+        orderNumYidaotwd: "",
+        orderNumYizhuanghuo: "",
+        orderNumYunshuzhong: "",
+        orderNumYidaomdd: "",
+        orderNumYixiehuo: "",
+        orderNumGaipai: "",
         totalCount: 0,
         pageSize: 10,
         currentPage: 1,
@@ -280,50 +281,51 @@
         visible: true
       });
       mp.addControl(ctl);
-      var points = this.points = [];
-      var carUrl = this.carUrl;
-      var marker = new AMap.Marker({
-        icon: carUrl,
-        position: [113.28804, 23.086912],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "1";
-      var markerClick = this.markerClick;
-      marker.on("click", markerClick);
-      points.push(marker);
 
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [116.395645, 39.924232],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "2";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [106.546242, 29.585069],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "3";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [103.816546, 36.083181],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "4";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      mp.setFitView(points);
+      // var points = this.points = [];
+      // var carUrl = this.carUrl;
+      // var marker = new AMap.Marker({
+      //   icon: carUrl,
+      //   position: [113.28804, 23.086912],
+      //   offset: new AMap.Pixel(-28, -68),
+      //   map: mp
+      // });
+      // marker.content = "1";
+      // var markerClick = this.markerClick;
+      // marker.on("click", markerClick);
+      // points.push(marker);
+      //
+      // marker = new AMap.Marker({
+      //   icon: carUrl,
+      //   position: [116.395645, 39.924232],
+      //   offset: new AMap.Pixel(-28, -68),
+      //   map: mp
+      // });
+      // marker.content = "2";
+      // marker.on("click", markerClick);
+      // points.push(marker);
+      //
+      // marker = new AMap.Marker({
+      //   icon: carUrl,
+      //   position: [106.546242, 29.585069],
+      //   offset: new AMap.Pixel(-28, -68),
+      //   map: mp
+      // });
+      // marker.content = "3";
+      // marker.on("click", markerClick);
+      // points.push(marker);
+      //
+      // marker = new AMap.Marker({
+      //   icon: carUrl,
+      //   position: [103.816546, 36.083181],
+      //   offset: new AMap.Pixel(-28, -68),
+      //   map: mp
+      // });
+      // marker.content = "4";
+      // marker.on("click", markerClick);
+      // points.push(marker);
+      //
+      // mp.setFitView(points);
 
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
@@ -398,21 +400,21 @@
           if (orderStatus === "")
             this.orderNumAll = c;
           else if (orderStatus === "AF0080601HZ")
-            this.orderNumJiedan=c;
+            this.orderNumJiedan = c;
           else if (orderStatus === "AF0080602HZ")
-            this.orderNumGanwangtwd=c;
+            this.orderNumGanwangtwd = c;
           else if (orderStatus === "AF0080603HZ")
-            this.orderNumYidaotwd=c;
+            this.orderNumYidaotwd = c;
           else if (orderStatus === "AF0080604HZ")
-            this.orderNumYizhuanghuo=c;
+            this.orderNumYizhuanghuo = c;
           else if (orderStatus === "AF0080605HZ")
-            this.orderNumYunshuzhong=c;
+            this.orderNumYunshuzhong = c;
           else if (orderStatus === "AF0080606HZ")
-            this.orderNumYidaomdd=c;
+            this.orderNumYidaomdd = c;
           else if (orderStatus === "AF0080607HZ")
-            this.orderNumYixiehuo=c;
+            this.orderNumYixiehuo = c;
           else if (orderStatus === "AF0080608HZ")
-            this.orderNumGaipai=c;
+            this.orderNumGaipai = c;
 
           if (flag) {
             this.totalCount = c;
@@ -420,6 +422,7 @@
             if (l == null)
               l = [];
             this.carList = l;
+            this.displayMarkers();
           }
         });
       },
@@ -429,8 +432,12 @@
       clickOrder(ordStatus) {
         this.orderStatus = ordStatus;
         this.currentPage = 1;
+        var points = this.points;
+        this.points = [];
+        if (points != null)
+          this.mp.remove(points);
         if (ordStatus === "全部服务中")
-          this.orderStatusCode = null;
+          this.orderStatusCode = "";
         else if (ordStatus === "司机已接单")
           this.orderStatusCode = "AF0080601HZ";
         else if (ordStatus === "司机赶往提货地")
@@ -477,13 +484,64 @@
         if (this.redball != null)
           this.redball.setMap(null);
       },
+      displayMarkers() {
+        var l = this.carList;
+        if (l == null)
+          return;
+        var i = 0;
+        var pos = null;
+        var marker = null;
+        this.points = [];
+        for (; i < l.length; ++i) {
+          pos = l[i].pos;
+          if (pos == null)
+            continue;
+          marker = new AMap.Marker({
+            icon: this.carUrl,
+            position: pos,
+            offset: this.markerOffset,
+            extData: i,
+            map: this.mp
+          });
+          marker.on("click", this.markerClick);
+          this.points.push(marker);
+        }
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.mp == null || this.points == null)
+          return;
+        this.mp.setFitView(this.points);
+      },
       centerMark() {
         if (this.markerPoint != null)
           this.mp.panTo(this.markerPoint.getPosition());
       },
+      statusCode2Text(code) {
+        if (code === "AF0080601HZ")
+          return "司机已接单";
+        if (code === "AF0080602HZ")
+          return "司机赶往提货地";
+        if (code === "AF0080603HZ")
+          return "司机已到提货地";
+        if (code === "AF0080604HZ")
+          return "司机已装货";
+        if (code === "AF0080605HZ")
+          return "运输中";
+        if (code === "AF0080606HZ")
+          return "司机已到目的地";
+        if (code === "AF0080607HZ")
+          return "司机已卸货";
+        if (code === "AF0080608HZ")
+          return "司机改派";
+      },
       markerClick(e) {
+        this.mp.clearInfoWindow();
         var markerPoint = this.markerPoint = e.target;
+        var idx = markerPoint.extData;
+        if (idx == null)
+          return;
         var infoWindow = this.infoWindow2;
+        var status=this.orderStatus;
         if (!this.infoWindow2Init) {
           document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
           var tempEle = document.getElementById("infoWindow");
@@ -783,7 +841,7 @@
     display: table-row
   }
 
-  .rowclick{
+  .rowclick {
     cursor: pointer;
   }
 
