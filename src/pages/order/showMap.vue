@@ -1,63 +1,128 @@
 <template>
-  <div class="content-top" v-show="dialogVisible">
-    <div class="content" >
-      <div class="window" >
-        <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort === 0">发货地</div>
-        <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort !== 0">目的地</div>
-        <div class="margin_10">
-          <span>你可以拖动地图选择位置</span>
-          <el-input
-            style="font-size: 12px"
-            type="textarea"
-            autosize
-            placeholder="详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            v-model="data.origin">
-          </el-input>
-          <el-input
-            style="width: 220px"
-            class="margin_t_10"
-            autosize
-            placeholder="楼层及门牌号（选填）"
-            size="small"
-            v-model="data.floorHousenum">
-          </el-input>
-          <el-input
-            style="width: 220px"
-            class="margin_t_10"
-            autosize
-            :placeholder="(data.shipperSort === 0)?'发货联系人（选填）':'收货联系人（选填）'"
-            size="small"
-            v-model="data.consignee">
-          </el-input>
-          <el-input
-            style="width: 220px"
-            class="margin_t_10"
-            autosize
-            :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
-            size="small"
-            v-model="data.consigneeMobile">
-          </el-input>
-          <el-checkbox v-model="checked">保存为常用地址</el-checkbox>
-          <div class="flex">
-            <el-button class="margin_t_10 f_w" style="background-color: #2fb301;width: 80px" type="success" size="small" @click="save()">确定</el-button>
-          </div>
 
+  <my-dialog  :visible.sync="dialogVisible" @open="open"
+              width="940px">
+
+    <div class="content-top">
+      <div class="content">
+        <div class="window" >
+          <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort === 0">发货地</div>
+          <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort !== 0">目的地</div>
+          <div class="margin_10">
+            <span>你可以拖动地图选择位置</span>
+            <el-input
+              style="font-size: 12px"
+              type="textarea"
+              autosize
+              placeholder="详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              v-model="data.origin">
+            </el-input>
+            <el-input
+              style="width: 220px"
+              class="margin_t_10"
+              autosize
+              placeholder="楼层及门牌号（选填）"
+              size="small"
+              v-model="data.floorHousenum">
+            </el-input>
+            <el-input
+              style="width: 220px"
+              class="margin_t_10"
+              autosize
+              :placeholder="(data.shipperSort === 0)?'发货联系人（选填）':'收货联系人（选填）'"
+              size="small"
+              v-model="data.consignee">
+            </el-input>
+            <el-input
+              style="width: 220px"
+              class="margin_t_10"
+              autosize
+              :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
+              size="small"
+              v-model="data.consigneeMobile">
+            </el-input>
+            <el-checkbox v-model="checked">保存为常用地址</el-checkbox>
+            <div class="flex">
+              <el-button class="margin_t_10 f_w" style="background-color: #2fb301;width: 80px" type="success" size="small" @click="save()">确定</el-button>
+            </div>
+
+          </div>
         </div>
+
+        <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="close()">
+        <div class="map-content" ref="allmap"></div>
       </div>
 
-      <img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="close()">
-      <div class="map-content" ref="allmap"></div>
     </div>
-  </div>
+
+
+  </my-dialog>
+
+
+
+
+  <!--<div class="content-top" v-show="dialogVisible">-->
+    <!--<div class="content" >-->
+      <!--<div class="window" >-->
+        <!--<div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort === 0">发货地</div>-->
+        <!--<div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort !== 0">目的地</div>-->
+        <!--<div class="margin_10">-->
+          <!--<span>你可以拖动地图选择位置</span>-->
+          <!--<el-input-->
+            <!--style="font-size: 12px"-->
+            <!--type="textarea"-->
+            <!--autosize-->
+            <!--placeholder="详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"-->
+            <!--:autosize="{ minRows: 2, maxRows: 4}"-->
+            <!--v-model="data.origin">-->
+          <!--</el-input>-->
+          <!--<el-input-->
+            <!--style="width: 220px"-->
+            <!--class="margin_t_10"-->
+            <!--autosize-->
+            <!--placeholder="楼层及门牌号（选填）"-->
+            <!--size="small"-->
+            <!--v-model="data.floorHousenum">-->
+          <!--</el-input>-->
+          <!--<el-input-->
+            <!--style="width: 220px"-->
+            <!--class="margin_t_10"-->
+            <!--autosize-->
+            <!--:placeholder="(data.shipperSort === 0)?'发货联系人（选填）':'收货联系人（选填）'"-->
+            <!--size="small"-->
+            <!--v-model="data.consignee">-->
+          <!--</el-input>-->
+          <!--<el-input-->
+            <!--style="width: 220px"-->
+            <!--class="margin_t_10"-->
+            <!--autosize-->
+            <!--:placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"-->
+            <!--size="small"-->
+            <!--v-model="data.consigneeMobile">-->
+          <!--</el-input>-->
+          <!--<el-checkbox v-model="checked">保存为常用地址</el-checkbox>-->
+          <!--<div class="flex">-->
+            <!--<el-button class="margin_t_10 f_w" style="background-color: #2fb301;width: 80px" type="success" size="small" @click="save()">确定</el-button>-->
+          <!--</div>-->
+
+        <!--</div>-->
+      <!--</div>-->
+
+      <!--<img src="../../assets/main/ditu_close.png" class="close pointer" alt="" @click="close()">-->
+      <!--<div class="map-content" ref="allmap"></div>-->
+    <!--</div>-->
+  <!--</div>-->
 </template>
 
 <script>
   import {REGEX} from '@/utils/valiRegex.js'
   import { getApi ,postApi} from "@/api/api.js";
+  import myDialog from '@/components/myDialog'
     export default {
         name: "showMap",
       props:['data','map'],
+      components:{myDialog},
       data(){
           return {
             dialogVisible:false,
@@ -108,11 +173,9 @@
           this.data.map = null
 
         },
-          ok(){
-            this.dialogVisible = true;
-
-            let centerPoint;
-
+        open(){
+          let centerPoint;
+          this.$nextTick(()=>{
             this.data.mapTo = new AMap.Map(this.$refs.allmap, {
               zoom: 14,
               scrollWheel: true,
@@ -158,6 +221,7 @@
               });
               positionPicker.start();
 
+              ///------
               // AMap.service('AMap.Geocoder',() =>{
               //   let geocoder = new AMap.Geocoder({});
               //   geocoder.getAddress(centerPoint, (status, result) =>{
@@ -184,6 +248,12 @@
               // })
 
             });
+          })
+
+
+        },
+          ok(){
+            this.dialogVisible = true;
 
           },
         close(){
