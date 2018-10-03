@@ -96,7 +96,7 @@
                 联系电话
               </div>
             </div>
-            <div class="row" v-for="(item,i) in carList" :key="item.orderSerial">
+            <div class="row" v-for="(item) in carList" :key="item.orderSerial">
               <div class="cell4">
                 {{item.orderSerial}}
               </div>
