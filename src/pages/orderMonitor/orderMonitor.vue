@@ -96,7 +96,7 @@
                 联系电话
               </div>
             </div>
-            <div class="row" v-for="(item) in carList" :key="item.orderSerial">
+            <div class="row rowclick" v-for="(item) in carList" :key="item.orderSerial">
               <div class="cell4">
                 {{item.orderSerial}}
               </div>
@@ -781,6 +781,10 @@
 
   .orderSearchResult .table .row {
     display: table-row
+  }
+
+  .rowclick{
+    cursor: pointer;
   }
 
   .orderSearchResult .table .cell {
