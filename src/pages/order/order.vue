@@ -6,7 +6,7 @@
         <span class="title">小提示</span>
         <span class="title1">（<span>*</span>号为必填项）</span>
       </div>
-      <el-form :model="form"  ref="Rules" class="myForm">
+
       <div class="item-margin item-1 flex_r">
         <div class="item-l"><span class="f_r">*</span>选择城市：</div>
         <el-cascader placeholder="请选择城市" size="small" style="width: 121px"
@@ -17,7 +17,7 @@
         filterable
         @change="getPriceByArea">
         </el-cascader>
-        <el-form-item label="" label-width="">
+
         <div class="item-1-2">
           <span>选择用车时间：</span>
           <el-date-picker :clearable="false"
@@ -33,9 +33,7 @@
           >
           </el-date-picker>
         </div>
-        </el-form-item>
-        <el-form-item label="" label-width=""  prop="time"
-                      :rules="{required: true, message: ' ', trigger: 'change'}">
+
         <div class="item-1-3">
           <el-select v-model="form.time" placeholder="选择时间" size="small" style="width: 121px">
             <el-option
@@ -46,9 +44,9 @@
             </el-option>
           </el-select>
         </div>
-        </el-form-item>
+
       </div>
-      </el-form>
+
       <div class="item-margin item-2 flex_r">
       <div class="item-l"><span class="f_r">*</span>选择车型：</div>
       <div class="flex_ae">
@@ -360,7 +358,7 @@
 
 <script>
   import VueJsCookie from 'vue-js-cookie'
-  import myDialog from '../../components/myDialog'
+  import { mapActions,mapGetters } from 'vuex';
   import myButton from '../../components/myButton'
   import showMap from './showMap.vue'
   import showMapNext from './showMapNext'
@@ -372,7 +370,7 @@
     export default {
       name: "order",
       components: {
-        myDialog,showMap,showMapNext,addRoute,showAddress,myButton,routeLine
+        showMap,showMapNext,addRoute,showAddress,myButton,routeLine
       },
       watch:{
         // form:{
@@ -402,55 +400,12 @@
           search_route:'',
           specList:[],//车辆规格
           requestList:[],//额外需求
-
           searchRouteList:[],//路线列表
-
           mapNext:null,
           timeList:[],//时间列表
-          form:{//主页表单
-            carList:[],//车辆列表
-            code:[],//城市code
-            date: new Date(),//选择日期
-            time:'',//选择的时间
-            city:'',
-            carId:"AF01801",
-            specCode:'',//车辆规格Code
-            extraServiceDtoList:[],//额外服务
-            goodsId:'',//货物id
-            goodsName:'',
-            wightId:'',//重量id
-            wightName:'',
-            volumeId:'',//体积id
-            volumeName:'',
-            tipId:'',//小费id
-            tipName:'',//小费名
-            isFirst:false,//我的司机优先接单
-            to:[{
-              consignee: "",//收货人姓名
-              consigneeMobile: "",//收货人电话
-              isSms: 0,//是否短信通知(1为是，0为否)
-              origin: "",//地点名称详细地址
-              originCoordinate: "",//地点坐标(格式22.5253951835,114.0988813763纬度经度)
-              originName: "",//地点名称
-              provinceCityArea: "",//省市区（格式:广东省广州市天河区）
-              shipperSort: 0,//线路排序号
-                show:false,mapTo:null,zoom:14
-            },
-              {
-                consignee: "",
-                consigneeMobile: "",
-                isSms: 0,
-                origin: "",
-                originCoordinate: "",
-                originName: "",
-                provinceCityArea: "",
-                shipperSort: 1,
-                show:false,mapTo:null,zoom:14}
-              ],
-            remark:''//给司机捎句话
-          },
-          getDuration:'',//起终时间
-          distAddress:0,//主页选择目的地index
+
+          form:{},//要提交的表单
+
           cityList:[],//城市列表
 
           tipList:'',//小费列表
@@ -471,6 +426,8 @@
         }
       },
       methods:{
+        ...mapActions(['setForm']),
+        ...mapGetters(['getForm']),
         getSelectLine(dataList){
 
           console.log(dataList)
@@ -746,6 +703,7 @@
           });
           this.form.extraServiceDtoList = extraServiceDtoList;
           this.$localStorage.set("formDown",this.form);
+          this.setForm(this.form);
           this.$router.push('/order/showMapNext');
 
           // let truckOptions = {
@@ -803,10 +761,10 @@
           this.goodsWindow = false;
           this.wightWindow = false;
           this.volumeWindow = false;
-          this.form.to.forEach((item,i)=>{
-            this.$refs[i][0].dialogVisible = false;
-            item.show = false;
-          });
+          // this.form.to.forEach((item,i)=>{
+          //   this.$refs[i][0].dialogVisible = false;
+          //   item.show = false;
+          // });
           this.$refs[i][0].ok();
         },
         createMap(){
@@ -873,7 +831,9 @@
 
         }
       },
-
+      created(){
+        this.form = this.getForm();
+      },
       mounted(){
         let  timeStamp = new Date(new Date().setHours(0, 0, 0, 0)) * 1;
 

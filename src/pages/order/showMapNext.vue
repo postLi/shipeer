@@ -308,6 +308,7 @@
                 userId: this.$localStorage.get("28ky-userdata").shipperId
               }
             };
+            //优惠卷
             postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
               if(res.status === 200){
                 this.couponList = res.data.list;
