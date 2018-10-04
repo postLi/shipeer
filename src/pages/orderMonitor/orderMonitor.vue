@@ -592,10 +592,22 @@
         }
         status = this.subString(status, 16);
         document.getElementById("infoWindowTitle").innerText = status;
-        document.getElementById("infoWindowCarNo").innerText = carInfo.carNo;
-        document.getElementById("infoWindowDriverName").innerText = carInfo.driverName;
-        document.getElementById("infoWindowCarType").innerText = carInfo.carType;
-        document.getElementById("infoWindowMobile").innerText = carInfo.mobile;
+        var v = carInfo.carNo;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowCarNo").innerText = v;
+        v = carInfo.driverName;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowDriverName").innerText = v;
+        v = carInfo.carType;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowCarType").innerText = v;
+        v = carInfo.mobile;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowMobile").innerText = v;
         if (!this.infoWindow2Init) {
           var tempEle = document.getElementById("infoWindow");
           infoWindow.setContent(tempEle.innerHTML);
@@ -604,6 +616,13 @@
         }
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
+        this.translateAddr();
+      },
+      translateAddr() {
+        var markerPoint = this.markerPoint;
+        if (markerPoint == null)
+          return;
+        var pos = markerPoint.getPosition();
         var mapAddr = document.getElementById("mapAddr");
         if (mapAddr != null)
           mapAddr.innerText = "";
