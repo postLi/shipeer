@@ -156,14 +156,12 @@
               <div class="cellHeader">
                 车型
               </div>
-              <div class="cell">
-                小面包
+              <div class="cell" id="infoWindowCarType">
               </div>
               <div class="cellHeader">
                 联系电话
               </div>
-              <div class="cell">
-                18028693660
+              <div class="cell" id="infoWindowMobile">
               </div>
             </div>
           </div>
@@ -562,6 +560,8 @@
         document.getElementById("infoWindowTitle").innerText = status;
         document.getElementById("infoWindowCarNo").innerText = carInfo.carNo;
         document.getElementById("infoWindowDriverName").innerText = carInfo.driverName;
+        document.getElementById("infoWindowCarType").innerText = carInfo.carType;
+        document.getElementById("infoWindowMobile").innerText = carInfo.mobile;
         if (!this.infoWindow2Init) {
           var tempEle = document.getElementById("infoWindow");
           infoWindow.setContent(tempEle.innerHTML);
