@@ -244,6 +244,7 @@
         polyline: null,
         passedPolyline: null,
         redball: null,
+        track: null,
         orderStatus: "全部服务中",
         orderStatusCode: "",
         orderNumAll: "",
@@ -452,6 +453,21 @@
                 this.translateAddr();
               }
             }
+
+            v = res.data.track;
+            if (v != null && (v.length % 2) == 0) {
+              var i = 0;
+              var j = 0;
+              var len = v.length / 2;
+              var pois = [];
+              var point = null;
+              for (; i < len; ++i) {
+                j = 2 * i;
+                point = new AMap.LngLat(v[j], v[j + 1]);
+                pois.push(point);
+              }
+              this.track = pois;
+            }
           });
         } catch (e) {
         }
@@ -590,6 +606,7 @@
         return null;
       },
       markerClick(e) {
+        this.track = null;
         this.mp.clearInfoWindow();
         var markerPoint = this.markerPoint = e.target;
         var idx = markerPoint.getExtData();
@@ -640,13 +657,15 @@
         this.translateAddr();
       },
       translateAddr() {
+        var mapAddr = document.getElementById("mapAddr");
+        if (mapAddr != null)
+          mapAddr.innerText = "";
+        else
+          return;
         var markerPoint = this.markerPoint;
         if (markerPoint == null)
           return;
         var pos = markerPoint.getPosition();
-        var mapAddr = document.getElementById("mapAddr");
-        if (mapAddr != null)
-          mapAddr.innerText = "";
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
@@ -658,18 +677,13 @@
         });
       },
       showTrack(orderId) {
-        if (orderId == null) {
-          var markerPoint = this.markerPoint;
-          if (markerPoint == null)
-            return;
-          this.showTrack(markerPoint.content);
+        var pois = this.track;
+        if (pois == null || pois.length < 2) {
+          alert("未获取到轨迹数据，请稍后再试. ");
           return;
         }
         var mp = this.mp;
         mp.clearInfoWindow();
-        var pois = this.genTrack(orderId);
-        if (pois == null || pois.length < 2)
-          return;
         var polyline = this.polyline;
         polyline.setPath(pois);
         var redball = this.redball;
