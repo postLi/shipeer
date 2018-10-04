@@ -101,7 +101,7 @@
                 {{item.orderSerial}}
               </div>
               <div class="cell2">
-
+                {{item.carNo}}
               </div>
               <div class="cell2">
                 {{item.driverName}}
@@ -144,14 +144,12 @@
               <div class="cellHeader">
                 车牌号
               </div>
-              <div class="cell">
-                粤A12345
+              <div class="cell" id="infoWindowCarNo">
               </div>
               <div class="cellHeader">
                 司机
               </div>
-              <div class="cell">
-                李世杰
+              <div class="cell" id="infoWindowDriverName">
               </div>
             </div>
             <div class="row">
@@ -533,24 +531,43 @@
           return "司机已卸货";
         if (code === "AF0080608HZ")
           return "司机改派";
+        return null;
       },
       markerClick(e) {
         this.mp.clearInfoWindow();
         var markerPoint = this.markerPoint = e.target;
-        var idx = markerPoint.extData;
+        var idx = markerPoint.getExtData();
         if (idx == null)
           return;
+        var carInfo = null;
+        if (idx >= 0 && idx < this.carList.length)
+          carInfo = this.carList[idx];
+        if (carInfo == null)
+          return;
         var infoWindow = this.infoWindow2;
-        var status=this.orderStatus;
+        var status = this.orderStatus;
+        if (status === "全部服务中") {
+          if (carInfo.statusCode == null)
+            return;
+          status = carInfo.statusText;
+          if (status == null) {
+            status = this.statusCode2Text(carInfo.statusCode);
+          }
+          carInfo.statusText = status;
+        }
+        if (status == null)
+          status = "";
+        else
+          status = this.subString(status, 16);
+        document.getElementById("infoWindowTitle").innerText = status;
+        document.getElementById("infoWindowCarNo").innerText = carInfo.carNo;
+        document.getElementById("infoWindowDriverName").innerText = carInfo.driverName;
         if (!this.infoWindow2Init) {
-          document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
           var tempEle = document.getElementById("infoWindow");
           infoWindow.setContent(tempEle.innerHTML);
           tempEle.innerHTML = "";
           this.infoWindow2Init = true;
-        } else
-          document.getElementById("infoWindowTitle").innerText = this.subString("运输中", 16);
-
+        }
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
         var mapAddr = document.getElementById("mapAddr");
@@ -781,6 +798,7 @@
     text-align: left;
     padding-left: 4px;
     vertical-align: middle;
+    word-break: break-all;
   }
 
   .customInfoWindow .table .cellHeader {
@@ -793,6 +811,7 @@
     height: 32px;
     padding-right: 4px;
     vertical-align: middle;
+    word-break: break-all;
   }
 
   .customInfoWindow #mapAddr {
