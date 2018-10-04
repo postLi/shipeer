@@ -96,7 +96,8 @@
                 联系电话
               </div>
             </div>
-            <div class="row rowclick" v-for="(item) in carList" :key="item.orderSerial">
+            <div class="row rowclick" v-for="(item,index) in carList" :key="item.orderSerial"
+                 @click="clickOrder2(index)">
               <div class="cell4">
                 {{item.orderSerial}}
               </div>
@@ -169,13 +170,13 @@
           <table class="table2">
             <tr>
               <td class="label">用车时间</td>
-              <td colspan="3">2018-09-28 10:00:00</td>
+              <td colspan="3" id="infoWindowOrderTime"></td>
             </tr>
             <tr>
               <td class="label">需求车型</td>
-              <td>小面包</td>
+              <td id="infoWindowOrderCarType"></td>
               <td class="label">货物名称</td>
-              <td>香油/3吨/3方</td>
+              <td id="infoWindowOrderCargo"></td>
             </tr>
             <tr>
               <td class="label">额外服务</td>
@@ -278,51 +279,6 @@
       });
       mp.addControl(ctl);
 
-      // var points = this.points = [];
-      // var carUrl = this.carUrl;
-      // var marker = new AMap.Marker({
-      //   icon: carUrl,
-      //   position: [113.28804, 23.086912],
-      //   offset: new AMap.Pixel(-28, -68),
-      //   map: mp
-      // });
-      // marker.content = "1";
-      // var markerClick = this.markerClick;
-      // marker.on("click", markerClick);
-      // points.push(marker);
-      //
-      // marker = new AMap.Marker({
-      //   icon: carUrl,
-      //   position: [116.395645, 39.924232],
-      //   offset: new AMap.Pixel(-28, -68),
-      //   map: mp
-      // });
-      // marker.content = "2";
-      // marker.on("click", markerClick);
-      // points.push(marker);
-      //
-      // marker = new AMap.Marker({
-      //   icon: carUrl,
-      //   position: [106.546242, 29.585069],
-      //   offset: new AMap.Pixel(-28, -68),
-      //   map: mp
-      // });
-      // marker.content = "3";
-      // marker.on("click", markerClick);
-      // points.push(marker);
-      //
-      // marker = new AMap.Marker({
-      //   icon: carUrl,
-      //   position: [103.816546, 36.083181],
-      //   offset: new AMap.Pixel(-28, -68),
-      //   map: mp
-      // });
-      // marker.content = "4";
-      // marker.on("click", markerClick);
-      // points.push(marker);
-      //
-      // mp.setFitView(points);
-
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
       window.checkTrack = this.checkTrack;
@@ -422,8 +378,36 @@
           }
         });
       },
+      getOrderDetail(orderId, marker) {
+        try {
+          if (orderId == null)
+            return;
+          postApi("/aflc-order/aflcMyOrderApi/myOrder?orderSerial=" + orderId).then((res) => {
+            document.getElementById("infoWindowOrderTime").innerText = res.data.orderTime;
+            document.getElementById("infoWindowOrderCarType").innerText = res.data.carType;
+            document.getElementById("infoWindowOrderCargo").innerText = res.data.cargo;
+            var pos = res.data.pos;
+            if (pos != null && marker != null) {
+              marker.setPosition(pos);
+            }
+          });
+        } catch (e) {
+        }
+      },
       logError() {
         this.$message.error("无法获取服务端数据. ");
+      },
+      clickOrder2(idx) {
+        try {
+          var marker = this.points[idx];
+          if (marker == null)
+            return;
+          var evt = {"target": marker};
+          this.markerClick(evt);
+          this.markerPoint = marker;
+          this.centerMark();
+        } catch (e) {
+        }
       },
       clickOrder(ordStatus) {
         this.orderStatus = ordStatus;
@@ -542,6 +526,7 @@
           carInfo = this.carList[idx];
         if (carInfo == null)
           return;
+        this.getOrderDetail(carInfo.orderSerial, markerPoint);
         var infoWindow = this.infoWindow2;
         var status = this.orderStatus;
         if (status === "全部服务中") {
@@ -776,6 +761,7 @@
     padding-left: 4px;
     vertical-align: middle;
     width: 88px;
+    word-break: break-all;
   }
 
   .customInfoWindow .table2 td.label {
