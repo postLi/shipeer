@@ -188,9 +188,9 @@
             </tr>
             <tr>
               <td class="label">预估价格</td>
-              <td>120元</td>
+              <td id="infoWindowOrderPrice"></td>
               <td class="label">付款状态</td>
-              <td>待付款</td>
+              <td id="infoWindowOrderPayState"></td>
             </tr>
             <tr>
               <td class="label">当前位置</td>
@@ -205,15 +205,15 @@
             </tr>
             <tr>
               <td class="label">提货地</td>
-              <td colspan="3"></td>
+              <td colspan="3" id="infoWindowOrderStartAddr"></td>
             </tr>
             <tr>
-              <td class="label">途径地</td>
-              <td colspan="3"></td>
+              <td class="label">途经地</td>
+              <td colspan="3" id="infoWindowOrderPassAddr"></td>
             </tr>
             <tr>
               <td class="label">目的地</td>
-              <td colspan="3"></td>
+              <td colspan="3" id="infoWindowOrderTargetAddr"></td>
             </tr>
           </table>
         </div>
@@ -403,6 +403,26 @@
             if (v == null)
               v = "";
             document.getElementById("infoWindowOrderMemo").innerText = v;
+            v = res.data.price;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPrice").innerText = v;
+            v = res.data.paystate;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPayState").innerText = v;
+            v = res.data.startAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderStartAddr").innerText = v;
+            v = res.data.passAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPassAddr").innerText = v;
+            v = res.data.targetAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderTargetAddr").innerText = v;
             var status = res.data.statusCode;
             if (status != null && marker != null) {
               var idx = marker.getExtData();
@@ -429,6 +449,7 @@
                 this.infoWindow2.setPosition(pos);
                 this.markerPoint = marker;
                 this.centerMark();
+                this.translateAddr();
               }
             }
           });
