@@ -9,7 +9,7 @@
     </div>
     <div class="orderSearch">
       <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
-        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+        <el-button slot="append" icon="el-icon-search" class="orderSearchButton" @click="clickOrder(null,true)">搜索
         </el-button>
       </el-input>
       <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">
@@ -232,6 +232,7 @@
         showOrderSearchResult: true,
         showOrderSearchResultIcon: "收起",
         showOrderSearchResultStyle: "right: 396px",
+        filterText: null,
         mp: null,
         points: null,
         markerOffset: new AMap.Pixel(-28, -68),
@@ -498,14 +499,24 @@
         } catch (e) {
         }
       },
-      clickOrder(ordStatus) {
-        this.orderStatus = ordStatus;
+      clickOrder(ordStatus, searchFlag) {
+        if (ordStatus != null)
+          this.orderStatus = ordStatus;
+        if (searchFlag != null) {
+          alert(this.filterText);
+        }
         this.currentPage = 1;
         var points = this.points;
         this.points = [];
         if (points != null)
           this.mp.remove(points);
         this.mp.clearInfoWindow();
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.hide();
+        if (this.passedPolyline != null)
+          this.passedPolyline.hide();
         if (ordStatus === "全部服务中")
           this.orderStatusCode = "";
         else if (ordStatus === "司机已接单")
@@ -553,6 +564,10 @@
         this.mp.setFitView(this.points);
         if (this.redball != null)
           this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.hide();
+        if (this.passedPolyline != null)
+          this.passedPolyline.hide();
       },
       displayMarkers() {
         var l = this.carList;
