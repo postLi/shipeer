@@ -180,11 +180,11 @@
             </tr>
             <tr>
               <td class="label">额外服务</td>
-              <td colspan="3">需要回单，需要回款5000元</td>
+              <td colspan="3" id="infoWindowOrderExtraServ"></td>
             </tr>
             <tr>
               <td class="label">备注</td>
-              <td colspan="3">需要坐2人</td>
+              <td colspan="3" id="infoWindowOrderMemo"></td>
             </tr>
             <tr>
               <td class="label">预估价格</td>
@@ -383,16 +383,68 @@
           if (orderId == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrder?orderSerial=" + orderId).then((res) => {
-            document.getElementById("infoWindowOrderTime").innerText = res.data.orderTime;
-            document.getElementById("infoWindowOrderCarType").innerText = res.data.carType;
-            document.getElementById("infoWindowOrderCargo").innerText = res.data.cargo;
+            var v = res.data.orderTime;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderTime").innerText = v;
+            v = res.data.carType;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderCarType").innerText = v;
+            v = res.data.cargo;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderCargo").innerText = v;
+            v = res.data.extraServ;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderExtraServ").innerText = v;
+            v = res.data.memo;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderMemo").innerText = v;
+            var status = res.data.statusCode;
+            if (status != null && marker != null) {
+              var idx = marker.getExtData();
+              if (idx != null) {
+                var carInfo = this.carList[idx];
+                if (status != carInfo.statusCode) {
+                  carInfo.statusCode = status;
+                  carInfo.statusText = null;
+                  var text = this.statusCode2Text(status);
+                  if (text != null) {
+                    carInfo.statusText = text;
+                  } else
+                    text = this.orderStatus;
+                  text = this.subString(text, 16);
+                  document.getElementById("infoWindowTitle").innerText = text;
+                }
+              }
+            }
             var pos = res.data.pos;
             if (pos != null && marker != null) {
-              marker.setPosition(pos);
+              var lnglat = marker.getPosition();
+              if (this.diffPosition(lnglat, pos)) {
+                marker.setPosition(pos);
+                this.infoWindow2.setPosition(pos);
+                this.markerPoint = marker;
+                this.centerMark();
+              }
             }
           });
         } catch (e) {
         }
+      },
+      diffPosition(lngLat, pos) {
+        try {
+          if ((lngLat.getLng()) != pos[0])
+            return true;
+          if ((lngLat.getLat()) != pos[1])
+            return true;
+          return false;
+        } catch (e) {
+        }
+        return true;
       },
       logError() {
         this.$message.error("无法获取服务端数据. ");
@@ -416,6 +468,7 @@
         this.points = [];
         if (points != null)
           this.mp.remove(points);
+        this.mp.clearInfoWindow();
         if (ordStatus === "全部服务中")
           this.orderStatusCode = "";
         else if (ordStatus === "司机已接单")
@@ -528,20 +581,16 @@
           return;
         this.getOrderDetail(carInfo.orderSerial, markerPoint);
         var infoWindow = this.infoWindow2;
-        var status = this.orderStatus;
-        if (status === "全部服务中") {
-          if (carInfo.statusCode == null)
-            return;
-          status = carInfo.statusText;
-          if (status == null) {
-            status = this.statusCode2Text(carInfo.statusCode);
-          }
+        var status = carInfo.statusText;
+        if (status == null && carInfo.statusCode != null) {
+          status = this.statusCode2Text(carInfo.statusCode);
+        }
+        if (status == null) {
+          status = this.orderStatus;
+        } else {
           carInfo.statusText = status;
         }
-        if (status == null)
-          status = "";
-        else
-          status = this.subString(status, 16);
+        status = this.subString(status, 16);
         document.getElementById("infoWindowTitle").innerText = status;
         document.getElementById("infoWindowCarNo").innerText = carInfo.carNo;
         document.getElementById("infoWindowDriverName").innerText = carInfo.driverName;
