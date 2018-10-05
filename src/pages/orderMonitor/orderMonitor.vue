@@ -517,9 +517,9 @@
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
-          this.polyline.hide();
+          this.polyline.setPath(null);
         if (this.passedPolyline != null)
-          this.passedPolyline.hide();
+          this.passedPolyline.setPath(null);
         if (ordStatus === "全部服务中")
           this.orderStatusCode = "";
         else if (ordStatus === "司机已接单")
@@ -568,9 +568,9 @@
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
-          this.polyline.hide();
+          this.polyline.setPath(null);
         if (this.passedPolyline != null)
-          this.passedPolyline.hide();
+          this.passedPolyline.setPath(null);
       },
       displayMarkers() {
         var l = this.carList;
