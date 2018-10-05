@@ -3,7 +3,8 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button class="btn" @click="displayTraffic">实时路况</button>
+        <button class="btn" @click="displaySatellite">卫星图</button>
+        <button class="btn btn2" @click="displayTraffic">实时路况</button>
         <button class="btn btn2" @click="displayAllMarkers">显示全部车辆</button>
         <button class="btn btn2" @click="centerMark">移动到中心点</button>
       </div>
@@ -237,6 +238,8 @@
         mp: null,
         points: null,
         markerOffset: new AMap.Pixel(-28, -68),
+        satelliteVisible: false,
+        satelliteLayer: null,
         trafficVisible: false,
         trafficLayer: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
@@ -574,6 +577,17 @@
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
+      },
+      displaySatellite() {
+        if (this.mp == null)
+          return;
+        if (this.satelliteLayer == null)
+          this.satelliteLayer = new AMap.TileLayer.Satellite({map: this.mp});
+        if (this.satelliteVisible)
+          this.satelliteLayer.hide();
+        else
+          this.satelliteLayer.show();
+        this.satelliteVisible = !(this.satelliteVisible);
       },
       displayTraffic() {
         if (this.mp == null)
