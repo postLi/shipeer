@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText">
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton" @click="clickOrder(null,true)">搜索
         </el-button>
       </el-input>
@@ -337,10 +337,16 @@
         this.currentPage = val;
         this.getOrder(this.orderStatusCode, true);
       },
-      getOrder(orderStatus, flag) {
+      getOrder(orderStatus, updateFlag, searchFlag) {
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
+        if (searchFlag) {
+          var t = this.filterText;
+          if (t != null) {
+            s = s + "&searchText=" + t;
+          }
+        }
         postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
           var c = "";
           try {
@@ -370,7 +376,7 @@
           else if (orderStatus === "AF0080608HZ")
             this.orderNumGaipai = c;
 
-          if (flag) {
+          if (updateFlag) {
             this.totalCount = c;
             var l = res.data.list;
             if (l == null)
@@ -502,9 +508,6 @@
       clickOrder(ordStatus, searchFlag) {
         if (ordStatus != null)
           this.orderStatus = ordStatus;
-        if (searchFlag != null) {
-          alert(this.filterText);
-        }
         this.currentPage = 1;
         var points = this.points;
         this.points = [];
@@ -535,7 +538,7 @@
           this.orderStatusCode = "AF0080607HZ";
         else if (ordStatus === "司机改派")
           this.orderStatusCode = "AF0080608HZ";
-        this.getOrder(this.orderStatusCode, true);
+        this.getOrder(this.orderStatusCode, true, searchFlag);
       },
       subString(str, maxLength) {
         if (str == null)
