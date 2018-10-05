@@ -3,8 +3,9 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
-        <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
+        <button class="btn" @click="displayTraffic">实时路况</button>
+        <button class="btn btn2" @click="displayAllMarkers">显示全部车辆</button>
+        <button class="btn btn2" @click="centerMark">移动到中心点</button>
       </div>
     </div>
     <div class="orderSearch">
@@ -236,6 +237,8 @@
         mp: null,
         points: null,
         markerOffset: new AMap.Pixel(-28, -68),
+        trafficVisible: false,
+        trafficLayer: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
@@ -571,6 +574,17 @@
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
+      },
+      displayTraffic() {
+        if (this.mp == null)
+          return;
+        if (this.trafficLayer == null)
+          this.trafficLayer = new AMap.TileLayer.Traffic({map: this.mp, autoRefresh: true});
+        if (this.trafficVisible)
+          this.trafficLayer.hide();
+        else
+          this.trafficLayer.show();
+        this.trafficVisible = !(this.trafficVisible);
       },
       displayMarkers() {
         var l = this.carList;
@@ -1069,7 +1083,7 @@
     position: relative;
     display: block;
     padding: 10px;
-    left: 100px;
+    left: 60px;
     top: 10px;
   }
 
@@ -1084,12 +1098,15 @@
     background-image: none;
     color: rgb(37, 165, 247);
     line-height: 1.5;
-    -webkit-appearance: button;
     cursor: pointer;
     border-width: 1px;
     border-style: solid;
     border-image: initial;
     border-color: rgb(37, 165, 247);
     padding: 0.25rem 0.5rem;
+  }
+
+  .btn2 {
+    margin-left: 5px;
   }
 </style>
