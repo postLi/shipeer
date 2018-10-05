@@ -700,6 +700,8 @@
           alert("未获取到轨迹数据，请稍后再试. ");
           return;
         }
+        var d = AMap.GeometryUtil.distanceOfLine(pois);
+        var s = (d * 3.6) / 5;
         var mp = this.mp;
         mp.clearInfoWindow();
         var polyline = this.polyline;
@@ -708,7 +710,7 @@
         redball.setPosition(pois[0]);
         redball.setMap(mp);
         mp.setFitView([polyline, redball]);
-        redball.moveAlong(pois, 1000);
+        redball.moveAlong(pois, s);
         checkTrack();
       },
       genTrack(orderId) {
