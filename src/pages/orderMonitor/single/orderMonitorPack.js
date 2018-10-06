@@ -1,16 +1,14 @@
-import Vue from 'vue'
-import App from '@/App'
-import router from 'router'
-import store from '../../../store/index'
-import localStorage from '../../../utils/localStorage'
+import Vue from 'vue';
+import App from '@/App';
+import router from 'router';
+import localStorage from '@/utils/localStorage';
 import ElementUI from 'element-ui';
-import Axios from 'axios'
+import Axios from 'axios';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
 Vue.prototype.$http = Axios;
 Vue.prototype.$localStorage = localStorage;
-const url = '/api';
 
 Axios.interceptors.request.use(config => {
   if (!config.params) {
@@ -47,6 +45,5 @@ Axios.interceptors.response.use(
 new Vue({
   el: '#app',
   router,
-  store,
   render: h => h(App)
 });
