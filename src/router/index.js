@@ -39,7 +39,7 @@ export default new Router({
       path: '/main',
       name: 'Main',
       component: Main,
-      children:[
+      children: [
         {
           path: '/orderMonitor',
           name: 'orderMonitor',
@@ -101,21 +101,21 @@ export default new Router({
           ],
         },
         {
-          path: '/orderRouter/unloadOrder', component: UnloadOrder,name:'UnloadOrder'
+          path: '/orderRouter/unloadOrder', component: UnloadOrder, name: 'UnloadOrder'
         },
         {
-          path: '/orderRouter/evaluateDriver', component: EvaluateDriver,name:'EvaluateDriver'
+          path: '/orderRouter/evaluateDriver', component: EvaluateDriver, name: 'EvaluateDriver'
         },
         {
-          path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'
+          path: '/orderRouter/payFoy', component: PayFor, name: 'PayFor'
         },
         {
-          path: '/orderRouter/inSingle', component: InSingle,name:'InSingle'
+          path: '/orderRouter/inSingle', component: InSingle, name: 'InSingle'
         },
         {
-          path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
-        },{
-          path: '/orderRouter/getPickUp', component: GetPickUp,name:'GetPickUp'
+          path: '/orderRouter/alOrder', component: AlOrder, name: 'AlOrder'
+        }, {
+          path: '/orderRouter/getPickUp', component: GetPickUp, name: 'GetPickUp'
         },
         {
           path: '/allRecod',
@@ -154,18 +154,23 @@ export default new Router({
       ]
     },
     {
-      path: '/', component: Login,name:'Login'
+      path: '/', component: Login, name: 'Login'
     },
     {
-      path: '/register', component: Register,name:'Register'
+      path: '/register', component: Register, name: 'Register'
     },
     {
-      path: '/passWordEdit', component: PassWordEdit,name:'PassWordEdit'
+      path: '/passWordEdit', component: PassWordEdit, name: 'PassWordEdit'
     },
     {
       path: '/order1',
       name: 'Order1',
       component: Order,
     },
+    {
+      path: '/orderMonitor2',
+      name: 'orderMonitor2',
+      component: OrderMonitor,
+    }
   ]
 })
