@@ -1,56 +1,28 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
-import App from '../../App'
-import router from '../../router/index'
-import store from '../../store/index'
-import localStorage from '../../utils/localStorage'
+import App from '@/App'
+import router from 'router'
+import store from '../../../store/index'
+import localStorage from '../../../utils/localStorage'
 import ElementUI from 'element-ui';
 import Axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css';
-import VueJsCookie from 'vue-js-cookie'
-import {getUserInfo,removeUserInfo} from '@/utils/auth'
-import { Message, MessageBox } from 'element-ui'
-import '@/icons' // icon
-import { mapGetters } from 'vuex'
-import * as filters from '../../filters/index'
-
-Vue.config.productionTip = false;
-// Vue.use(Vuex);
 Vue.use(ElementUI);
-// 修改vue的原型对象
 Vue.prototype.$http = Axios;
-Axios.defaults.headers.post['Content-Type'] = 'application/json';
 Vue.prototype.$localStorage = localStorage;
 const url = '/api';
 
-// Axios.defaults.baseURL = "http://192.168.1.78:7010" ;
-
-// request拦截器
 Axios.interceptors.request.use(config => {
   if (!config.params) {
     config.params = {}
   }
 
   let token = VueJsCookie.get('28kytoken')
-  if (getUserInfo() && getUserInfo().userToken) {
-
-    // config.headers.user_token = getUserInfo().userToken
-    config.params['user_token'] = getUserInfo().userToken
-  }
-
   if (token) {
-    // 让每个请求携带自定义token 请根据实际情况自行修改
-    config.headers['access_token'] = token
-    // config.headers.Authorization = 'Bearer ' + getToken()
-
-    // 暂时放到链接中
-
-    config.params['access_token'] = token
-    // console.log(config.url, config.params)
+    config.params['access_token'] = token;
   }
 
   if(localStorage.get("28ky-userdata")){
-    config.headers['user_token'] = localStorage.get("28ky-userdata").userToken
+    config.params['user_token'] = localStorage.get("28ky-userdata").userToken
   }
 
   if (config.url.indexOf('http://') === -1) {
@@ -59,10 +31,9 @@ Axios.interceptors.request.use(config => {
 
   return config
 }, error => {
-  // Do something with request error
-  console.log('interceptors:', error) // for debug
+   console.log('interceptors:', error);
   Promise.reject(error)
-})
+});
 
 // respone拦截器
 Axios.interceptors.response.use(
@@ -134,33 +105,11 @@ Axios.interceptors.response.use(
     }
     return Promise.reject(err)
   }
-)
-Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key])
-})
+);
 
-Date.prototype.format = function(fmt) {
-  var o = {
-    "M+" : this.getMonth()+1,                 //月份
-    "d+" : this.getDate(),                    //日
-    "h+" : this.getHours(),                   //小时
-    "m+" : this.getMinutes(),                 //分
-    "s+" : this.getSeconds(),                 //秒
-    "q+" : Math.floor((this.getMonth()+3)/3), //季度
-    "S"  : this.getMilliseconds()             //毫秒
-  };
-  if(/(y+)/.test(fmt))
-    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-  for(var k in o)
-    if(new RegExp("("+ k +")").test(fmt))
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length===1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-  return fmt;
-};
-
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   store,
   render: h => h(App)
-})
+});
