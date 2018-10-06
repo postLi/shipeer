@@ -34,17 +34,9 @@ module.exports = {
   },
   devServer: {
     hot: true,
-    contentBase: false,
-    compress: true,
     host: '0.0.0.0',
     port: 8080,
-    open: false,
-    publicPath: config.dev.assetsPublicPath,
-    proxy: config.dev.proxyTable,
-    quiet: true,
-    watchOptions: {
-      poll: config.dev.poll,
-    }
+    open: false
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
