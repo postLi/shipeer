@@ -227,6 +227,7 @@
 <script>
   import {postApi} from '@/api/api.js';
   import localStorage from '@/utils/localStorage';
+  import VueJsCookie from 'vue-js-cookie';
 
   export default {
     name: "orderMonitor",
@@ -338,11 +339,26 @@
     },
     methods: {
       checkLogin() {
-        var v = localStorage.get("28ky-userdata");
+        var v = this.$route.query.access;
+        if (v != null && v != "")
+          VueJsCookie.set('28kytoken', v);
+
+        v = this.$route.query.user;
+        if (v != null && v != "")
+          localStorage.set("28ky-userdata", {userToken: v});
+
+        v = localStorage.get("28ky-userdata");
+        if (v == null || v.userToken == null) {
+          this.notLogin();
+          return false;
+        }
+
+        v = VueJsCookie.get('28kytoken');
         if (v == null) {
           this.notLogin();
           return false;
         }
+
         return true;
       },
       notLogin() {
