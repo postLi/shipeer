@@ -1,4 +1,6 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   context: path.resolve(__dirname, './'),
@@ -32,7 +34,7 @@ module.exports = {
   },
   devServer: {
     hot: true,
-    contentBase: false, // since we use CopyWebpackPlugin.
+    contentBase: false,
     compress: true,
     host: '0.0.0.0',
     port: 8080,
@@ -45,8 +47,10 @@ module.exports = {
     }
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      filename: 'orderMonitor.html',
+      inject: true
+    })
   ]
 }
-)
-;
