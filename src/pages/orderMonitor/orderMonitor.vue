@@ -226,6 +226,7 @@
 
 <script>
   import {postApi} from '@/api/api.js';
+  import localStorage from '@/utils/localStorage';
 
   export default {
     name: "orderMonitor",
@@ -323,6 +324,8 @@
         isCustom: true,
         autoMove: true
       });
+      if (!(this.checkLogin()))
+        ;
       this.getOrder("", true);
       this.getOrder("AF0080601HZ", false);
       this.getOrder("AF0080602HZ", false);
@@ -334,6 +337,21 @@
       this.getOrder("AF0080608HZ", false);
     },
     methods: {
+      checkLogin() {
+        var v = localStorage.get("28ky-userdata");
+        if (v == null) {
+          this.notLogin();
+          return false;
+        }
+        return true;
+      },
+      notLogin() {
+        this.$confirm('尚未登录或者登录信息已失效，请重新登录. ', '', {
+          confirmButtonText: '确定',
+          showCancelButton: false,
+          type: 'warning'
+        });
+      },
       pageSizeChange(val) {
         this.pageSize = val;
         this.currentPage = 1;
