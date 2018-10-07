@@ -199,6 +199,7 @@
                 if(res1.status === 200){
                   this.$message(res1.text);
                   this.timeName = 60;
+                  this.$localStorage.set_s("timeNamePassWord",this.timeName);
                   this.canClick = true;
                   this.timeGo();
                 }
@@ -252,8 +253,10 @@
         timeGo(){
           this.time = setInterval(()=>{
             this.timeName = this.timeName -1;
+            this.$localStorage.set_s("timeNamePassWord",this.timeName);
             if( this.timeName <= 0){
               this.timeName = "获取验证码";
+              this.$localStorage.remove_s('timeNamePassWord');
               this.canClick = false;
               clearInterval(this.time)
             }
@@ -265,8 +268,15 @@
           this.imgsrc = loginCode()
         },
         checkMyPhone(rule, value, callback){
-          checkPhone(rule, value, callback)
+          checkPhone(rule, value, callback,0)
         },
+      },
+      created(){
+        if(this.$localStorage.get_s('timeNamePassWord')){
+          this.timeName = this.$localStorage.get_s('timeNamePassWord');
+          this.canClick = true;
+          this.timeGo();
+        }
       },
       mounted(){
         this.changeVcode()

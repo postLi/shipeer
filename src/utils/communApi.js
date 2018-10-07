@@ -1,15 +1,23 @@
 
 import {REGEX} from '@/utils/valiRegex.js'
 
-let checkPhone = (rule, value, callback) => {
+let checkPhone = (rule, value, callback,int) => {
   let re = /^1[3|4|5|7|8|9]\d{9}$/;
   if (value === '') {
-    callback(new Error('请输入手机'));
+    if(int === 0){
+      callback(new Error('请输入手机号码'));
+      return false
+    }else{
+      callback();
+      return true
+    }
   }else {
     if(re.test(value)){
-      callback()
+      callback();
+      return true
     }else {
       callback(new Error('请输入正确手机号码'));
+      return false
     }
   }
 };

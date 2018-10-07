@@ -1,8 +1,6 @@
 <template>
-
-  <my-dialog  :visible.sync="dialogVisible" @open="open"
+  <my-dialog :visible.sync="dialogVisible" @open="open" :close-on-click-modal="false" :close-on-press-escape="false"
               width="940px">
-
     <div class="content-top">
       <div class="content">
         <div class="window" >
@@ -10,9 +8,12 @@
           <div class="title-4 f_w flex_a padding_l_10" v-if="data.shipperSort !== 0">目的地</div>
           <div class="margin_10">
             <span>你可以拖动地图选择位置</span>
+            <el-form :model="data" ref="mapRules">
+
             <el-input
               style="font-size: 12px"
               type="textarea"
+              :readonly="true"
               autosize
               placeholder="详细地址（如：输入“xx工业区”，再从下拉框选择一个地址）"
               :autosize="{ minRows: 2, maxRows: 4}"
@@ -34,14 +35,19 @@
               size="small"
               v-model="data.consignee">
             </el-input>
-            <el-input
-              style="width: 220px"
-              class="margin_t_10"
-              autosize
-              :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
-              size="small"
-              v-model="data.consigneeMobile">
-            </el-input>
+              <el-form-item label="" label-width=""  prop="consigneeMobile"
+                            :rules="{required: true, validator:checkMyPhone, trigger: 'blur'}">
+                <el-input
+                  style="width: 220px"
+                  class="margin_t_10"
+                  autosize
+                  :placeholder="(data.shipperSort === 0)?'发货人联系电话（必填）':'收货人联系电话（选填）'"
+                  size="small"
+                  v-model="data.consigneeMobile">
+                </el-input>
+              </el-form-item>
+            </el-form>
+
             <el-checkbox v-model="checked">保存为常用地址</el-checkbox>
             <div class="flex">
               <el-button class="margin_t_10 f_w" style="background-color: #2fb301;width: 80px" type="success" size="small" @click="save()">确定</el-button>
@@ -119,7 +125,9 @@
   import {REGEX} from '@/utils/valiRegex.js'
   import { getApi ,postApi} from "@/api/api.js";
   import myDialog from '@/components/myDialog'
-    export default {
+  import {checkPhone} from '@/utils/communApi'
+
+  export default {
         name: "showMap",
       props:['data','map'],
       components:{myDialog},
@@ -141,36 +149,34 @@
           }
       },
       methods:{
-        save(){
+        checkMyPhone(rule, value, callback){
           if(this.data.shipperSort === 0){
-            if(this.data.consigneeMobile === ''){
-              this.$message.warning("发货人联系电话（必填）");
-              return
-            }else {
-              if(!REGEX.MOBILE.test(this.data.consigneeMobile)){
-                this.$message.warning("手机号码格式错误");
-                return
-              }
-            }
+            checkPhone(rule, value, callback,0)
           }else {
-            if(!REGEX.MOBILE.test(this.data.consigneeMobile) && this.data.consigneeMobile !== ''){
-              this.$message.warning("手机号码格式错误");
-              return
-            }
+            checkPhone(rule, value, callback,1)
           }
-          this.dialogVisible = false;
-          // this.data.map.destroy( );
-          this.parm.contacts = this.data.consignee;
-          this.parm.contactsPhone = this.data.consigneeMobile;
-          this.parm.floorHousenum = this.data.floorHousenum;
-          if(this.checked){
-            postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.parm).then((res)=>{
-              if(res !== '' || res !== null){
-                this.$message.success("新增成功");
+        },
+        save(){
+          this.$refs['mapRules'].validate((valid) => {
+            if (valid) {
+              this.dialogVisible = false;
+              // this.data.map.destroy( );
+              this.parm.contacts = this.data.consignee;
+              this.parm.contactsPhone = this.data.consigneeMobile;
+              this.parm.floorHousenum = this.data.floorHousenum;
+              if(this.checked){
+                postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.parm).then((res)=>{
+                  if(res !== '' || res !== null){
+                    this.$message.success("新增成功");
+                  }
+                });
               }
-            });
-          }
-          this.data.map = null
+              this.data.map = null
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
 
         },
         open(){
@@ -258,6 +264,7 @@
           },
         close(){
           this.dialogVisible = false;
+          // this.$refs['mapRules'].resetFields();
           // this.data.map.destroy( );
           this.data.map = null
         },
@@ -280,10 +287,9 @@
     position: absolute;top: 40px;z-index: 100;
     .content{
       position: relative;
-      box-shadow: 1px 2px 5px 0px #DEDEDE;
+      box-shadow: 1px 2px 5px 0 #DEDEDE;
       .window{
         width: 278px;
-        height: 333px;
         background-color: white;
         position: absolute;
         z-index: 100;
