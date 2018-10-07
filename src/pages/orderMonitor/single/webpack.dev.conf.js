@@ -5,7 +5,7 @@ const webpack = require('webpack');
 module.exports = {
   context: path.resolve(__dirname, './'),
   entry: {
-    orderMonitor: './orderMonitorPack.js'
+    orderMonitor: './orderMonitor.js'
   },
   output: {
     path: path.resolve(__dirname, './dist'),
