@@ -6,8 +6,8 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: '/orderMonitor2',
-      name: 'orderMonitor2',
+      path: '/orderMonitor',
+      name: 'orderMonitor',
       component: OrderMonitor,
     }
   ]
