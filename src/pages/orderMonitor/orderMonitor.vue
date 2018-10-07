@@ -21,25 +21,25 @@
         <el-badge :value="orderNumAll">
           <div ref="ttt" class="title allOrder"
                :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
-               @click="clickOrder('全部服务中')">
+               @click="clickOrder('全部服务中',true)">
             全部服务中
           </div>
         </el-badge>
         <div class="table">
           <div class="row">
-            <div class="cell3" @click="clickOrder('司机已接单')">
+            <div class="cell3" @click="clickOrder('司机已接单',true)">
               <el-badge :value="orderNumJiedan" :max="maxNum"
                         :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机赶往提货地')">
+            <div class="cell" @click="clickOrder('司机赶往提货地',true)">
               <el-badge :value="orderNumGanwangtwd" :max="maxNum"
                         :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机已到提货地')">
+            <div class="cell" @click="clickOrder('司机已到提货地',true)">
               <el-badge :value="orderNumYidaotwd" :max="maxNum"
                         :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
@@ -47,19 +47,19 @@
             </div>
           </div>
           <div class="row">
-            <div class="cell3" @click="clickOrder('司机已装货')">
+            <div class="cell3" @click="clickOrder('司机已装货',true)">
               <el-badge :value="orderNumYizhuanghuo" :max="maxNum"
                         :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('运输中')">
+            <div class="cell" @click="clickOrder('运输中',true)">
               <el-badge :value="orderNumYunshuzhong" :max="maxNum"
                         :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机已到目的地')">
+            <div class="cell" @click="clickOrder('司机已到目的地',true)">
               <el-badge :value="orderNumYidaomdd" :max="maxNum"
                         :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
@@ -67,14 +67,14 @@
             </div>
           </div>
           <div class="row">
-            <div class="cell" @click="clickOrder('司机已卸货')">
+            <div class="cell" @click="clickOrder('司机已卸货',true)">
               <el-badge
                 :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
                 :value="orderNumYixiehuo" :max="maxNum">
                 司机已卸货
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机改派')">
+            <div class="cell" @click="clickOrder('司机改派',true)">
               <el-badge :value="orderNumGaipai" :max="maxNum"
                         :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
@@ -371,11 +371,26 @@
       pageSizeChange(val) {
         this.pageSize = val;
         this.currentPage = 1;
-        this.getOrder(this.orderStatusCode, true);
+        this.clear();
+        this.getOrder(this.orderStatusCode, true, true);
       },
       currentPageChange(val) {
         this.currentPage = val;
-        this.getOrder(this.orderStatusCode, true);
+        this.clear();
+        this.getOrder(this.orderStatusCode, true, true);
+      },
+      clear() {
+        var points = this.points;
+        this.points = [];
+        if (points != null && this.mp != null)
+          this.mp.remove(points);
+        this.mp.clearInfoWindow();
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.setPath(null);
+        if (this.passedPolyline != null)
+          this.passedPolyline.setPath(null);
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         var s = "";
@@ -549,17 +564,7 @@
         if (ordStatus != null)
           this.orderStatus = ordStatus;
         this.currentPage = 1;
-        var points = this.points;
-        this.points = [];
-        if (points != null)
-          this.mp.remove(points);
-        this.mp.clearInfoWindow();
-        if (this.redball != null)
-          this.redball.setMap(null);
-        if (this.polyline != null)
-          this.polyline.setPath(null);
-        if (this.passedPolyline != null)
-          this.passedPolyline.setPath(null);
+        this.clear();
         if (ordStatus === "全部服务中")
           this.orderStatusCode = "";
         else if (ordStatus === "司机已接单")
@@ -656,8 +661,6 @@
           marker.on("click", this.markerClick);
           this.points.push(marker);
         }
-        if (this.redball != null)
-          this.redball.setMap(null);
         if (this.mp == null || this.points == null)
           return;
         this.mp.setFitView(this.points);
