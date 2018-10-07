@@ -3,10 +3,10 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    map: __dirname + "./orderMonitor.js"
+    map: __dirname + "/orderMonitor.js"
   },
   output: {
-    path: __dirname + "../dist/js",
+    path: __dirname + "/../dist/js",
     filename: "[name].js",
     publicPath: ""
   },
@@ -32,16 +32,29 @@ module.exports = {
     }, {
       test: /\.vue$/,
       loader: 'vue-loader'
+    }, {
+      test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+      loader: 'url-loader',
+      options: {
+        limit: 10000,
+        name: 'fonts/[name].[hash:7].[ext]'
+      }
     }]
   },
   watch: false,
   devServer: {
     host: '0.0.0.0',
     port: 8081,
-    contentBase: path.resolve(__dirname, '../dist'),
+    contentBase: __dirname + "/../dist/",
     publicPath: "/js/",
     inline: true,
     hot: true
+  },
+  resolve: {
+    extensions: ['.js', '.vue'],
+    alias: {
+      "@": __dirname + "/../../..",
+    },
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin()
