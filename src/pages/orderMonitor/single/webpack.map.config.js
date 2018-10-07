@@ -1,5 +1,4 @@
 const webpack = require("webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -42,12 +41,6 @@ module.exports = {
         hot: true
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new CopyWebpackPlugin([
-            {
-                from: path.resolve(__dirname, './static'),
-                to: path.resolve(__dirname, './dist/webapp'),
-            }
-        ])
+        new webpack.HotModuleReplacementPlugin()
     ]
 };
