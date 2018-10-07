@@ -73,21 +73,22 @@
       @open="handleOpen"
       @close="handleClose">
       <div class="add-route-item ">
-        <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
+
+        <el-form :model="form" ref="routeRules" class="myForm-m">
+        <div v-for="(item,index) in form.addRoute" :key="index" class="margin_b_10">
           <div class="flex_sb">
             <span v-if="index === 0" class="window-title-left c-3">提货地</span>
-            <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left c-3">途经地</span>
-            <span v-if="index + 1 === addRoute.length" class="window-title-left c-3">目的地</span>
-            <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
+            <span v-if="index > 0 && index + 1 !== form.addRoute.length" class="window-title-left c-3">途经地</span>
+            <span v-if="index + 1 === form.addRoute.length" class="window-title-left c-3">目的地</span>
+            <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(form.addRoute.length)">新增目的地</el-button>
             <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
           </div>
 
           <route-item :data="item" :index="index"></route-item>
 
         </div>
+        </el-form>
       </div>
-
-
 
       <span slot="footer" class="dialog-footer">
     <el-button @click="window = false">取 消</el-button>
@@ -124,29 +125,34 @@
           topHeight:0,
           footer:0,
           tableData: [],
-          addRoute:[
-            {
-              tel:'',
-              name:'',
-              floor:'',
-              cityCode: "",//城市编码（格式440100）
-              origin: "",//详细地址
-              originCoordinate: "",//地点坐标(小的在前)
-              originName: "",//地点名称
-              provinceCityArea: "",//省市区（格式:广东省广州市天河区）
-              shipperSort: 0
-            },
-            {
-              tel:'',
-              name:'',
-              floor:'',
-              cityCode: "",
-              origin: "",
-              originCoordinate: "",
-              originName: "",
-              provinceCityArea: "",
-              shipperSort: 1
-            }],
+          form:{
+            addRoute:[
+              {
+                tel:'',
+                name:'',
+                floor:'',
+                cityCode: "",//城市编码（格式440100）
+                origin: "",//详细地址
+                originCoordinate: "",//地点坐标(小的在前)
+                originName: "",//地点名称
+                provinceCityArea: "",//省市区（格式:广东省广州市天河区）
+                shipperSort: 0,
+                checkRoute:true
+              },
+              {
+                tel:'',
+                name:'',
+                floor:'',
+                cityCode: "",
+                origin: "",
+                originCoordinate: "",
+                originName: "",
+                provinceCityArea: "",
+                shipperSort: 1,
+                checkRoute:true
+              }],
+          },
+
 
           addressTo:'',
           addressFrom:'',
@@ -165,20 +171,20 @@
           });
 
           console.log(item)
-          this.addRoute = item;
+          this.form.addRoute = item;
         },
         delDestination(i){
-          this.addRoute.splice(i,1);
-          this.addRoute.forEach((item ,i)=>{
+          this.form.addRoute.splice(i,1);
+          this.form.addRoute.forEach((item ,i)=>{
             item.shipperSort = i
           })
         },
         addDestination(i){
-          if(this.addRoute.length >=10){
+          if(this.form.addRoute.length >=10){
             this.$message.warning('最多只能添加十条目的地');
             return
           }
-          this.addRoute.push({
+          this.form.addRoute.push({
             tel:'',
             name:'',
             floor:'',
@@ -187,7 +193,8 @@
             originCoordinate: "",
             originName: "",
             provinceCityArea: "",
-            shipperSort: i
+            shipperSort: i,
+            checkRoute:true
           })
 
         },
@@ -218,55 +225,75 @@
         },
 
         save(){
-          console.log(this.addRoute)
-          let check =  this.addRoute.some((item)=>{
-            return item.originCoordinate === ''
-          });
+          console.log(this.$refs.routeRules)
 
-          if(check){
-            this.$message.warning('收发货地址没有获取到坐标点');
-            return
-          }
-          if( this.name === "编辑"){
-            let parm =  {
-              "aflcShipperLineDtos": this.addRoute,
-              "shipperLineName": this.addRoute[0].lineName
-            };
-            postApi(`/aflc-uc/aflcShipperLineApi/updateAflcShipperLine/${this.addRoute[0].shipperNo}`,parm).then((res)=>{
-              if(res.status === 200){
-                this.$message.success("修改成功");
-                this.window = false;
-                this.getList();
-              } else {
-                this.$message.warning(res.errorInfo)
+
+
+
+          this.$refs.routeRules.validate((valid) => {
+            if (valid) {
+              if( this.name === "编辑"){
+                let parm =  {
+                  "aflcShipperLineDtos": this.form.addRoute,
+                  "shipperLineName": this.form.addRoute[0].lineName
+                };
+                postApi(`/aflc-uc/aflcShipperLineApi/updateAflcShipperLine/${this.form.addRoute[0].shipperNo}`,parm).then((res)=>{
+                  if(res.status === 200){
+                    this.$message.success("修改成功");
+                    this.window = false;
+                    this.getList();
+                  } else {
+                    this.$message.warning(res.errorInfo)
+                  }
+                });
+              }else {
+                let parm =  {
+                  "aflcShipperLineDtos": this.form.addRoute,
+                  "shipperLineName": new Date() * 1
+                };
+                postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine',parm).then((res)=>{
+                  if(res.status === 200){
+                    this.$message.success("新增成功");
+                    this.window = false;
+                    this.getList();
+                  } else {
+                    this.$message.warning(res.errorInfo)
+                  }
+                });
               }
-            });
-          }else {
-            let parm =  {
-              "aflcShipperLineDtos": this.addRoute,
-              "shipperLineName": new Date() * 1
-            };
-            postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine',parm).then((res)=>{
-              if(res.status === 200){
-                this.$message.success("新增成功");
-                this.window = false;
-                this.getList();
-              } else {
-                this.$message.warning(res.errorInfo)
-              }
-            });
-          }
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
+          //
+          //
+          //
+          //
+          // let check =  this.form.addRoute.some((item)=>{
+          //   return item.originCoordinate === ''
+          // });
+          //
+          // if(check){
+          //   this.$message.warning('收发货地址没有获取到坐标点');
+          //   return
+          // }
+
+
+
+
         },
         handleOpen(){
 
         },
         handleClose(){
+          this.$refs.routeRules.resetFields();
           this.getList()
         },
         openWindow(){
           this.name= "新增";
           this.window = true;
-          this.addRoute = [
+          this.form.addRoute = [
             {
               tel:'',
               name:'',
@@ -276,7 +303,8 @@
               originCoordinate: "",
               originName: "",
               provinceCityArea: "",
-              shipperSort: 0
+              shipperSort: 0,
+              checkRoute:true
             },
             {
               tel:'',
@@ -287,7 +315,8 @@
               originCoordinate: "",
               originName: "",
               provinceCityArea: "",
-              shipperSort: 1
+              shipperSort: 1,
+              checkRoute:true
             }]
         },
         search(){

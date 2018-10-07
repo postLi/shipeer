@@ -23,9 +23,9 @@
             <img src="../../assets/main/changydz_close.png" alt="" class="pointer" @click="close()">
           </div>
 
-          <address-item :data="form" :type="type"></address-item>
+          <address-item :data="form" :type="type" ref="address"></address-item>
 
-          <div class="flex margin_t_10">
+          <div class="flex margin_t_20">
             <el-button class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="save()">保 存</el-button>
             <el-button plain class=" f_w" style="background-color: white;width: 105px;color: #999999;border-color: #979797" size="small" @click="close()">取 消</el-button>
           </div>
@@ -116,45 +116,31 @@
           })
         },
         save(){
-          if(this.form.coordinate === ''){
-            this.$message.warning("没有获取到坐标点，保存失败");
-            return
-          }
-          if(this.type === '0'){
-            if(this.form.contactsPhone === ''){
-              this.$message.warning("联系电话（必填）");
-              return
-            }else {
-              if(!REGEX.MOBILE.test(this.form.contactsPhone)){
-                this.$message.warning("手机号码格式错误");
-                return
+          console.log(this.form)
+          this.$refs.address.$refs['addressRules'].validate((valid) => {
+            if (valid) {
+              if(this.form.id){
+                putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
+                  if(res !== '' || res !== null){
+                    this.$message.success("修改成功");
+                    this.window = false;
+                    this.getList();
+                  }
+                });
+              }else {
+                postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
+                  if(res !== '' || res !== null){
+                    this.$message.success("新增成功");
+                    this.window = false;
+                    this.getList();
+                  }
+                });
               }
+            } else {
+              console.log('error submit!!');
+              return false;
             }
-          }else{
-            if(!REGEX.MOBILE.test(this.form.contactsPhone) && this.form.contactsPhone !== ''){
-              this.$message.warning("手机号码格式错误");
-              return
-            }
-          }
-
-
-          if(this.form.id){
-            putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
-              if(res !== '' || res !== null){
-                this.$message.success("修改成功");
-                this.window = false;
-                this.getList();
-              }
-            });
-          }else {
-            postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
-              if(res !== '' || res !== null){
-                this.$message.success("新增成功");
-                this.window = false;
-                this.getList();
-              }
-            });
-          }
+          });
         },
 
         openWindow(){

@@ -85,7 +85,7 @@
         {{item.name}}
       </el-button>
 
-      <address-item :data="form" :type="type"></address-item>
+      <address-item :data="form" :type="type" ref="address"></address-item>
       <span slot="footer" class="dialog-footer">
     <el-button @click="window = false">取 消</el-button>
     <el-button type="primary" @click="save()">保 存</el-button>
@@ -190,56 +190,50 @@
           this.$message.warning("请选择提货或收货地址");
           return
         }
-        if(this.form.coordinate === ''){
-          this.$message.warning("没有获取到坐标点，保存失败");
-          return
-        }
-        if(this.type === '0'){
-          if(this.form.contactsPhone === ''){
-            this.$message.warning("手机号码必填");
-            return
-          }else {
-            if(!REGEX.MOBILE.test(this.form.contactsPhone)){
-              this.$message.warning("手机号码格式错误");
-              return
-            }
-          }
-        }else{
-          if(!REGEX.MOBILE.test(this.form.contactsPhone) && this.form.contactsPhone !== ''){
-            this.$message.warning("手机号码格式错误");
-            return
-          }
-        }
 
         this.form.type = this.type;
-        if(this.form.id){
-          putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
-            if(res.status === 200){
-              this.$message.success("修改成功");
-              this.window = false;
-              this.getList();
-            } else {
-              this.$message.warning(res.errorInfo)
-            }
-          });
-        }else {
-          postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
-            if(res.status === 200){
-              this.$message.success("新增成功");
-              this.window = false;
-              this.p.page = 1;
-              this.getList();
+
+        console.log(this.form)
+        this.$refs.address.$refs['addressRules'].validate((valid) => {
+          if (valid) {
+            if(this.form.id){
+              putApi('/aflc-uc/usercenter/aflcShipperContacts/v1/update',this.form).then((res)=>{
+                if(res.status === 200){
+                  this.$message.success("修改成功");
+                  this.window = false;
+                  this.getList();
+                } else {
+                  this.$message.warning(res.errorInfo)
+                }
+              });
             }else {
-              this.$message.warning(res.errorInfo)
+              postApi('/aflc-uc/usercenter/aflcShipperContacts/v1/add',this.form).then((res)=>{
+                if(res.status === 200){
+                  this.$message.success("新增成功");
+                  this.window = false;
+                  this.p.page = 1;
+                  this.getList();
+                }else {
+                  this.$message.warning(res.errorInfo)
+                }
+              });
             }
-          });
-        }
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+
       },
       requestClick(id){
         this.type = id;
+        this.$refs.address.$refs['addressRules'].resetFields();
+        this.$refs.address.changeAddress(1)
       },
       handleClose(){
-        //this.getList();
+        this.$refs.address.$refs['addressRules'].resetFields();
+        this.$refs.address.changeAddress(1)
       },
 
 

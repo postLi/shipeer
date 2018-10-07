@@ -1,9 +1,16 @@
 <template>
   <div >
 
-    <div class="item-base-flex flex_a margin_t_10">
+    <div class="item-base-flex flex_a margin_t_10" :style="{'border-color':data.checkRoute?'#dcdfe6':'red'}">
       <img src="../assets/main/tihuod.png" alt="">
-      <input id="pickerInput" @focus="toLoadUI(index)" :ref="index" class="my-input margin_l_10" style="height: 32px" placeholder="地址" v-model="data.origin"/>
+      <!--<input id="pickerInput" @focus="toLoadUI(index)" :ref="index" class="my-input margin_l_10" style="height: 32px" placeholder="地址" v-model="data.origin"/>-->
+
+      <el-form-item label="" label-width="" prop="origin" size="small"
+                    :rules="{required: true, validator:(rule, value, callback)=>{
+                      return checkMyRoute(rule, data, callback)
+                    },trigger: 'change'}">
+        <el-input class="myInput-border-none" :ref="index" @focus="toLoadUI(index)" style="font-size: 12px;width: 400px" v-model="data.origin" placeholder="地址"></el-input>
+      </el-form-item>
     </div>
 
     <!--<div class="flex_r margin_t_10">-->
@@ -28,14 +35,29 @@
 <script>
   export default {
     name: "routeItem",
+    props:["data","index"],
     computed:{
 
     },
+    data(){
+      return{
+
+      }
+    },
     methods:{
+      checkMyRoute(rule, value, callback){
+        if (value.originCoordinate === '' || value.origin === '') {
+          callback(new Error("没有获取到坐标点，保存失败"));
+          value.checkRoute = false
+        }else {
+          callback();
+          value.checkRoute = true
+        }
+      },
       toLoadUI(i){
         AMapUI.loadUI(['misc/PoiPicker'], (PoiPicker) =>{
           let poiPicker = new PoiPicker({
-            input: this.$refs[i]
+            input: this.$refs[i].$refs.input
           });
           this.toPoiPickerReady(poiPicker);
         });
@@ -46,6 +68,11 @@
           console.log(poiResult)
           if(poiResult.item.location === undefined){
             this.$message.warning("没有获取到地址");
+            this.data.origin = '';
+            this.data.cityCode = '';
+            this.data.originCoordinate = '';
+            this.data.originName = '';
+            this.data.provinceCityArea = '';
             return
           }
 
@@ -71,10 +98,8 @@
         });
       },
 
-
-
     },
-    props:["data","index"],
+
     created(){
 
     }
