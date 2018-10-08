@@ -52,7 +52,7 @@
         </div>
         <div class="divClass">
           <span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice}}</span>&nbsp;&nbsp;<span
-          class="blueClass" @click="openDetail">费用明细</span>
+          class="blueClassL" @click="closeDetail">费用明细</span>
         </div>
         <div class="divClass">
           <span class="unClass">需要车型:</span><span class="spanclass">{{getDetail.carTypeName}}</span>
@@ -80,20 +80,27 @@
         </li>
       </template>
     </ul>
+
+    <SmllDialog @click="openDetail"  :centerDialogVisible="DialogVisible" :getDetail="getDetail"></SmllDialog>
   </div>
+
 </template>
 
 <script>
   import {parseTime} from '@/utils/'
   import {getUserInfo, setOrderDtaial, getOrderDtaial} from '@/utils/auth'
   import {postMyOrderDetail,getSysDictBycode} from '@/api/concentrateAxios/orderManage'
-
+  import SmllDialog from '@/components/smllDialog/index'
   export default {
+    components:{
+      SmllDialog
+    },
     props: {
       orderid: [Number, String]
     },
     data() {
       return {
+        DialogVisible:false,
         centerDialogVisible: false,
         centerDialogVisiblezfb: false,
         centerDialogVisibleye: false,
@@ -118,8 +125,13 @@
       // this.fetchCode()
     },
     methods: {
-      openDetail() {
-        alert('00')
+      closeDetail() {
+
+        this.DialogVisible = true
+        // console.log(this.DialogVisible)
+      },
+      openDetail(){
+        this.DialogVisible = false
       },
       fetchOrderDetail() {
         return postMyOrderDetail(this.$route.query.qy.orderSerial).then(res => {
@@ -258,6 +270,14 @@
           .blueClass {
             color: #1890ff;
             font-size: 12px;
+            cursor: pointer;
+            /*border-bottom: 1px solid #1890ff;*/
+          }
+          .blueClassL {
+            color: #1890ff;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #1890ff;
           }
           span:nth-of-type(2) {
 

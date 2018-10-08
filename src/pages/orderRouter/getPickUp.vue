@@ -202,27 +202,46 @@
           console.log("【disconnect】");
         }); //异常断线监听
 
-        this.getSignature()
+        this.getSignature().then(res =>{
+          console.log(res,'请求的数据');
+          JIM.init({
+            "appkey":this.jimInfo.appkey,
+            "random_str": this.jimInfo.random_str,
+            "signature":  this.jimInfo.signature,
+            "timestamp":  this.jimInfo.timestamp,
+            "flag": 1
+          }).onSuccess(function(data) {
+            // console.log('success:' + JSON.stringify(data));
+            console.log(data,'成功了');
+            JIM.onMsgReceive(function(data) {
+              data = JSON.stringify(data);
+              console.log('1msg_receive:' + data,'成功了1');
+
+            });
+          }).onFail(function(data) {
+            console.log('error2:' + JSON.stringify(data))
+          });
+        })
         console.log(this.jimInfo,'几率')
         const md5 = require("js-md5");
-        const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
-        JIM.init({
-          "appkey":this.jimInfo.appkey,
-          "random_str": this.jimInfo.random_str,
-          "signature":  this.jimInfo.signature,
-          "timestamp":  this.jimInfo.timestamp,
-          "flag": 1
-        }).onSuccess(function(data) {
-          // console.log('success:' + JSON.stringify(data));
-          console.log(data,'成功了');
-          JIM.onMsgReceive(function(data) {
-            data = JSON.stringify(data);
-            console.log('1msg_receive:' + data,'成功了1');
-
-          });
-        }).onFail(function(data) {
-          console.log('error成功了2:' + JSON.stringify(data))
-        });
+        // const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
+        // JIM.init({
+        //   "appkey":this.jimInfo.appkey,
+        //   "random_str": this.jimInfo.random_str,
+        //   "signature":  this.jimInfo.signature,
+        //   "timestamp":  this.jimInfo.timestamp,
+        //   "flag": 1
+        // }).onSuccess(function(data) {
+        //   // console.log('success:' + JSON.stringify(data));
+        //   console.log(data,'成功了');
+        //   JIM.onMsgReceive(function(data) {
+        //     data = JSON.stringify(data);
+        //     console.log('1msg_receive:' + data,'成功了1');
+        //
+        //   });
+        // }).onFail(function(data) {
+        //   console.log('error2:' + JSON.stringify(data))
+        // });
       },
       loadMsg(){
         if(window.JMessage){
@@ -309,6 +328,7 @@
         return getAuroraSignature(2).then(res => {
           if(res.status===200){
             this.jimInfo.signature =res.data
+
             console.log(this.jimInfo.signature,'请求的');
           }else{
             this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')

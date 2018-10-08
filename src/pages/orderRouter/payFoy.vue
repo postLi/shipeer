@@ -82,7 +82,7 @@
             <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
           <!--&lt;!&ndash;</li>&ndash;&gt;-->
         <!--</ul>-->
-        <OrderDetail  :orderid="this.$route.query.qy.orderSerial"></OrderDetail>
+        <OrderDetail  :orderid="$route.query.qy.orderSerial"></OrderDetail>
       </el-header>
       <el-main class="clearfix">
         <div class="mainClass clearfix">
@@ -90,14 +90,14 @@
           <ul>
             <li>
               <div><span>起步价(含{{getDetail.startMileage}}公里)</span><span>{{getDetail.startPrice}}元</span></div>
-              <div><span>超里程费(超出{{getDetail.outMileage}}公里)</span><span>{{getDetail.outMileagePrice}}元</span></div>
+              <div><span>超里程费(超出{{getDetail.outMileage}}公里)</span><span>{{getDetail.outMileagePrice===null?0:getDetail.outMileagePrice}}元</span></div>
             </li>
             <li>
               <div><span>订单价</span><span>{{getDetail.orderPrice}}元</span></div>
-              <div><span>优惠券抵扣</span><span class="redClass">-{{getDetail.preferentialPrice}}元</span></div>
+              <div><span>优惠券抵扣</span><span class="redClass">{{getDetail.preferentialPrice===null?0:'-'+getDetail.preferentialPrice}}元</span></div>
             </li>
             <li>
-              <div><span>小费</span><span class="greenClass">+{{getDetail.tip}}元</span></div>
+              <div><span>小费</span><span class="greenClass">+{{getDetail.tip===null?0:getDetail.tip}}元</span></div>
               <!--<div><span>超里程费(超出0公里)</span><span>0.00元</span></div>-->
             </li>
           </ul>

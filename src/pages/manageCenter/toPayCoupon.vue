@@ -7,12 +7,21 @@
               <h4>充值金额：</h4>
               <ul class="clearfix">
                 <template  v-for="(item,index) in datasetList">
-                  <li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">
-                    <p>{{item.name}}</p>
-                    <p>赠送{{item.value.slice(-3) * item.name.substr(0,item.name.length-1)}}</p>
+                  <li @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']" v-if="item.moreMoney !== 0">
+                    <!--<p>{{item.name}}</p>-->
+                    <!--<p>赠送{{item.moreMoney}}</p>-->
+                    <p >{{item.name}}</p>
+                    <p >赠送{{item.moreMoney}}</p>
                   </li>
 
+                  <li v-else @click="changeActive(item,index)" :class="[tabId === index ? 'active' : 'unatctiv']">
+                    <el-input placeholder="请输入" v-model="item.name" :maxlength="8"  @input="(val)=>changInputFn(item, val)" @change="(val)=>changInputFn(item, val)" ></el-input>
+                    <p></p>
+                  </li>
                 </template>
+                <!--<template v-else>-->
+
+                <!--</template>-->
                 <!--<li>-->
                   <!--必须为10的倍数-->
                   <!--&lt;!&ndash;<p>必须为10的倍数</p>&ndash;&gt;-->
@@ -36,7 +45,7 @@
               </ul>
               <div class="btn">
                 <el-button type="success" @click="onSubmit">充值</el-button>
-                <span>（支付3000元，到账<i>3300</i>元）</span>
+                <span>（支付{{changeItem.name || 0}}元，到账<i>{{changeItem.totalMoney || 0}}</i>元）</span>
               </div>
             </div>
           </div>
@@ -181,6 +190,7 @@
     export default {
       data(){
         return{
+          changInput:'',
           total: 0,
           centerDialogVisible: false,
           centerDialogVisiblezfb: false,
@@ -231,7 +241,15 @@
       },
 
       computed:{
+        getitem(){
+          this.datasetList.forEach(el=>{
 
+          })
+          // console.log(item)
+          //item.value.slice(-3) * item.name.substr(0,item.name.length-1
+          // return item.value.slice(-3) * item.name.substr(0,item.name.length-1)
+
+        }
       },
       components:{
         searchTime,
@@ -253,6 +271,9 @@
         }
       },
       watch:{
+        changInput(n){
+
+        },
         centerDialogVisiblezfb(n){
           if(!n){
             clearTimeout(this.timer)
@@ -265,7 +286,11 @@
         }
       },
       methods:{
-
+        changInputFn(item, val){
+          item.totalMoney = (Number(val) * item.bilibili).toFixed(2)
+          // this.changInput = Object.assign(this.changeItem.name)
+          // console.log(this.changInput);
+        },
         onSubmit(){
           this.centerDialogVisible = false
           this.centerDialogVisiblezfb = false
@@ -280,10 +305,16 @@
         },
         changeActive(item,index){
           this.tabId = index
+          // console.log(this.tabId,'循环');
           if(this.tabId === 0){
-
             this.changeItem = this.datasetList[0]
-          }else{
+          }else if(this.tabId === 5){
+            this.changeItem = this.datasetList[5]
+            this.changInput = Object.assign(this.changeItem.name)
+            console.log(this.changInput,'循环1');
+            console.log(this.changeItem,'循环');
+          }
+          else{
             this.changeItem = item
           }
 
@@ -389,7 +420,22 @@
         getPayment(){
           return getSysDictByCodesGet(this.sendAF011).then(res =>{
             if(res.status === 200){
-              this.datasetList = res.data.AF011
+              let data = res.data.AF011
+              this.datasetList = data.map(el=>{
+                if(el.code === 'AF01106'){
+                  el.name = ''
+                }else{
+                  el.name = el.name.replace('元','')
+                }
+                let name = el.value.split(',')
+                el.bili = name[1]
+                el.bilibili = (1+(+name[1]))
+                el.moreMoney = name[0] * name[1]
+                el.totalMoney =  name[0] * (1+(+name[1]))
+                return el
+              })
+              this.changeActive(this.datasetList[0], 0)
+              // this.changeItem = this.datasetList[0]
             }else{
               this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
             }
@@ -402,11 +448,9 @@
               this.dataset = res.data.list
               this.total = res.data.totalPage
             }else{
-              this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+              this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
             }
 
-          }).catch(err => {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           })
         },
         fetchAllList(){
@@ -483,8 +527,17 @@
             }
             li:last-of-type{
               margin-right: 0;
-              padding:25px 36px 28px 25px;
-              cursor: help;
+              padding:18px 0px;
+              .el-input{
+                text-align: center;
+                .el-input__inner{
+                  height: 30px;
+                  line-height: 30px;
+                  width: 70%;
+                  font-size: 12px;
+                }
+              }
+              /*cursor: help;*/
             }
             .active{
               background-color: #ffffff;

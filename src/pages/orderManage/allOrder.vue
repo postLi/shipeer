@@ -125,7 +125,8 @@
             width="150"
             label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
+              <el-button @click="handleClickUnloadOrder(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
+              <!--<el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
               <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
               <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
 
@@ -234,11 +235,7 @@
           }})
 
       },
-      // handleClickSing(row){
-      //   this.$router.push({path: '/orderRouter/inSingle',query: {
-      //       tab: '短驳对账-创建对账'
-      //     }})
-      // },
+
       handleClickPy(row) {
         this.title = '去支付'
         this.sendData = row
@@ -250,6 +247,8 @@
       },
 
       handleClickEvaDriver(row){
+        this.title = '评价司机'
+        this.sendData = row
         this.$router.push({path: '/orderRouter/evaluateDriver',query: {
             tab: this.title,
             qy:this.sendData,
@@ -257,7 +256,13 @@
           }})
       },
       handleClickUnloadOrder(row) {
-        this.$router.push({path: '/orderRouter/unloadOrder'})
+        this.title = '确认收货'
+        this.sendData = row
+        this.$router.push({path: '/orderRouter/unloadOrder',query: {
+            tab: this.title,
+            qy:this.sendData,
+            fn:this.sendFn
+          }})
       },
       handleClickAgain(row) {
         this.$router.push({path: '/order'})
