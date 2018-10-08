@@ -80,7 +80,7 @@ export function postMywalletPay(orderSerial ) {
 // 我的订单详情(货主)
 export function postMyOrderDetail(orderSerial ) {
 
-  return Axios.post(''+swg2+'/aflcMyOrderApi/myOrderDetail/'+'?orderSerial='+orderSerial)
+  return Axios.post(''+swg2+'/aflcMyOrderApi/myOrderDetail'+'?orderSerial='+orderSerial)
 }
 // /usercenter/aflcDriver/v1/{id}
 // 根据id获取车主
@@ -95,4 +95,19 @@ export function getLcDriver(id ) {
 export function getSysDictBycode(codes) {
 
   return Axios.get(''+swg3+'/sysDict/findAflcCommonSysDictBycode/'+codes)
+}
+//添加小费
+export function getSysDictByCodeGet(codes) {
+
+  return Axios.get(''+swg3+'/sysDict/getSysDictByCodeGet/'+codes)
+}
+
+///aflcOrderApi/addTip
+//确定 增加小费(货主端)
+// "orderSerial": "string",
+//   "shipperId": "string",
+//   "tip": 0
+export function postAddTip(params ) {
+
+  return Axios.post(''+swg2+'/aflcOrderApi/addTip',params)
 }
