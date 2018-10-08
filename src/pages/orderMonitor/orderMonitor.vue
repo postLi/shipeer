@@ -3,77 +3,79 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button class="btn" @click="displayAllMarkers">显示全部车辆</button>
-        <button class="btn" style="margin-left:5px;" @click="centerMark">移动到中心点</button>
+        <button class="btn" @click="displaySatellite">卫星图</button>
+        <button class="btn btn2" @click="displayTraffic">实时路况</button>
+        <button class="btn btn2" @click="displayAllMarkers">显示全部车辆</button>
+        <button class="btn btn2" @click="centerMark">移动到中心点</button>
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="fiterText">
-        <el-button slot="append" icon="el-icon-search" class="orderSearchButton">搜索
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText">
+        <el-button slot="append" icon="el-icon-search" class="orderSearchButton" @click="clickOrder(null,true)">搜索
         </el-button>
       </el-input>
       <div class="showOrderSearchResult" @click="clickOrderSearchResult" :style="showOrderSearchResultStyle">
         {{showOrderSearchResultIcon}}
       </div>
       <div class="orderSearchResult" v-show="showOrderSearchResult">
-        <el-badge :value="allOrderNum">
+        <el-badge :value="orderNumAll">
           <div ref="ttt" class="title allOrder"
                :style="{color:('全部服务中' === orderStatus)?'red':'black', 'text-decoration':('全部服务中' === orderStatus)?'underline':'none'}"
-               @click="clickOrder('全部服务中')">
+               @click="clickOrder('全部服务中',true)">
             全部服务中
           </div>
         </el-badge>
         <div class="table">
           <div class="row">
-            <div class="cell3" @click="clickOrder('司机已接单')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell3" @click="clickOrder('司机已接单',true)">
+              <el-badge :value="orderNumJiedan" :max="maxNum"
                         :style="{color:('司机已接单' === orderStatus)?'red':'black', 'text-decoration':('司机已接单' === orderStatus)?'underline':'none'}">
                 司机已接单
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机赶往提货地')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell" @click="clickOrder('司机赶往提货地',true)">
+              <el-badge :value="orderNumGanwangtwd" :max="maxNum"
                         :style="{color:('司机赶往提货地' === orderStatus)?'red':'black', 'text-decoration':('司机赶往提货地' === orderStatus)?'underline':'none'}">
                 司机赶往提货地
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机已到提货地')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell" @click="clickOrder('司机已到提货地',true)">
+              <el-badge :value="orderNumYidaotwd" :max="maxNum"
                         :style="{color:('司机已到提货地' === orderStatus)?'red':'black', 'text-decoration':('司机已到提货地' === orderStatus)?'underline':'none'}">
                 司机已到提货地
               </el-badge>
             </div>
           </div>
           <div class="row">
-            <div class="cell3" @click="clickOrder('司机已装货')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell3" @click="clickOrder('司机已装货',true)">
+              <el-badge :value="orderNumYizhuanghuo" :max="maxNum"
                         :style="{color:('司机已装货' === orderStatus)?'red':'black', 'text-decoration':('司机已装货' === orderStatus)?'underline':'none'}">
                 司机已装货
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('运输中')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell" @click="clickOrder('运输中',true)">
+              <el-badge :value="orderNumYunshuzhong" :max="maxNum"
                         :style="{color:('运输中' === orderStatus)?'red':'black', 'text-decoration':('运输中' === orderStatus)?'underline':'none'}">
                 运输中
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机已到目的地')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell" @click="clickOrder('司机已到目的地',true)">
+              <el-badge :value="orderNumYidaomdd" :max="maxNum"
                         :style="{color:('司机已到目的地' === orderStatus)?'red':'black', 'text-decoration':('司机已到目的地' === orderStatus)?'underline':'none'}">
                 司机已到目的地
               </el-badge>
             </div>
           </div>
           <div class="row">
-            <div class="cell" @click="clickOrder('司机已卸货')">
+            <div class="cell" @click="clickOrder('司机已卸货',true)">
               <el-badge
                 :style="{color:('司机已卸货' === orderStatus)?'red':'black', 'text-decoration':('司机已卸货' === orderStatus)?'underline':'none'}"
-                :value="9999" :max="maxNum">
+                :value="orderNumYixiehuo" :max="maxNum">
                 司机已卸货
               </el-badge>
             </div>
-            <div class="cell" @click="clickOrder('司机改派')">
-              <el-badge :value="9999" :max="maxNum"
+            <div class="cell" @click="clickOrder('司机改派',true)">
+              <el-badge :value="orderNumGaipai" :max="maxNum"
                         :style="{color:('司机改派' === orderStatus)?'red':'black', 'text-decoration':('司机改派' === orderStatus)?'underline':'none'}">
                 司机改派
               </el-badge>
@@ -81,10 +83,10 @@
           </div>
         </div>
         <div style="max-height: 280px;overflow: auto;margin-top: 12px">
-          <div class="table" style="width: 350px">
+          <div class="table" style="width: 360px">
             <div class="row">
               <div class="cellHeader">
-                序号
+                订单号
               </div>
               <div class="cellHeader">
                 车牌号
@@ -96,242 +98,19 @@
                 联系电话
               </div>
             </div>
-            <div class="row">
-              <div class="cell2">
-                1
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                2
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                3
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                4
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                5
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                6
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                7
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                8
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                9
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                10
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                11
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                12
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                13
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                14
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                15
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                16
-              </div>
-              <div class="cell2">
-                粤A123456
-              </div>
-              <div class="cell2">
-                李世杰
-              </div>
-              <div class="cell2">
-                18028693660
-              </div>
-            </div>
-            <div class="row">
-              <div class="cell2">
-                17
+            <div class="row rowclick" v-for="(item,index) in carList" :key="item.orderSerial"
+                 @click="clickOrder2(index)">
+              <div class="cell4">
+                {{item.orderSerial}}
               </div>
               <div class="cell2">
-                粤A123456
+                {{item.carNo}}
               </div>
               <div class="cell2">
-                李世杰
+                {{item.driverName}}
               </div>
               <div class="cell2">
-                18028693660
+                {{item.mobile}}
               </div>
             </div>
           </div>
@@ -368,28 +147,24 @@
               <div class="cellHeader">
                 车牌号
               </div>
-              <div class="cell">
-                粤A12345
+              <div class="cell" id="infoWindowCarNo">
               </div>
               <div class="cellHeader">
                 司机
               </div>
-              <div class="cell">
-                李世杰
+              <div class="cell" id="infoWindowDriverName">
               </div>
             </div>
             <div class="row">
               <div class="cellHeader">
                 车型
               </div>
-              <div class="cell">
-                小面包
+              <div class="cell" id="infoWindowCarType">
               </div>
               <div class="cellHeader">
                 联系电话
               </div>
-              <div class="cell">
-                18028693660
+              <div class="cell" id="infoWindowMobile">
               </div>
             </div>
           </div>
@@ -397,27 +172,27 @@
           <table class="table2">
             <tr>
               <td class="label">用车时间</td>
-              <td colspan="3">2018-09-28 10:00:00</td>
+              <td colspan="3" id="infoWindowOrderTime"></td>
             </tr>
             <tr>
               <td class="label">需求车型</td>
-              <td>小面包</td>
+              <td id="infoWindowOrderCarType"></td>
               <td class="label">货物名称</td>
-              <td>香油/3吨/3方</td>
+              <td id="infoWindowOrderCargo"></td>
             </tr>
             <tr>
               <td class="label">额外服务</td>
-              <td colspan="3">需要回单，需要回款5000元</td>
+              <td colspan="3" id="infoWindowOrderExtraServ"></td>
             </tr>
             <tr>
               <td class="label">备注</td>
-              <td colspan="3">需要坐2人</td>
+              <td colspan="3" id="infoWindowOrderMemo"></td>
             </tr>
             <tr>
               <td class="label">预估价格</td>
-              <td>120元</td>
+              <td id="infoWindowOrderPrice"></td>
               <td class="label">付款状态</td>
-              <td>待付款</td>
+              <td id="infoWindowOrderPayState"></td>
             </tr>
             <tr>
               <td class="label">当前位置</td>
@@ -432,15 +207,15 @@
             </tr>
             <tr>
               <td class="label">提货地</td>
-              <td colspan="3"></td>
+              <td colspan="3" id="infoWindowOrderStartAddr"></td>
             </tr>
             <tr>
-              <td class="label">途径地</td>
-              <td colspan="3"></td>
+              <td class="label">途经地</td>
+              <td colspan="3" id="infoWindowOrderPassAddr"></td>
             </tr>
             <tr>
               <td class="label">目的地</td>
-              <td colspan="3"></td>
+              <td colspan="3" id="infoWindowOrderTargetAddr"></td>
             </tr>
           </table>
         </div>
@@ -451,6 +226,8 @@
 
 <script>
   import {postApi} from '@/api/api.js';
+  import localStorage from '@/utils/localStorage';
+  import VueJsCookie from 'vue-js-cookie';
 
   export default {
     name: "orderMonitor",
@@ -459,8 +236,14 @@
         showOrderSearchResult: true,
         showOrderSearchResultIcon: "收起",
         showOrderSearchResultStyle: "right: 396px",
+        filterText: null,
         mp: null,
         points: null,
+        markerOffset: new AMap.Pixel(-28, -68),
+        satelliteVisible: false,
+        satelliteLayer: null,
+        trafficVisible: false,
+        trafficLayer: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
@@ -470,12 +253,23 @@
         polyline: null,
         passedPolyline: null,
         redball: null,
+        track: null,
         orderStatus: "全部服务中",
-        allOrderNum: "",
+        orderStatusCode: "",
+        orderNumAll: "",
+        orderNumJiedan: "",
+        orderNumGanwangtwd: "",
+        orderNumYidaotwd: "",
+        orderNumYizhuanghuo: "",
+        orderNumYunshuzhong: "",
+        orderNumYidaomdd: "",
+        orderNumYixiehuo: "",
+        orderNumGaipai: "",
         totalCount: 0,
         pageSize: 10,
         currentPage: 1,
-        maxNum: 999
+        maxNum: 999,
+        carList: []
       }
     },
     mounted() {
@@ -494,50 +288,6 @@
         visible: true
       });
       mp.addControl(ctl);
-      var points = this.points = [];
-      var carUrl = this.carUrl;
-      var marker = new AMap.Marker({
-        icon: carUrl,
-        position: [113.28804, 23.086912],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "1";
-      var markerClick = this.markerClick;
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [116.395645, 39.924232],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "2";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [106.546242, 29.585069],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "3";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      marker = new AMap.Marker({
-        icon: carUrl,
-        position: [103.816546, 36.083181],
-        offset: new AMap.Pixel(-28, -68),
-        map: mp
-      });
-      marker.content = "4";
-      marker.on("click", markerClick);
-      points.push(marker);
-
-      mp.setFitView(points);
 
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
@@ -575,19 +325,83 @@
         isCustom: true,
         autoMove: true
       });
-      this.getOrderNum(null, true);
+      if (!(this.checkLogin()))
+        ;
+      this.getOrder("", true);
+      this.getOrder("AF0080601HZ", false);
+      this.getOrder("AF0080602HZ", false);
+      this.getOrder("AF0080603HZ", false);
+      this.getOrder("AF0080604HZ", false);
+      this.getOrder("AF0080605HZ", false);
+      this.getOrder("AF0080606HZ", false);
+      this.getOrder("AF0080607HZ", false);
+      this.getOrder("AF0080608HZ", false);
     },
     methods: {
+      checkLogin() {
+        var v = this.$route.query.access;
+        if (v != null && v != "")
+          VueJsCookie.set('28kytoken', v);
+
+        v = this.$route.query.user;
+        if (v != null && v != "")
+          localStorage.set("28ky-userdata", {userToken: v});
+
+        v = localStorage.get("28ky-userdata");
+        if (v == null || v.userToken == null) {
+          this.notLogin();
+          return false;
+        }
+
+        v = VueJsCookie.get('28kytoken');
+        if (v == null) {
+          this.notLogin();
+          return false;
+        }
+
+        return true;
+      },
+      notLogin() {
+        this.$confirm('尚未登录或者登录信息已失效，请重新登录. ', '', {
+          confirmButtonText: '确定',
+          showCancelButton: false,
+          type: 'warning'
+        });
+      },
       pageSizeChange(val) {
         this.pageSize = val;
+        this.currentPage = 1;
+        this.clear();
+        this.getOrder(this.orderStatusCode, true, true);
       },
       currentPageChange(val) {
         this.currentPage = val;
+        this.clear();
+        this.getOrder(this.orderStatusCode, true, true);
       },
-      getOrderNum(orderStatus, flag,) {
+      clear() {
+        var points = this.points;
+        this.points = [];
+        if (points != null && this.mp != null)
+          this.mp.remove(points);
+        this.mp.clearInfoWindow();
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.setPath(null);
+        if (this.passedPolyline != null)
+          this.passedPolyline.setPath(null);
+      },
+      getOrder(orderStatus, updateFlag, searchFlag) {
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
+        if (searchFlag) {
+          var t = this.filterText;
+          if (t != null) {
+            s = s + "&searchText=" + t;
+          }
+        }
         postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
           var c = "";
           try {
@@ -595,19 +409,181 @@
           } catch (e) {
             this.logError();
           }
+
           if (c === "" || c == null || isNaN(c))
             return;
-          if (orderStatus == null)
-            this.allOrderNum = c;
-          if (flag)
+          if (orderStatus === "")
+            this.orderNumAll = c;
+          else if (orderStatus === "AF0080601HZ")
+            this.orderNumJiedan = c;
+          else if (orderStatus === "AF0080602HZ")
+            this.orderNumGanwangtwd = c;
+          else if (orderStatus === "AF0080603HZ")
+            this.orderNumYidaotwd = c;
+          else if (orderStatus === "AF0080604HZ")
+            this.orderNumYizhuanghuo = c;
+          else if (orderStatus === "AF0080605HZ")
+            this.orderNumYunshuzhong = c;
+          else if (orderStatus === "AF0080606HZ")
+            this.orderNumYidaomdd = c;
+          else if (orderStatus === "AF0080607HZ")
+            this.orderNumYixiehuo = c;
+          else if (orderStatus === "AF0080608HZ")
+            this.orderNumGaipai = c;
+
+          if (updateFlag) {
             this.totalCount = c;
+            var l = res.data.list;
+            if (l == null)
+              l = [];
+            this.carList = l;
+            this.displayMarkers();
+          }
         });
+      },
+      getOrderDetail(orderId, marker) {
+        try {
+          if (orderId == null)
+            return;
+          postApi("/aflc-order/aflcMyOrderApi/myOrder?orderSerial=" + orderId).then((res) => {
+            var v = res.data.orderTime;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderTime").innerText = v;
+            v = res.data.carType;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderCarType").innerText = v;
+            v = res.data.cargo;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderCargo").innerText = v;
+            v = res.data.extraServ;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderExtraServ").innerText = v;
+            v = res.data.memo;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderMemo").innerText = v;
+            v = res.data.price;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPrice").innerText = v;
+            v = res.data.paystate;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPayState").innerText = v;
+            v = res.data.startAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderStartAddr").innerText = v;
+            v = res.data.passAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderPassAddr").innerText = v;
+            v = res.data.targetAddr;
+            if (v == null)
+              v = "";
+            document.getElementById("infoWindowOrderTargetAddr").innerText = v;
+            var status = res.data.statusCode;
+            if (status != null && marker != null) {
+              var idx = marker.getExtData();
+              if (idx != null) {
+                var carInfo = this.carList[idx];
+                if (status != carInfo.statusCode) {
+                  carInfo.statusCode = status;
+                  carInfo.statusText = null;
+                  var text = this.statusCode2Text(status);
+                  if (text != null) {
+                    carInfo.statusText = text;
+                  } else
+                    text = this.orderStatus;
+                  text = this.subString(text, 16);
+                  document.getElementById("infoWindowTitle").innerText = text;
+                }
+              }
+            }
+            var pos = res.data.pos;
+            if (pos != null && marker != null) {
+              var lnglat = marker.getPosition();
+              if (this.diffPosition(lnglat, pos)) {
+                marker.setPosition(pos);
+                this.infoWindow2.setPosition(pos);
+                this.markerPoint = marker;
+                this.centerMark();
+                this.translateAddr();
+              }
+            }
+
+            v = res.data.track;
+            if (v != null && (v.length % 2) == 0) {
+              var i = 0;
+              var j = 0;
+              var len = v.length / 2;
+              var pois = [];
+              var point = null;
+              for (; i < len; ++i) {
+                j = 2 * i;
+                point = new AMap.LngLat(v[j], v[j + 1]);
+                pois.push(point);
+              }
+              this.track = pois;
+            }
+          });
+        } catch (e) {
+        }
+      },
+      diffPosition(lngLat, pos) {
+        try {
+          if ((lngLat.getLng()) != pos[0])
+            return true;
+          if ((lngLat.getLat()) != pos[1])
+            return true;
+          return false;
+        } catch (e) {
+        }
+        return true;
       },
       logError() {
         this.$message.error("无法获取服务端数据. ");
       },
-      clickOrder(ordStatus) {
-        this.orderStatus = ordStatus;
+      clickOrder2(idx) {
+        try {
+          var marker = this.points[idx];
+          if (marker == null)
+            return;
+          var evt = {"target": marker};
+          this.markerClick(evt);
+          this.markerPoint = marker;
+          this.centerMark();
+        } catch (e) {
+        }
+      },
+      clickOrder(ordStatus, searchFlag) {
+        if (ordStatus != null)
+          this.orderStatus = ordStatus;
+        this.currentPage = 1;
+        this.clear();
+        if (ordStatus === "全部服务中")
+          this.orderStatusCode = "";
+        else if (ordStatus === "司机已接单")
+          this.orderStatusCode = "AF0080601HZ";
+        else if (ordStatus === "司机赶往提货地")
+          this.orderStatusCode = "AF0080602HZ";
+        else if (ordStatus === "司机已到提货地")
+          this.orderStatusCode = "AF0080603HZ";
+        else if (ordStatus === "司机已装货")
+          this.orderStatusCode = "AF0080604HZ";
+        else if (ordStatus === "运输中")
+          this.orderStatusCode = "AF0080605HZ";
+        else if (ordStatus === "司机已到目的地")
+          this.orderStatusCode = "AF0080606HZ";
+        else if (ordStatus === "司机已卸货")
+          this.orderStatusCode = "AF0080607HZ";
+        else if (ordStatus === "司机改派")
+          this.orderStatusCode = "AF0080608HZ";
+        this.getOrder(this.orderStatusCode, true, searchFlag);
       },
       subString(str, maxLength) {
         if (str == null)
@@ -636,28 +612,143 @@
         this.mp.setFitView(this.points);
         if (this.redball != null)
           this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.setPath(null);
+        if (this.passedPolyline != null)
+          this.passedPolyline.setPath(null);
+      },
+      displaySatellite() {
+        if (this.mp == null)
+          return;
+        if (this.satelliteLayer == null)
+          this.satelliteLayer = new AMap.TileLayer.Satellite({map: this.mp});
+        if (this.satelliteVisible)
+          this.satelliteLayer.hide();
+        else
+          this.satelliteLayer.show();
+        this.satelliteVisible = !(this.satelliteVisible);
+      },
+      displayTraffic() {
+        if (this.mp == null)
+          return;
+        if (this.trafficLayer == null)
+          this.trafficLayer = new AMap.TileLayer.Traffic({map: this.mp, autoRefresh: true});
+        if (this.trafficVisible)
+          this.trafficLayer.hide();
+        else
+          this.trafficLayer.show();
+        this.trafficVisible = !(this.trafficVisible);
+      },
+      displayMarkers() {
+        var l = this.carList;
+        if (l == null)
+          return;
+        var i = 0;
+        var pos = null;
+        var marker = null;
+        this.points = [];
+        for (; i < l.length; ++i) {
+          pos = l[i].pos;
+          if (pos == null)
+            continue;
+          marker = new AMap.Marker({
+            icon: this.carUrl,
+            position: pos,
+            offset: this.markerOffset,
+            extData: i,
+            map: this.mp
+          });
+          marker.on("click", this.markerClick);
+          this.points.push(marker);
+        }
+        if (this.mp == null || this.points == null)
+          return;
+        this.mp.setFitView(this.points);
       },
       centerMark() {
         if (this.markerPoint != null)
           this.mp.panTo(this.markerPoint.getPosition());
       },
+      statusCode2Text(code) {
+        if (code === "AF0080601HZ")
+          return "司机已接单";
+        if (code === "AF0080602HZ")
+          return "司机赶往提货地";
+        if (code === "AF0080603HZ")
+          return "司机已到提货地";
+        if (code === "AF0080604HZ")
+          return "司机已装货";
+        if (code === "AF0080605HZ")
+          return "运输中";
+        if (code === "AF0080606HZ")
+          return "司机已到目的地";
+        if (code === "AF0080607HZ")
+          return "司机已卸货";
+        if (code === "AF0080608HZ")
+          return "司机改派";
+        return null;
+      },
       markerClick(e) {
+        this.track = null;
+        this.mp.clearInfoWindow();
         var markerPoint = this.markerPoint = e.target;
+        var idx = markerPoint.getExtData();
+        if (idx == null)
+          return;
+        var carInfo = null;
+        if (idx >= 0 && idx < this.carList.length)
+          carInfo = this.carList[idx];
+        if (carInfo == null)
+          return;
+        this.getOrderDetail(carInfo.orderSerial, markerPoint);
         var infoWindow = this.infoWindow2;
+        var status = carInfo.statusText;
+        if (status == null && carInfo.statusCode != null) {
+          status = this.statusCode2Text(carInfo.statusCode);
+        }
+        if (status == null) {
+          status = this.orderStatus;
+        } else {
+          carInfo.statusText = status;
+        }
+        status = this.subString(status, 16);
+        document.getElementById("infoWindowTitle").innerText = status;
+        var v = carInfo.carNo;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowCarNo").innerText = v;
+        v = carInfo.driverName;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowDriverName").innerText = v;
+        v = carInfo.carType;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowCarType").innerText = v;
+        v = carInfo.mobile;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowMobile").innerText = v;
         if (!this.infoWindow2Init) {
-          document.getElementById("infoWindowTitle").innerText = "司机已到提货地";
           var tempEle = document.getElementById("infoWindow");
           infoWindow.setContent(tempEle.innerHTML);
           tempEle.innerHTML = "";
           this.infoWindow2Init = true;
-        } else
-          document.getElementById("infoWindowTitle").innerText = this.subString("运输中", 16);
-
+        }
         var pos = markerPoint.getPosition();
         infoWindow.open(this.mp, pos);
+        this.translateAddr();
+      },
+      translateAddr() {
         var mapAddr = document.getElementById("mapAddr");
         if (mapAddr != null)
           mapAddr.innerText = "";
+        else
+          return;
+        var markerPoint = this.markerPoint;
+        if (markerPoint == null)
+          return;
+        var pos = markerPoint.getPosition();
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
@@ -669,25 +760,22 @@
         });
       },
       showTrack(orderId) {
-        if (orderId == null) {
-          var markerPoint = this.markerPoint;
-          if (markerPoint == null)
-            return;
-          this.showTrack(markerPoint.content);
+        var pois = this.track;
+        if (pois == null || pois.length < 2) {
+          alert("未获取到轨迹数据，请稍后再试. ");
           return;
         }
+        var d = AMap.GeometryUtil.distanceOfLine(pois);
+        var s = (d * 3.6) / 5;
         var mp = this.mp;
         mp.clearInfoWindow();
-        var pois = this.genTrack(orderId);
-        if (pois == null || pois.length < 2)
-          return;
         var polyline = this.polyline;
         polyline.setPath(pois);
         var redball = this.redball;
         redball.setPosition(pois[0]);
         redball.setMap(mp);
         mp.setFitView([polyline, redball]);
-        redball.moveAlong(pois, 1000);
+        redball.moveAlong(pois, s);
         checkTrack();
       },
       genTrack(orderId) {
@@ -861,6 +949,7 @@
     padding-left: 4px;
     vertical-align: middle;
     width: 88px;
+    word-break: break-all;
   }
 
   .customInfoWindow .table2 td.label {
@@ -883,6 +972,7 @@
     text-align: left;
     padding-left: 4px;
     vertical-align: middle;
+    word-break: break-all;
   }
 
   .customInfoWindow .table .cellHeader {
@@ -895,6 +985,7 @@
     height: 32px;
     padding-right: 4px;
     vertical-align: middle;
+    word-break: break-all;
   }
 
   .customInfoWindow #mapAddr {
@@ -943,6 +1034,10 @@
     display: table-row
   }
 
+  .rowclick {
+    cursor: pointer;
+  }
+
   .orderSearchResult .table .cell {
     display: table-cell;
     text-align: center;
@@ -959,12 +1054,25 @@
     border: 1px solid gray;
     text-align: center;
     color: gray;
+    width: 89px;
+    max-width: 89px;
+    word-wrap: break-word;
   }
 
   .orderSearchResult .table .cell3 {
     display: table-cell;
     padding-bottom: 12px;
     text-align: center;
+  }
+
+  .orderSearchResult .table .cell4 {
+    display: table-cell;
+    border: 1px solid gray;
+    text-align: center;
+    color: gray;
+    width: 93px;
+    max-width: 93px;
+    word-wrap: break-word;
   }
 
   .orderSearchInput {
@@ -1010,9 +1118,8 @@
   .topLayer {
     position: relative;
     width: 100%;
-    min-width: 900px;
     height: 100%;
-    min-height: 900px;
+    overflow: auto;
   }
 
   #monitor_map {
@@ -1027,7 +1134,7 @@
     position: relative;
     display: block;
     padding: 10px;
-    left: 100px;
+    left: 60px;
     top: 10px;
   }
 
@@ -1042,12 +1149,15 @@
     background-image: none;
     color: rgb(37, 165, 247);
     line-height: 1.5;
-    -webkit-appearance: button;
     cursor: pointer;
     border-width: 1px;
     border-style: solid;
     border-image: initial;
     border-color: rgb(37, 165, 247);
     padding: 0.25rem 0.5rem;
+  }
+
+  .btn2 {
+    margin-left: 5px;
   }
 </style>

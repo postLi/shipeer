@@ -1,34 +1,34 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/pages/main/main.vue'
-import Login from '@/pages/login/index.vue'
-import Register from '@/pages/register/register.vue'
-import PayFor from '@/pages/orderRouter/payFoy.vue'
-import EvaluateDriver from '@/pages/orderRouter/evaluateDriver.vue'
-import UnloadOrder from '@/pages/orderRouter/unloadOrder.vue'
-import InSingle from '@/pages/orderRouter/inSingle.vue'
-import AlOrder from '@/pages/orderRouter/alOrder.vue'
-import GetPickUp from '@/pages/orderRouter/getPickUp.vue'
-import Order from '@/pages/order/order.vue'
-import ShowMapNext from '@/pages/order/showMapNext.vue'
-import MyDriver from '@/pages/myDriver/index.vue'
-import ManageCenter from '@/pages/manageCenter/index.vue'
-import ManageAllRecod from '@/pages/manageCenter/allRecod.vue'
-import ManageCoupon from '@/pages/manageCenter/coupon.vue'
-import ManageCouponList from '@/pages/manageCenter/couponList.vue'
-import ManageToPayCoupon from '@/pages/manageCenter/toPayCoupon.vue'
-import OrderManage from '@/pages/orderManage/index.vue'
-import AlcencelOrder from '@/pages/orderManage/alcencel.vue'
-import AllOrderOrder from '@/pages/orderManage/allOrder.vue'
-import AlreadyOrder from '@/pages/orderManage/already.vue'
-import ServerOrder from '@/pages/orderManage/server.vue'
-import ChargeStandard from '@/pages/chargeStandard/chargeStandard.vue'
 
-import AddressManage from '@/pages/addressManage/addressManage.vue'
-import RouteManage from '@/pages/routeManage/routeManage.vue'
-import PassWordEdit from '@/pages/passWordEdit/passWordEdit.vue'
-import OrderMonitor from '@/pages/orderMonitor/orderMonitor.vue'
-import Track from '@/pages/orderMonitor/track.vue'
+const Main = () => import('@/pages/main/main.vue');
+const Login = () => import('@/pages/login/index.vue');
+const Register = () => import('@/pages/register/register.vue');
+const PayFor = () => import('@/pages/orderRouter/payFoy.vue');
+const EvaluateDriver = () => import('@/pages/orderRouter/evaluateDriver.vue');
+const UnloadOrder = () => import('@/pages/orderRouter/unloadOrder.vue');
+const InSingle = () => import('@/pages/orderRouter/inSingle.vue');
+const AlOrder = () => import('@/pages/orderRouter/alOrder.vue');
+const GetPickUp = () => import('@/pages/orderRouter/getPickUp.vue');
+const Order = () => import('@/pages/order/order.vue');
+const ShowMapNext = () => import('@/pages/order/showMapNext.vue');
+const MyDriver = () => import('@/pages/myDriver/index.vue');
+const ManageCenter = () => import('@/pages/manageCenter/index.vue');
+const ManageAllRecod = () => import('@/pages/manageCenter/allRecod.vue');
+const ManageCoupon = () => import('@/pages/manageCenter/coupon.vue');
+const ManageCouponList = () => import('@/pages/manageCenter/couponList.vue');
+const ManageToPayCoupon = () => import('@/pages/manageCenter/toPayCoupon.vue');
+const OrderManage = () => import('@/pages/orderManage/index.vue');
+const AlcencelOrder = () => import('@/pages/orderManage/alcencel.vue');
+const AllOrderOrder = () => import('@/pages/orderManage/allOrder.vue');
+const AlreadyOrder = () => import('@/pages/orderManage/already.vue');
+const ServerOrder = () => import('@/pages/orderManage/server.vue');
+const ChargeStandard = () => import('@/pages/chargeStandard/chargeStandard.vue');
+const AddressManage = () => import('@/pages/addressManage/addressManage.vue');
+const RouteManage = () => import('@/pages/routeManage/routeManage.vue');
+const PassWordEdit = () => import('@/pages/passWordEdit/passWordEdit.vue');
+const OrderMonitor = () => import('@/pages/orderMonitor/orderMonitor.vue');
+const Track = () => import('@/pages/orderMonitor/track.vue');
 
 Vue.use(Router);
 
@@ -39,7 +39,7 @@ export default new Router({
       path: '/main',
       name: 'Main',
       component: Main,
-      children:[
+      children: [
         {
           path: '/orderMonitor',
           name: 'orderMonitor',
@@ -101,21 +101,21 @@ export default new Router({
           ],
         },
         {
-          path: '/orderRouter/unloadOrder', component: UnloadOrder,name:'UnloadOrder'
+          path: '/orderRouter/unloadOrder', component: UnloadOrder, name: 'UnloadOrder'
         },
         {
-          path: '/orderRouter/evaluateDriver', component: EvaluateDriver,name:'EvaluateDriver'
+          path: '/orderRouter/evaluateDriver', component: EvaluateDriver, name: 'EvaluateDriver'
         },
         {
-          path: '/orderRouter/payFoy', component: PayFor,name:'PayFor'
+          path: '/orderRouter/payFoy', component: PayFor, name: 'PayFor'
         },
         {
-          path: '/orderRouter/inSingle', component: InSingle,name:'InSingle'
+          path: '/orderRouter/inSingle', component: InSingle, name: 'InSingle'
         },
         {
-          path: '/orderRouter/alOrder', component: AlOrder,name:'AlOrder'
-        },{
-          path: '/orderRouter/getPickUp', component: GetPickUp,name:'GetPickUp'
+          path: '/orderRouter/alOrder', component: AlOrder, name: 'AlOrder'
+        }, {
+          path: '/orderRouter/getPickUp', component: GetPickUp, name: 'GetPickUp'
         },
         {
           path: '/allRecod',
@@ -154,18 +154,23 @@ export default new Router({
       ]
     },
     {
-      path: '/', component: Login,name:'Login'
+      path: '/', component: Login, name: 'Login'
     },
     {
-      path: '/register', component: Register,name:'Register'
+      path: '/register', component: Register, name: 'Register'
     },
     {
-      path: '/passWordEdit', component: PassWordEdit,name:'PassWordEdit'
+      path: '/passWordEdit', component: PassWordEdit, name: 'PassWordEdit'
     },
     {
       path: '/order1',
       name: 'Order1',
       component: Order,
     },
+    {
+      path: '/orderMonitor2',
+      name: 'orderMonitor2',
+      component: OrderMonitor,
+    }
   ]
 })

@@ -3,7 +3,7 @@
       <div class="header-left flex">
         <img src="../../assets/main/jiank_logo.png" alt="">
       </div>
-      <div class="margin_10 flex_r flex_1">
+      <!--<div class="margin_10 flex_r flex_1">-->
         <div class="header-right flex_ce flex_1">
           <div class="header-right-context flex_a height_100">
             <div class=" flex_a header-phone">
@@ -43,7 +43,7 @@
             </div>
           </div>
         </div>
-      </div>
+      <!--</div>-->
 
     </div>
 </template>
@@ -112,6 +112,7 @@
     }
     .header-right{
       /*box-shadow: 2px -2px 2px 1px;*/
+      border-bottom: 1px solid #f2f2f2;
       .header-right-context{
         margin-right: 40px;
 

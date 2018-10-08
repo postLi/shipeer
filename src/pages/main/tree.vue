@@ -8,7 +8,7 @@
         <!--<i  class="iconfont icon-yingyong margin_r_10" v-if="item.id === 228" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
         <!--<i  class="iconfont icon-qiaquan margin_r_10" v-if="item.id === 315" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
         <div class="tree-node0 flex_a" style="white-space: nowrap;height: 40px">
-          <span @click="test(item)" class="pointer el-tree-node__label" >
+          <span @click="clickRouter(item)" class="pointer el-tree-node__label" >
            <span :style="{'color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgba(255, 255, 255,0.65)'}">{{item.name}}</span>
         </span>
         </div>
@@ -19,7 +19,7 @@
 
       <div v-if="count !== 0" class=" flex_a border1" style="height: 50px">
         <div class="tree_item flex_a" style="height: 40px" :style="{'padding-left':  count *  30  + 'px','background-color':(item.selected )? '#2fb301' : ''}">
-          <span @click="test(item)" class="pointer el-tree-node__label" >
+          <span @click="clickRouter(item)" class="pointer el-tree-node__label" >
             <span :style="{'color':(item.selected )? '#ffffff' : 'rgba(255, 255, 255,0.65)'}">{{item.name}}</span>
         </span>
         </div>
@@ -55,25 +55,19 @@
     },
     data() {
       return {
+        loading: false,
         item: {},
       }
     },
     methods: {
       ...mapActions(['setTreeArr']),
 
-      test(item) {
+      clickRouter(item) {
         if(item.router !== ''){
-          this.recurFirst(this.dataOrg);
           this.$router.push(item.router);
         }
         item.show = !item.show;
-        this.data.forEach((child_item)=>{
-          //let path = `/${this.$route.path.split("/")[1]}`;
-          //let router = `/${child_item.router.split("/")[1]}`;
-          if(this.$route.path === child_item.router){
-            this.$set(child_item, "selected", true);
-          }
-        });
+
       },
       beforeEnter: function (el) {
         el.style.height = '0';
@@ -106,14 +100,6 @@
 
       leaveCancelled: function (el) {
 
-      },
-      recurFirst(data) {
-        data.forEach((map) => {
-          if (map.children) {
-            this.$set(map, "selected", false);
-            this.recurFirst(map.children)
-          }
-        })
       },
 
     },

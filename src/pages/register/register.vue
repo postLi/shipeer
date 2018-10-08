@@ -66,8 +66,8 @@
               <div class="item-left window-title-16 c-3"></div>
               <div>
                 <el-checkbox v-model="checked">&nbsp;</el-checkbox>
-                <span>
-                  <span class="window-title-16 c-3">我已阅读并同意</span><span @click="user()" class="window-title-16 c-f pointer">《用户协议》</span>
+                <span class="pointer">
+                  <span class="window-title-16 c-3" @click="checked = true">我已阅读并同意</span><span @click="user()" class="window-title-16 c-f">《用户协议》</span>
                 </span>
               </div>
             </div>
@@ -154,7 +154,7 @@
               let parm = {
                 areaCode: "",
                 cityCode: "",
-                memberType: "AF00101",
+                memberType: "AF0010101",
                 mobile: this.form.mobile,
                 password: "",
                 provinceCode: "",
@@ -173,6 +173,8 @@
                       this.$router.replace("/")
                     }
                   },1000)
+                }else {
+                  this.$message.warning(res.errorInfo)
                 }
               })
             } else {
@@ -187,7 +189,7 @@
           this.$refs['Rules'].validate((valid) => {
             if (valid) {
               let parm = {
-                memberType:'AF00102',
+                memberType:'AF0010101',
                 mobile:this.form.mobile
               };
               pustApiX('/aflc-common/common/aflcMemberCenter/v1/checkMobileIsRegister',parm).then((res)=>{
@@ -196,14 +198,15 @@
                   postApi(`/aflc-common/aflcCommonSms/sendCodeSms/${this.form.mobile}`).then((res1)=>{
                     console.log(res1)
                     if(res1.status === 200){
-                      this.$message(res1.text)
+                      this.$message(res1.text);
                       this.timeName = 60;
+                      this.$localStorage.set_s('timeNameRegister',this.timeName);
                       this.canClick = true;
                       this.timeGo();
                     }
                   })
                 }else {
-                  this.$message.warning('手机已经注册了~',)
+                  this.$message.warning(res.errorInfo)
                 }
               });
             } else {
@@ -218,7 +221,7 @@
           this.imgsrc = loginCode()
         },
         checkMyPhone(rule, value, callback){
-          checkPhone(rule, value, callback)
+          checkPhone(rule, value, callback,0)
         },
         login(){
           this.$router.replace('/')
@@ -226,23 +229,31 @@
         timeGo(){
         this.time = setInterval(()=>{
            this.timeName = this.timeName -1;
+          this.$localStorage.set_s('timeNameRegister',this.timeName);
            if( this.timeName <= 0){
              this.timeName = "获取验证码";
+             this.$localStorage.remove_s('timeNameRegister');
              this.canClick = false;
              clearInterval(this.time)
            }
          },1000)
         },
         user(){
-         window.open("http://163.com")
+         window.open("http://h5.2856pt.com/ServicAgreement/")
+        }
+      },
+      created(){
+        if(this.$localStorage.get_s('timeNameRegister')){
+          this.timeName = this.$localStorage.get_s('timeNameRegister');
+          this.canClick = true;
+          this.timeGo();
         }
       },
       mounted() {
         this.changeVcode()
-
       },
       destroyed(){
-        clearInterval(this.time)
+        clearInterval(this.time);
         this.time = null
       }
     }

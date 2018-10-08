@@ -86,9 +86,8 @@
 
                   </el-form-item>
                   <div class="flex_a h-40">
-                    <span class="t pointer margin_l_10" @click="changeVcode">必须是6-20位英文字母、数字</span>
+                    <span class="t margin_l_10">必须是6-20位英文字母、数字</span>
                   </div>
-
                 </div>
 
                 <div class="item flex_as">
@@ -200,6 +199,7 @@
                 if(res1.status === 200){
                   this.$message(res1.text);
                   this.timeName = 60;
+                  this.$localStorage.set_s("timeNamePassWord",this.timeName);
                   this.canClick = true;
                   this.timeGo();
                 }
@@ -222,7 +222,7 @@
           this.$refs['Rules2'].validate((valid) => {
             if (valid) {
               let parm ={
-                memberType:"AF00102",
+                memberType:"AF0010101",
                 mobile:this.form.mobile,
                 imageCode:this.form1.imageCode,
                 smsCode:this.form1.smsCode,
@@ -253,8 +253,10 @@
         timeGo(){
           this.time = setInterval(()=>{
             this.timeName = this.timeName -1;
+            this.$localStorage.set_s("timeNamePassWord",this.timeName);
             if( this.timeName <= 0){
               this.timeName = "获取验证码";
+              this.$localStorage.remove_s('timeNamePassWord');
               this.canClick = false;
               clearInterval(this.time)
             }
@@ -266,8 +268,15 @@
           this.imgsrc = loginCode()
         },
         checkMyPhone(rule, value, callback){
-          checkPhone(rule, value, callback)
+          checkPhone(rule, value, callback,0)
         },
+      },
+      created(){
+        if(this.$localStorage.get_s('timeNamePassWord')){
+          this.timeName = this.$localStorage.get_s('timeNamePassWord');
+          this.canClick = true;
+          this.timeGo();
+        }
       },
       mounted(){
         this.changeVcode()

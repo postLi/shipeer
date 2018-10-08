@@ -6,48 +6,22 @@
   </div>
 
   <div class="add-route-item ">
-    <div v-for="(item,index) in addRoute" :key="index" class="margin_b_10">
+    <el-form :model="form" ref="routeRules" class="myForm-m">
+      <div v-for="(item,index) in form.addRoute" :key="index" class="margin_b_10">
         <div class="flex_sb">
          <span v-if="index === 0" class="window-title-left c-3">提货地</span>
-          <span v-if="index > 0 && index + 1 !== addRoute.length" class="window-title-left c-3">途经地</span>
-          <span v-if="index + 1 === addRoute.length" class="window-title-left c-3">目的地</span>
-          <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(addRoute.length)">新增目的地</el-button>
+          <span v-if="index > 0 && index + 1 !== form.addRoute.length" class="window-title-left c-3">途经地</span>
+          <span v-if="index + 1 === form.addRoute.length" class="window-title-left c-3">目的地</span>
+          <el-button v-if="index === 1" class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="addDestination(form.addRoute.length)">新增目的地</el-button>
           <el-button v-if="index > 1 " class=" f_w" style="background-color: #ff300d;width: 105px" type="danger" size="small" @click="delDestination(index)">删除目的地</el-button>
         </div>
 
+        <route-item :data="item" :index="index"></route-item>
 
-
-      <div class="item-base-flex flex_a margin_t_10">
-        <img src="../../assets/main/tihuod.png" alt="">
-       <input @focus="toLoadUI(item,index)" :ref="index" class="my-input margin_l_10" placeholder="地址" v-model="item.origin"/>
       </div>
-      <!--<div class="flex_r margin_t_10">-->
-        <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
-          <!--<img src="../../assets/main/menpaih.png" alt="">-->
-          <!--<input class="my-input margin_l_10" placeholder="楼层及门牌号" v-model="item.floor"/>-->
-        <!--</div>-->
-        <!--<div class="flex_1 item-base-flex flex_a margin_r_10">-->
-         <!--<img src="../../assets/main/fahuor.png" alt="">-->
-          <!--<input class="my-input margin_l_10" placeholder="发货联系人（选填）" v-model="item.name"/>-->
-        <!--</div>-->
-        <!--<div class="flex_1 item-base-flex flex_a">-->
-          <!--<img src="../../assets/main/nav_phone.png" alt="">-->
-          <!--<input class="my-input margin_l_10" placeholder="联系电话（选填）" v-model="item.tel"/>-->
-        <!--</div>-->
-      <!--</div>-->
-
-
-      <!--<route-item :address="form.origin"-->
-                    <!--:floorHousenum="form.floor" @inputFloorHousenum="value => { form.floor = value }"-->
-                    <!--:contacts="form.name"  @inputContacts="value => { form.name = value }"-->
-                    <!--:contactsPhone="form.tel"  @inputContactsPhone="value => { form.tel = value }"-->
-                    <!--:index="index"></route-item>-->
-
-
-
-    </div>
+    </el-form>
   </div>
-    <div class="flex">
+    <div class="flex margin_t_20">
       <el-button class=" f_w" style="background-color: #2fb301;width: 105px" type="success" size="small" @click="save()">保 存</el-button>
       <el-button plain class=" f_w" style="background-color: white;width: 105px;color: #999999;border-color: #979797" size="small" @click="window = false">取 消</el-button>
     </div>
@@ -63,6 +37,7 @@
       data(){
           return{
             window:false,
+            form:{
               addRoute:[
                 {
                   tel:'',
@@ -73,48 +48,51 @@
                   originCoordinate: "",//地点坐标(小的在前)
                   originName: "",//地点名称
                   provinceCityArea: "",//省市区（格式:广东省广州市天河区）
-                  shipperSort: 0
+                  shipperSort: 0,
+                  checkRoute:true
                 },
                 {
-                tel:'',
-                name:'',
-                floor:'',
-                cityCode: "",
-                origin: "",
-                originCoordinate: "",
-                originName: "",
-                provinceCityArea: "",
-                shipperSort: 1
-              }]
+                  tel:'',
+                  name:'',
+                  floor:'',
+                  cityCode: "",
+                  origin: "",
+                  originCoordinate: "",
+                  originName: "",
+                  provinceCityArea: "",
+                  shipperSort: 1,
+                  checkRoute:true
+                }]
+            },
+
 
           }
       },
       methods:{
         save(){
-          let check =  this.addRoute.some((item)=>{
-            return item.originCoordinate === ''
-          });
-
-          if(check){
-            this.$message.warning('收发货地址没有获取到坐标点');
-            return
-          }
-
-        let parm =  {
-            "aflcShipperLineDtos": this.addRoute,
-            "shipperLineName": new Date() * 1
-          };
-          postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine' ,parm).then((res)=>{
-            if(res.data){
-              this.$emit("addRoute", "addRoute");
-              this.$message.success('操作成功');
-              this.window = false;
+          this.$refs.routeRules.validate((valid) => {
+            if (valid) {
+              let parm =  {
+                "aflcShipperLineDtos": this.form.addRoute,
+                "shipperLineName": new Date() * 1
+              };
+              postApi('/aflc-uc/aflcShipperLineApi/addAflcShipperLine' ,parm).then((res)=>{
+                if(res.data){
+                  this.$emit("addRoute", "addRoute");
+                  this.$message.success('操作成功');
+                  this.window = false;
+                }
+              });
+            } else {
+              console.log('error submit!!');
+              return false;
             }
           });
+
         },
         showWindow(){
           this.window = !this.window;
-          this.addRoute = [
+          this.form.addRoute = [
             {
               tel:'',
               name:'',
@@ -124,7 +102,8 @@
               originCoordinate: "",
               originName: "",
               provinceCityArea: "",
-              shipperSort: 0
+              shipperSort: 0,
+              checkRoute:true
             },
             {
               tel:'',
@@ -135,7 +114,8 @@
               originCoordinate: "",
               originName: "",
               provinceCityArea: "",
-              shipperSort: 1
+              shipperSort: 1,
+              checkRoute:true
             }]
         },
         toLoadUI(item,i){
@@ -170,17 +150,17 @@
           });
         },
         delDestination(i){
-          this.addRoute.splice(i,1);
-          this.addRoute.forEach((item ,i)=>{
+          this.form.addRoute.splice(i,1);
+          this.form.addRoute.forEach((item ,i)=>{
             item.shipperSort = i
           })
         },
         addDestination(i){
-          if(this.addRoute.length >=10){
+          if(this.form.addRoute.length >=10){
             this.$message.warning('最多只能添加十条目的地');
             return
           }
-          this.addRoute.push({
+          this.form.addRoute.push({
               tel:'',
               name:'',
               floor:'',
@@ -189,7 +169,8 @@
               originCoordinate: "",
               originName: "",
               provinceCityArea: "",
-              shipperSort: i
+              shipperSort: i,
+              checkRoute:true
             })
 
         },

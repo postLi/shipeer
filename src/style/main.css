@@ -39,6 +39,9 @@
 .padding_r_10{padding-right: 10px}
 .padding_l_20{padding-left: 20px}
 .pointer{cursor: pointer;}
+.width_max{
+  width: max-content;
+}
 .b_c_w{background-color: white}
 .f_r{color: #ff300d}
 .f_w{ color: #ffffff;}
@@ -49,6 +52,7 @@
   font-size: 12px;
   background-color: transparent;
 }
+
 .o_f{overflow: auto;}
 .p_r{position: relative}
 
@@ -88,13 +92,33 @@
   color: #000000;
 }
 
+.c-c{
+  color: #c0c4cc;
+}
+
 .b-s{
   box-shadow: 0 0 10px 0 grey;
 }
 
+/*/////改element-ui////*/
 .myForm .el-form-item .el-form-item__content{
   line-height:0
 }
+
+.myForm-m .el-form-item{
+  margin:18px 0;
+}
+
 .myInput .el-input__inner{
  border-radius: 0;
 }
+
+.myInput-border-none input{
+  border: none;
+  background: transparent;
+  padding: 0 10px;
+}
+.myInput-border-none input::-webkit-input-placeholder{
+  color: #878887;
+}
+
