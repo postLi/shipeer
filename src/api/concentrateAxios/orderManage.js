@@ -82,3 +82,17 @@ export function postMyOrderDetail(orderSerial ) {
 
   return Axios.post(''+swg2+'/aflcMyOrderApi/myOrderDetail/'+'?orderSerial='+orderSerial)
 }
+// /usercenter/aflcDriver/v1/{id}
+// 根据id获取车主
+export function getLcDriver(id ) {
+
+  return Axios.get(''+swg5+'/usercenter/aflcDriver/v1/'+id)
+}
+
+
+// /sysDict/findAflcCommonSysDictBycode/{code}
+// 根据code值查找当前属性
+export function getSysDictBycode(codes) {
+
+  return Axios.get(''+swg3+'/sysDict/findAflcCommonSysDictBycode/'+codes)
+}

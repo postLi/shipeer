@@ -2,87 +2,102 @@
   <div class="odPayForClass-lll">
     <el-container class="clearfix">
       <el-header class="clearfix">
-        <ul class="clearfix">
-          <li>
-            <div class="liClass-top">
-              <img src="../../assets/role.png"/>
-              <p></p>
-              <span class="actClass">网显示</span>&nbsp;&nbsp;<span class="unClass">(外星人)</span>
-              <el-rate
-                v-model="value5"
-                disabled
-                show-score
-                text-color="#ff9900"
-                score-template="{value}">
-              </el-rate>
-              <i><icon-svg iconClass="lll03xin"></icon-svg></i>
-              <span class="unClass">13344单</span>
+        <!--<ul class="clearfix">-->
+          <!--<li>-->
+            <!--<div class="liClass-top">-->
+              <!--&lt;!&ndash;<img src="../../assets/role.png"/>&ndash;&gt;-->
+              <!--<img v-if="getDetail.driverHeadUrl===''|| getDetail.driverHeadUrl === null " class="user-avatar" src="../../assets/default_tx.png">-->
+              <!--<img class="user-avatar" :src="getDetail.driverHeadUrl" v-else>-->
+              <!--<p></p>-->
+              <!--<span class="actClass">{{getDetail.driverName === null ?'xx':getDetail.driverName}}</span>&nbsp;&nbsp;<span class="unClass">({{getDetail.belongCityName === null ? 'xx' : getDetail.belongCityName}})</span>-->
+              <!--<el-rate-->
+                <!--v-model="getDetail.evaluateScore===null ? 0:getDetail.evaluateScore"-->
+                <!--disabled-->
+                <!--show-score-->
+                <!--text-color="#ff9900"-->
+                <!--score-template="{value}">-->
+              <!--</el-rate>-->
+              <!--<i><icon-svg iconClass="lll03xin"></icon-svg></i>-->
+              <!--<span class="unClass">{{getDetail.completeOrderNums ===null ? 0: getDetail.completeOrderNums}}单</span>-->
 
-            </div>
-            <div class="liClass-foot">
-              <img src="../../assets/main/xh@3x.png"/>
-              <p></p>
-              <p class="actClass">苏**v99</p>
-              <p class="unClass">广州</p>
-              <span class="unClass">承载16方,&nbsp;2.4吨</span>
-            </div>
-          </li>
-          <li>
-            <div class="divClass">
-              <span class="actClass">用车时间:</span><span class="blueClass">2019-1-10 09:3</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">付款方式:</span><span>发货人付款(现金支付)</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">运输支付:</span><span>￥66.00</span>&nbsp;&nbsp;<span class="blueClass">费用明细</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">需要车型:</span><span>巍面</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">货物名称:</span><span>家具</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">货物重量:</span><span><8,1-2方	</span>
-            </div>
-            <div class="divClass">
-              <span class="unClass">额外服务:</span><span>需要回单	</span>
-            </div>
-            <div class="divClass last">
-              <span class="unClass">备注:</span><span>协助装货</span>
-            </div>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <p>猎德村复建房五区</p>
-            <span>南山区兴南路10号</span>
-          </li>
-          <li>
-            <p>猎德村复建房五区</p>
-            <span>南山区兴南路10号</span>
-          </li>
-          <li>
-            <p>猎德村复建房五区</p>
-            <span>南山区兴南路10号</span>
-          </li>
-        </ul>
+            <!--</div>-->
+            <!--<div class="liClass-foot">-->
+              <!--<img v-if="getDetail.servicePic===''|| getDetail.servicePic === null " class="user-avatar" src="../../assets/main/xh@3x.png">-->
+              <!--<img class="user-avatar" :src="getDetail.servicePic" v-else>-->
+
+              <!--&lt;!&ndash;<img src="../../assets/main/xh@3x.png"/>&ndash;&gt;-->
+              <!--<p></p>-->
+              <!--<p class="actClass">苏**v99</p>-->
+              <!--<p class="unClass">广州</p>-->
+              <!--&lt;!&ndash;<span class="unClass">承载16方,&nbsp;2.4吨</span>&ndash;&gt;-->
+              <!--<span class="unClass">承载{{getDetail.carSpec}}吨</span>-->
+            <!--</div>-->
+          <!--</li>-->
+          <!--<li>-->
+            <!--<div class="divClass">-->
+              <!--<span class="actClass">用车时间:</span><span class="blueClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>-->
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">付款方式:</span><span class="spanclass">发货人付款({{getDetail.payWay}}支付)</span>-->
+              <!--&lt;!&ndash;payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付&ndash;&gt;-->
+
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice}}</span>&nbsp;&nbsp;<span class="blueClass">费用明细</span>-->
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">需要车型:</span><span class="spanclass">{{getDetail.carTypeName}}</span>-->
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">货物名称:</span><span class="spanclass">{{getDetail.goodsName}}</span>-->
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">货物重量:</span><span class="spanclass"><{{getDetail.goodsWeight===''?0:getDetail.goodsWeight}}吨,{{getDetail.goodsVolume==='' ?0:getDetail.goodsVolume}}方	</span>-->
+            <!--</div>-->
+            <!--<div class="divClass">-->
+              <!--<span class="unClass">额外服务:</span><span class="spanclass">{{getDetail.extraName}}	</span>-->
+            <!--</div>-->
+            <!--<div class="divClass last">-->
+              <!--<span class="unClass" style="text-align: right">备注:</span><span class="spanclass">协助装货</span>-->
+            <!--</div>-->
+          <!--</li>-->
+        <!--</ul>-->
+        <!--<ul>-->
+          <!--<template v-for="(item,index) in getDetail.addresses">-->
+            <!--<li>-->
+              <!--<p>{{item.viaAddressName}}</p>-->
+              <!--<span>{{item.viaAddress}}</span>-->
+            <!--</li>-->
+          <!--</template>-->
+          <!--&lt;!&ndash;<li>&ndash;&gt;-->
+            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
+            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
+          <!--&lt;!&ndash;</li>&ndash;&gt;-->
+          <!--&lt;!&ndash;<li>&ndash;&gt;-->
+            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
+            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
+          <!--&lt;!&ndash;</li>&ndash;&gt;-->
+          <!--&lt;!&ndash;<li>&ndash;&gt;-->
+            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
+            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
+          <!--&lt;!&ndash;</li>&ndash;&gt;-->
+        <!--</ul>-->
+        <OrderDetail  :orderid="$route.query.qy.orderSerial"></OrderDetail>
       </el-header>
       <el-main class="clearfix">
         <div class="mainClass clearfix">
-          <span class="titleClass">您还需支付</span><span class="priceClass">34.00元</span>
+          <span class="titleClass">您还需支付</span><span class="priceClass">{{getDetail.factPay?getDetail.factPay:0}}元</span>
           <ul>
             <li>
-              <div><span>起步价(含5公里)</span><span>30.00元</span></div>
-              <div><span>超里程费(超出0公里)</span><span>0.00元</span></div>
+              <div><span>起步价(含{{getDetail.startMileage}}公里)</span><span>{{getDetail.startPrice}}元</span></div>
+              <div><span>超里程费(超出{{getDetail.outMileage}}公里)</span><span>{{getDetail.outMileagePrice===null?0:getDetail.outMileagePrice}}元</span></div>
             </li>
             <li>
-              <div><span>订单价</span><span>30.00元</span></div>
-              <div><span>优惠券抵扣</span><span class="redClass">0.00元</span></div>
+              <div><span>订单价</span><span>{{getDetail.orderPrice}}元</span></div>
+              <div><span>优惠券抵扣</span><span class="redClass">{{getDetail.preferentialPrice===null?0:'-'+getDetail.preferentialPrice}}元</span></div>
             </li>
             <li>
-              <div><span>小费</span><span class="greenClass">+30.00元</span></div>
+              <div><span>小费</span><span class="greenClass">+{{getDetail.tip===null?0:getDetail.tip}}元</span></div>
               <!--<div><span>超里程费(超出0公里)</span><span>0.00元</span></div>-->
             </li>
           </ul>
@@ -94,14 +109,14 @@
               <el-radio v-model="radio" label="1"><span class="spanClass">
                   <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>0.00</i>元)</span><i class="getup" @click="gotoCoupon">立即充值</i></el-radio>
+                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>{{balance}}</i>元)</span><i class="getup" @click="gotoCoupon">立即充值</i></el-radio>
 
             </li>
             <li>
               <el-radio v-model="radio" label="2"><span class="spanClass">
                   <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">微信支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠8元）</i></span></el-radio>
+                <span class="titleP">微信支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{Number(getDetail.reward+getDetail.preferentialPrice)}}元）</i></span></el-radio>
 
             </li>
             <!--<li>-->
@@ -111,7 +126,7 @@
               <el-radio v-model="radio" label="3"><span class="spanClass">
                   <icon-svg iconClass="lll02zfb" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">支付宝支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠8元）</i></span></el-radio>
+                <span class="titleP">支付宝支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{Number(getDetail.reward+getDetail.preferentialPrice)}}元）</i></span></el-radio>
 
             </li>
 
@@ -186,11 +201,15 @@
 </template>
 
 <script>
-  import {getUserInfo} from '@/utils/auth'
-  import {postScanPayOrder,postMywalletPay,postMyOrderDetail} from '@/api/concentrateAxios/orderManage'
-  import {postTradeQuery} from '@/api/concentrateAxios/manageCenter'
-  import {setOrderDtaial} from '@/utils/auth'
+  import {getUserInfo,setOrderDtaial,getOrderDtaial} from '@/utils/auth'
+  import {postScanPayOrder,postMywalletPay,postMyOrderDetail,getLcDriver,getSysDictBycode} from '@/api/concentrateAxios/orderManage'
+  import {postTradeQuery,postFindMywallet} from '@/api/concentrateAxios/manageCenter'
+  import {parseTime} from '@/utils/'
+  import OrderDetail from '@/components/orderDetail/index'
   export default {
+    components:{
+      OrderDetail
+    },
     data(){
       return{
         centerDialogVisible: false,
@@ -201,9 +220,8 @@
         activeNames: '',
         userData: getUserInfo(),
         pfimg:'',
-        getDetail:{
-          // addresses:[],
-        }
+        getDetail:getOrderDtaial(),
+        balance:''
         // activeNames: ['1']
       }
     },
@@ -235,28 +253,30 @@
     },
     mounted(){
       console.log(this.$route.query)
-      console.log('userinfo":', window.USERDATA)
-      this.fetchOrderDetail()
+      // console.log('userinfo":', window.USERDATA)
+      // this.fetchOrderDetail()
+      this.getWallet()
+
     },
     methods: {
-      fetchOrderDetail(){
-        return postMyOrderDetail(this.$route.query.qy.orderSerial).then(res =>{
-          if(res.status === 200){
-            this.getDetail = res.data
-            setOrderDtaial(res.data)
-            // console.log(this.getDetail,'所以')
+      getWallet(){
+
+        return postFindMywallet().then(res =>{
+          if(res.status ===200){
+            this.balance = res.data.mywallet.balance
           }else{
-            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)|| '无法获取服务端数据'))
           }
         })
       },
+
       onSubmit(){
         if(this.radio == 1){
           // this.centerDialogVisibleye = true
           this.fetchMywall()
         }else if(this.radio == 2){
           this.centerDialogVisible = true
-          // this.fetctScanPayOrder()
+          this.fetctScanPayOrder()
         }else{
           this.centerDialogVisiblezfb = true
           this.fetctScanPayOrderzfb()
@@ -270,7 +290,6 @@
           }else{
             this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
           }
-          console.log(res,'车型')
         })
       },
       fetctScanPayOrder(){
@@ -282,7 +301,7 @@
             fr.readAsDataURL(res);
             fr.onload=(e)=>{
               this.pfimg = e.target.result;
-              // this.getPayResult(this.$route.query.qy.orderSerial,"wx")
+              this.getPayResult(this.$route.query.qy.orderSerial,"wx")
             }
         })
       },
@@ -295,7 +314,7 @@
             fr.readAsDataURL(res);
             fr.onload=(e)=>{
               this.pfimg = e.target.result;
-              // this.getPayResult(this.$route.query.qy.orderSerial,"ali")
+              this.getPayResult(this.$route.query.qy.orderSerial,"ali")
             }
         })
       },
@@ -318,16 +337,22 @@
         console.log(val);
       },
       donePy1(event){
-        // this.centerDialogVisible = true
-        // console.log('00000000')
         this.getPayResult(this.$route.query.qy.orderSerial,"wx")
       },
       donePyzfb(){
-        // alert('2222')
         this.getPayResult(this.$route.query.qy.orderSerial,"ali")
       },
       gotoCoupon(){
         this.$router.push({path: '/toPayCoupon'})
+      },
+      // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
+      changePW(){
+
+        if(this.getDetail.payWay ===null){
+          return this.getDetail.payWay ='支付宝'
+        }else{
+          return this.getDetail.payWay ='现金'
+        }
       }
     }
   }
@@ -348,186 +373,7 @@
       text-align: left;
       height: 407px !important;
       background: #fff;
-      ul:first-of-type{
 
-        border-right: 2px dotted #ddd;
-        display: inline-block;
-        max-width: 650px;
-        min-width: 650px;
-        float: left;
-        /*border*/
-        li:first-of-type{
-          padding: 50px 50px 88px 70px;
-          float:left;
-          /*display: inline-block;*/
-          .liClass-top{
-            /*display: inline-block;*/
-            text-align: center;
-            img{
-              /*display: flex;*/
-              /*padding:0 0 5px 30px;*/
-            }
-            .actClass{
-              color: rgb(51,51,51);
-              font-weight: 600;
-              font-size: 14px;
-              margin-left: -10px;
-            }
-            .unClass{
-              font-size: 12px;
-              color: #999999;
-            }
-            .el-rate{
-              display: list-item;
-              margin: 5px 0;
-            }
-            i{
-              .svg-icon{
-                width: 30px;
-                height: 15px;
-                text-align: center;
-                margin-left: -30px;
-              }
-            }
-          }
-          .liClass-foot{
-            /*display: inline-block;*/
-            text-align: center;
-            margin-top: 30px;
-          }
-        }
-        li:last-of-type{
-          /*display: inline-block;*/
-          padding: 50px 98px 88px 0;
-          float: right;
-          /*max-width: 650px;*/
-          /*min-width: 650px;*/
-          .divClass{
-            padding-bottom: 13px;
-            .actClass{
-              color: rgb(51,51,51);
-              font-weight: 600;
-              font-size: 12px;
-              padding-right: 20px;
-              text-align: right;
-            }
-            .unClass{
-              font-size: 12px;
-              color: #999999;
-              padding-right: 20px;
-              text-align: right;
-            }
-            .blueClass{
-              color: #1890ff;
-              font-size: 12px;
-            }
-            span:nth-of-type(2){
-
-            }
-          }
-          .divClass.last{
-            margin-bottom: 0;
-            .unClass{
-              padding-right: 45px;
-            }
-          }
-        }
-      }
-      ul:last-of-type{
-        /*position: absolute;*/
-        /*top: 50px;*/
-        /*left: 750px;*/
-        /*marfin-left: 65px;*/
-        float: left;
-        margin:40px 0 0 50px;
-        /*min-width: 700px;*/
-        /*display: inline-block;*/
-        li{
-          padding-top: 10px;
-          /*position: relative;*/
-          p{
-            position: relative;
-            /*background-color: green;*/
-            display: block;
-            color: #333333;
-            font-size: 14px;
-
-          }
-          span{
-            padding-top: 2px;
-            font-size: 14px;
-            color: #999999;
-          }
-          p:before{
-            content: '';
-            display: block;
-            height: 30px;
-            width: 2px;
-            background: #979797;
-            position: absolute;
-            top: 24px;
-            left: -14px;
-            /*border: 2px solid #ddd;*/
-          }
-        }
-        li:first-of-type{
-          padding-top: 0;
-        }
-        li:last-of-type{
-          p:before{
-            content: '';
-            display: block;
-            height: 30px;
-            /*width: 2px;*/
-            background: #fff;
-            position: absolute;
-            top: 24px;
-            left: -14px;
-            /*border: 2px solid #ddd;*/
-          }
-        }
-        li:first-of-type:before{
-          content: '';
-          display: block;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background-color: #80cc5a;
-          position: relative;
-          top: 18px;
-          left: -18px;
-
-
-
-        }
-        li:nth-of-type(2):before{
-          content: '';
-          display: block;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: #999999;
-          position: relative;
-          top: 15px;
-          left: -16px;
-          /*left: 56px;*/
-
-        }
-        li:last-of-type:before{
-          content: '';
-          display: block;
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background-color: #e6454a;
-          position: relative;
-          top: 10px;
-          left: -18px;
-          /*left: 156px;*/
-
-
-        }
-      }
     }
     .el-main.clearfix{
       .mainClass{

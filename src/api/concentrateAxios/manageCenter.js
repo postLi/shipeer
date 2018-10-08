@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import VueJsCookie from 'vue-js-cookie'
-let swg1 = 'aflcsmservice'
+let swg1 = '/aflcsmservice'
 // let swg1 = 'aflcsmservice_wtc'
 let swg2 = '/aflcsmservice'
 

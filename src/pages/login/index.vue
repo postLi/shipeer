@@ -255,11 +255,16 @@
         this.imgsrc = loginCode()
       },
       subLogin() {
+        const md5 = require("js-md5");
         if (this.tabId === 0) {
           this.$refs['userLogin'].validate(valid => {
             if (valid) {
               // this.loading = true
-              login(this.userData.userPhone + '|aflc-2', this.userData.userPassword).then((data) => {
+
+              let userPhone = md5(this.userData.userPhone + '|aflc-2')
+              let userPassword = md5(this.userData.userPassword)
+              login(this.userData.userPhone + '|aflc-2',userPassword).then((data) => {
+              // login(userPhone,userPassword).then((data) => {
                 if (data) {
                   VueJsCookie.set('28kytoken', data.access_token)
                   VueJsCookie.set('28kyuPhone', this.userData.userPhone)
@@ -282,7 +287,8 @@
 
           this.$refs['verLogin'].validate(valid => {
             if (valid) {
-              loginValid(this.verData.verPhone + '|aflc-2', this.verData.verNote).then((data) => {
+              let verNote = md5(this.verData.verNote)
+              loginValid(this.verData.verPhone + '|aflc-2', verNote).then((data) => {
                 if (data) {
                   VueJsCookie.set('28kytoken', data.access_token)
                   VueJsCookie.set('28kyuPhone', this.verData.verPhone)

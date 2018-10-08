@@ -36,7 +36,7 @@
               </el-popover>
               <div class="avatar-wrapper" v-popover:popoveruser>
                 <!--<img class="user-avatar" :src="userInfoData.shipperCardFile? userInfoData.shipperCardFile : '../../assets/role.png'">-->
-                <img v-if="userInfoData.shipperCardFile===''|| userInfoData.shipperCardFile === null " class="user-avatar" src="../../assets/role.png">
+                <img v-if="userInfoData.shipperCardFile===''|| userInfoData.shipperCardFile === null " class="user-avatar" src="../../assets/default_tx.png">
                 <img class="user-avatar" :src="userInfoData.shipperCardFile" v-else>
                 <span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span>
               </div>
@@ -170,6 +170,7 @@
       .el-col{
         padding: 10px 0;
         text-align: center;
+        cursor: pointer;
       }
       .el-col:hover{
         background: #ffe;
