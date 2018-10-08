@@ -93,7 +93,7 @@
                   <el-form-item label="" label-width="" :prop="'to.' + index + '.origin'" size="small" class="width_100"
                                 :rules="{required: true, validator:(rule, value, callback)=>{
                                   return checkMyMap(rule, value, callback,item)
-                                }, trigger: 'blur'}">
+                                }, trigger: 'change'}">
                     <el-input class="myInput-border-none" style="font-size: 12px" v-model="item.origin" placeholder="必填"></el-input>
                   </el-form-item>
                 </div>
@@ -475,7 +475,7 @@
             originName: "",
             provinceCityArea: "",
             shipperSort: i,
-            show:false,mapTo:null,zoom:14,checkP:true,checkMap:true
+            show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''
           });
           // this.form.to[i].floorHousenum =item;
           // this.form.to[i].consignee =item;
@@ -489,6 +489,7 @@
         this.windowRoute = false;
       },
       getAddRoute(data){
+        //路线列表
         getApi('/aflc-uc/aflcShipperLineApi/findAflcShipperLine').then((res)=>{
           this.searchRouteList = res.data;
         });
@@ -696,7 +697,7 @@
           originName: "",
           provinceCityArea: "",
           shipperSort: i,
-          show:false,mapTo:'',zoom:14,checkP:true,checkMap:true})
+          show:false,mapTo:'',zoom:14,checkP:true,checkMap:true,adcode:''})
       },
 
       next(){

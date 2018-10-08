@@ -54,7 +54,7 @@
                       </el-input>
                     </el-form-item>
 
-                    <el-button :disabled="canClick" class="code-img f_w" style="background-color: #3b99f0;width: 133px;height: 40px;font-size: 16px;border-radius: 0" type="primary" @click="getCode()">{{timeName}}</el-button>
+                    <el-button :disabled="canClick" class="code-img f_w" style="background-color: #3b99f0;width: 133px;height: 40px;font-size: 16px;border-radius: 0" type="primary" @click="getCode()">{{timeName === '获取验证码'?'获取验证码':'发送成功（' + timeName + '）'}}</el-button>
                   </div>
                   </el-form>
                 </div>
@@ -195,9 +195,7 @@
           this.$refs['Rules'].validate((valid) => {
             if (valid) {
               postApi(`/aflc-common/aflcCommonSms/sendCodeSms/${this.form.mobile}`).then((res1)=>{
-                console.log(res1)
                 if(res1.status === 200){
-                  this.$message(res1.text);
                   this.timeName = 60;
                   this.$localStorage.set_s("timeNamePassWord",this.timeName);
                   this.canClick = true;

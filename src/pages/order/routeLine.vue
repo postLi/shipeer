@@ -17,13 +17,20 @@
         <div class="red-point-line address-line"></div>
       </div>
       <div v-if="from === 'showMapNext'">
-        <div class="window-title-12 c-3">{{item.originName}}</div>
-        <div class="window-title-10 c-9">{{item.origin}}</div>
+        <div class="window-title-12 c-3 oneElisp">{{item.originName}}</div>
+        <div class="window-title-10 c-9 oneElisp">{{item.origin}}</div>
+      </div>
+
+
+
+      <div v-if="from === 'getPickUp2'">
+        <div class="window-title-12 c-3 oneElisp">{{item.viaAddress}}</div>
+        <div class="window-title-10 c-9 oneElisp">{{item.viaAddressName}}</div>
       </div>
 
       <div v-if="from === 'order'" @click="selectLine()" class="pointer" title="点击选择路线">
-        <div class="window-title-12 c-3">{{item.name}}</div>
-        <div class="window-title-10 c-9">{{item.address}}</div>
+        <div class="window-title-12 c-3 oneElisp">{{item.name}}</div>
+        <div class="window-title-10 c-9 oneElisp">{{item.address}}</div>
       </div>
     </div>
   </div>
@@ -46,7 +53,7 @@
   .route-item-body{
     height: 40px;
     .route-item-body-left{
-      width: 47px;
+      min-width: 47px;
     }
   }
 
@@ -99,5 +106,13 @@
     height: 18px;
     border-radius: 2px;
     background-color: #979797;
+  }
+
+  .oneElisp{
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
   }
 </style>

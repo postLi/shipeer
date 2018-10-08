@@ -11,6 +11,7 @@ const state = {
   bodyWidth:'',//右边内容宽度
 
   form:{//主页表单
+    belongCity:'',//发货地 订单所属区域(定位的城市id)
     carList:[],//车辆列表
     code:[],//城市code
     date: new Date(),//选择日期
@@ -38,7 +39,7 @@ const state = {
       originName: "",//地点名称
       provinceCityArea: "",//省市区（格式:广东省广州市天河区）
       shipperSort: 0,//线路排序号
-      show:false,mapTo:null,zoom:14,checkP:true,checkMap:true
+      show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''
     },
       {
         consignee: "",
@@ -49,7 +50,7 @@ const state = {
         originName: "",
         provinceCityArea: "",
         shipperSort: 1,
-        show:false,mapTo:null,zoom:14,checkP:true,checkMap:true}
+        show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''}
     ],
     remark:''//给司机捎句话
   },
