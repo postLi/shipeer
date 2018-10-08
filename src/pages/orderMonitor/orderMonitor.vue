@@ -444,14 +444,35 @@
       },
       getOrderDetail(orderId, marker) {
         try {
-          if (orderId == null)
+          if (orderId == null || !marker)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
+            var trails = res.data.aflcOrderCarTrails;
+            var lnglat = marker.getPosition();
+            if (!lnglat && (!trails || trails.length < 1))
+              return;
+            var lastTrail = trails[trails.length - 1];
+            if (!lastTrail || !lastTrail.longitude || !lastTrail.latitude)
+              return;
+            var pos = [lastTrail.longitude, lastTrail.latitude];
+            if (marker != null) {
+
+              if (this.diffPosition(lnglat, pos)) {
+                marker.setPosition(pos);
+                marker.setMap(this.mp);
+                this.infoWindow2.setPosition(pos);
+                this.markerPoint = marker;
+                this.centerMark();
+                this.translateAddr();
+              }
+            }
+
             var v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
             if (v == null)
-              v = "";alert(document.getElementById("infoWindowOrderTime"));
+              v = "";
+            alert(document.getElementById("infoWindowOrderTime"));
             document.getElementById("infoWindowOrderTime").innerText = v;
             v = res.data.carTypeName;
             alert(v);
@@ -507,25 +528,6 @@
                   text = this.subString(text, 16);
                   document.getElementById("infoWindowTitle").innerText = text;
                 }
-              }
-            }
-
-            var trails = res.data.aflcOrderCarTrails;
-            if (!trails || trails.length < 1)
-              return;
-            var lastTrail = trails[trails.length - 1];
-            if (!lastTrail||!lastTrail.longitude||!lastTrail.latitude)
-              return;
-            var pos = [lastTrail.longitude, lastTrail.latitude];
-            if (marker != null) {
-              var lnglat = marker.getPosition();
-              if (this.diffPosition(lnglat, pos)) {
-                marker.setPosition(pos);
-                marker.setMap(this.mp);
-                this.infoWindow2.setPosition(pos);
-                this.markerPoint = marker;
-                this.centerMark();
-                this.translateAddr();
               }
             }
 
