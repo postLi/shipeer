@@ -135,7 +135,7 @@
 </template>
 
 <script>
-  import {getUserInfo} from '@/utils/auth'
+  import {getUserInfo,getOrderDtaial} from '@/utils/auth'
   import {postEvaluateShipper,getSysDictByCodesGet} from '@/api/concentrateAxios/orderManage'
   const cityOptions = ['上海', '北京', '广州', '深圳'];
   import OrderDetail from '@/components/orderDetail/index'
@@ -161,6 +161,7 @@
         activeNames: '',
         changeItem: '',
         userData: getUserInfo(),
+        orderDetailData: getOrderDtaial(),
         liList:[
         ],
         senData:{
@@ -189,6 +190,7 @@
 
         if(this.rateDrive.evaluationType.length === 0){
           this.$message.info('请给司机评语~')
+          return false
         }else{
           let evaluationType = this.rateDrive.evaluationType.map(el => {
 
@@ -204,7 +206,7 @@
             // this.$route.query.qy.orderSerial
             "orderSerial": this.$route.query.qy.orderSerial,
             "starLevel": this.rateDrive.starLevel,
-            "userId": '',
+            "userId": this.orderDetailData.driverId,
             // this.$route.query.qy.driverName
             "userName": this.$route.query.qy.driverName
           }

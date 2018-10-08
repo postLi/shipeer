@@ -5,7 +5,7 @@
     <!--<div id="panel"></div>-->
     <div id="myPageTop" v-if="$route.query.tab === '派单中'">
      <div class="headerClass">
-       <span>{{$route.query.tab}}</span>
+       <span>{{isRouteData.tab}}</span>
        <span @click="gotoOrder"><i class="el-icon-close"></i>取消订单</span>
      </div>
       <div class="contentClass">
@@ -18,24 +18,24 @@
         <div class="centClass">
           <!--<div id="panel"></div>-->
           <ul >
-            <template v-for="(item,index) in addList">
-              <li><p>{{item.instruction}}</p><span>南山区兴南路10号</span></li>
+            <template v-for="(item,index) in getDetail.addresses">
+              <li><p>{{item.viaAddressName}}</p><span>{{item.viaAddress}}</span></li>
 
             </template>
           </ul>
         </div>
         <div class="footClass">
           <ul>
-            <li><span class="dateClass">用车时间:</span><span class="timeClass">2018-09-12 09:08</span></li>
+            <li><span class="dateClass">用车时间:</span><span class="timeClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span></li>
             <!--<li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>-->
-            <li><span>付款方式:</span><span>发货人付款(现金付款)</span></li>
-            <li><span>实际支付:</span><span>(已支付) &nbsp;￥99.00</span></li>
-            <li><span>运输费用:</span><span>¥80.56 <el-button type="success" size="mini"  class="btnClass" @click="add">加小费</el-button></span></li>
-            <li><span>需要车型:</span><span>未免</span></li>
-            <li><span>货物名称:</span><span>电脑</span></li>
-            <li><span>货物重量:</span><span><0.7吨,1-2方</span></li>
-            <li><span>额外服务:</span><span>需要回单</span></li>
-            <li><span>备注:</span><span>协助装货</span></li>
+            <li><span>付款方式:</span><span>{{getDetail.payStatus || 0}}&nbsp;&nbsp; ({{getDetail.payWay}}付款)</span></li>
+            <li><span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{getDetail.factPay || 0}}</span></li>
+            <li><span>运输费用:</span><span>¥{{getDetail.orderPrice || 0}} <el-button type="success" size="mini"  class="btnClass" @click="add">加小费{{addTitle}}</el-button></span></li>
+            <li><span>需要车型:</span><span>{{getDetail.carTypeName}}</span></li>
+            <li><span>货物名称:</span><span>{{getDetail.goodsName}}</span></li>
+            <li><span>货物重量:</span><span><{{getDetail.goodsWeight|| 0}}吨,{{getDetail.goodsVolume|| 0}}方	</span></li>
+            <li><span>额外服务:</span><span>{{getDetail.extraName}}</span></li>
+            <li><span>备注:</span><span>{{getDetail.sendWord}}</span></li>
           </ul>
         </div>
       </div>
@@ -47,21 +47,23 @@
           width="30%"
           center>
           <div class="radioList">
-            <el-radio-group v-model="radio3">
-              <el-radio-button label="radioList[0].name">￥{{radioList[0].name}}元</el-radio-button>
-              <el-radio-button label="radioList[1].name">￥{{radioList[1].name}}元</el-radio-button>
-              <el-radio-button label="radioList[2].name">￥{{radioList[2].name}}元</el-radio-button>
+            <el-radio-group v-model="radio3" @change="changeRadio">
+             <template v-for="(item,index) in radioList">
+               <el-radio-button :label="item.name">￥{{item.name}}元</el-radio-button>
+             </template>
+              <!--<el-radio-button label="radioList[1].name">￥{{radioList[1].name}}元</el-radio-button>-->
+              <!--<el-radio-button label="radioList[2].name">￥{{radioList[2].name}}元</el-radio-button>-->
               <!--<el-radio-button label="北京"></el-radio-button>-->
               <!--<el-radio-button label="广州"></el-radio-button>-->
             </el-radio-group>
           </div>
           <div class="textarea">
-            <el-input type="type" placeholder="其他金额,在此输入,(最高200元)～" ></el-input>
+            <el-input @focus="radio3=''" type="type" placeholder="其他金额,在此输入,(最高200元)～" v-model="changeInput" :maxlength="5"></el-input>
           </div>
           <!--<span>需要注意的是内容是默认不居中的</span>-->
           <span slot="footer" class="dialog-footer">
     <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="success" @click="centerDialogVisible = false">确 定</el-button>
+    <el-button type="success" @click="submitRadio">确 定</el-button>
   </span>
         </el-dialog>
       </div>
@@ -97,8 +99,9 @@
   </div>
 </template>
 <script>
-  import {loadJs} from '@/utils/'
-  import {getAuroraSignature} from '@/api/concentrateAxios/orderManage'
+  import {loadJs,parseTime} from '@/utils/'
+  import {getAuroraSignature,postMyOrderDetail,getSysDictByCodeGet,postAddTip} from '@/api/concentrateAxios/orderManage'
+  import {getUserInfo, setOrderDtaial, getOrderDtaial} from '@/utils/auth'
   export default {
 
     props: {
@@ -124,15 +127,26 @@
       },
       pos() {
         this.thepos = this.pos
+      },
+      changeInput(n){
+
+      },
+      radio3(n){
+        if(n){
+          this.changeInput = ''
+        }
       }
     },
     data() {
       return {
+        addTitle:'',
+        changeInput:'',
         radio3: '10',
+        getDetail:{},
         radioList:[
-          {name:10},
-          {name:20},
-          {name:30}
+          // {name:10},
+          // {name:20},
+          // {name:30}
         ],
         jimInfo:{
           appkey: "02c4b4f0341b60405b3c99e7",
@@ -149,17 +163,22 @@
         dialogTableVisible: false,
         thepos: '',
         thename: '',
-        theobj: {}
+        theobj: {},
+        isRouteData:{},
+        isRadio:''
       }
     },
     mounted() {
-      console.log(this.$route.query)
+      this.isRouteData = this.$route.query
+      // console.log(this.$route.query)
       // if(this.$route.query.tab === '派单中'){
       //   this.popVisibleTitle = this.$route.query.tab
       // }
 
 // this.dialogTableVisible = this.popVisible
       this.init()
+      this.fetchOrderDetail()
+
     },
     created() {
 
@@ -170,8 +189,91 @@
     },
 
     methods: {
+      fetchOrderDetail() {
+        return postMyOrderDetail(this.isRouteData.qy.orderSerial).then(res => {
+          if (res.status === 200) {
+            this.getDetail = res.data
+            // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
+            if (this.getDetail.payWay === 0) {
+              this.getDetail.payWay = '支付宝'
+            } else if (this.getDetail.payWay === 1) {
+              this.getDetail.payWay = '微信'
+            } else if (this.getDetail.payWay === 2) {
+              this.getDetail.payWay = '余额支付'
+            } else if (this.getDetail.payWay === 3) {
+              this.getDetail.payWay = '收货时付款'
+            } else if (this.getDetail.payWay === 4) {
+              this.getDetail.payWay = '发货时付款'
+            } else if (this.getDetail.payWay === 5) {
+              this.getDetail.payWay = '现金'
+            } else {
+              this.getDetail.payWay = ''
+            }
+
+          } else {
+            this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+          }
+        })
+      },
+      fetchCodeGet(){
+        return getSysDictByCodeGet('AF00405').then(res=>{
+          if (res.status === 200) {
+              this.radioList = res.data
+            // this.radio3 = this.radioList[0].name
+          }
+          else{
+            this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+          }
+        })
+      },
       add(){
         this.centerDialogVisible = true
+        this.fetchCodeGet()
+
+      },
+      changeRadio(item){
+        this.isRadio = item
+      },
+      submitRadio(){
+        // let params = postAddTip
+        let data = {
+          "orderSerial":this.isRouteData.qy.orderSerial ,
+          "shipperId": "",
+          "tip": 0
+        }
+        if(this.radio3 === '' && this.changeInput === ''){
+          this.$message.info('请选择值~')
+          return false
+        }else if(this.radio3 !== '' && this.changeInput === ''){
+          data.tip = this.isRadio==='' ? this.radioList[0].name :this.isRadio
+        }else{
+          data.tip = this.changeInput
+        }
+        data.tip = Number(data.tip)
+        // if(this.changeInput === '' || this.isRadio){
+        //   data.tip = this.isRadio==='' ? this.radioList[0].name :this.isRadio
+        //   console.log('1lll');
+        // }else if(this.changeInput !==''  && this.isRadio !==''){
+        //   this.$message.info('只能选其中一个值~')
+        // }else if(this.changeInput !==''){
+        //   data.tip = this.changeInput
+        //   console.log('2lll');
+        // }
+        // data.tip = this.isRadio==='' ? this.radioList[0].name :this.isRadio
+        //   changeInput
+        // if()
+        let promiseObj
+        promiseObj = postAddTip(data)
+        promiseObj.then(res =>{
+          if (res.status === 200) {
+           this.addTitle = res.data
+
+          }
+          else{
+            this.$message.warning(res.errorInfo || res.text || '无法获取服务端数据~')
+          }
+        })
+        this.centerDialogVisible = false
       },
       gotoOrder(){
         this.$router.push({path: '/order'})
@@ -203,7 +305,7 @@
         }); //异常断线监听
 
         this.getSignature().then(res =>{
-          console.log(res,'请求的数据');
+          // console.log(res,'请求的数据');
           JIM.init({
             "appkey":this.jimInfo.appkey,
             "random_str": this.jimInfo.random_str,
@@ -222,7 +324,7 @@
             console.log('error2:' + JSON.stringify(data))
           });
         })
-        console.log(this.jimInfo,'几率')
+        // console.log(this.jimInfo,'几率')
         const md5 = require("js-md5");
         // const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
         // JIM.init({
@@ -245,10 +347,10 @@
       },
       loadMsg(){
         if(window.JMessage){
-          this.initMsg()
+          // this.initMsg()
         } else {
           loadJs('/static/js/jmessage-sdk-web.2.6.0.min.js').then(res=>{
-            this.initMsg()
+            // this.initMsg()
           })
         }
       },
@@ -547,7 +649,7 @@
           }
         }
         .footClass{
-          padding: 20px 52px 56px 40px;
+          padding: 10px 52px 56px 40px;
           ul{
             li{
               padding-top: 10px;

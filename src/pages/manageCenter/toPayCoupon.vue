@@ -187,6 +187,7 @@
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
   import Pager from '@/components/Pagination/index'
+  import {REGEX} from '../../utils/valiRegex'
     export default {
       data(){
         return{
@@ -288,6 +289,16 @@
       methods:{
         changInputFn(item, val){
           item.totalMoney = (Number(val) * item.bilibili).toFixed(2)
+          // item.name = REGEX.NUM_POINT(item.name)
+          // if(item.name !== REGEX.NUM_POINT(item.name)){
+          //   this.$message.info('请保留2位小数')
+          // }else{
+          //   item.name = REGEX.NUM_POINT(item.name)
+          // }
+          // item.name =  REGEX(item.name)
+          console.log(item.name);
+          // item.name = (Number(val)).toFixed(2)
+
           // this.changInput = Object.assign(this.changeItem.name)
           // console.log(this.changInput);
         },
@@ -311,8 +322,6 @@
           }else if(this.tabId === 5){
             this.changeItem = this.datasetList[5]
             this.changInput = Object.assign(this.changeItem.name)
-            console.log(this.changInput,'循环1');
-            console.log(this.changeItem,'循环');
           }
           else{
             this.changeItem = item

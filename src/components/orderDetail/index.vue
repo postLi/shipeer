@@ -47,11 +47,11 @@
 
         </div>
         <div class="divClass">
-          <span class="unClass">实际支付:</span> <span class="spanclass">{{getDetail.orderStatus===0?'未支付':'已支付'}}&nbsp;&nbsp;￥{{getDetail.factPay===null?0:getDetail.factPay}}</span>
+          <span class="unClass">实际支付:</span> <span class="spanclass">{{getDetail.orderStatus===0?'未支付':'已支付'}}&nbsp;&nbsp;￥{{getDetail.factPay || 0}}</span>
 
         </div>
         <div class="divClass">
-          <span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice}}</span>&nbsp;&nbsp;<span
+          <span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice || 0}}</span>&nbsp;&nbsp;<span
           class="blueClassL" @click="closeDetail">费用明细</span>
         </div>
         <div class="divClass">
@@ -61,7 +61,7 @@
           <span class="unClass">货物名称:</span><span class="spanclass">{{getDetail.goodsName}}</span>
         </div>
         <div class="divClass">
-          <span class="unClass">货物重量:</span><span class="spanclass"><{{getDetail.goodsWeight===''?0:getDetail.goodsWeight}}吨,{{getDetail.goodsVolume==='' ?0:getDetail.goodsVolume}}方	</span>
+          <span class="unClass">货物重量:</span><span class="spanclass"><{{getDetail.goodsWeight|| 0}}吨,{{getDetail.goodsVolume|| 0}}方	</span>
         </div>
         <div class="divClass">
           <span class="unClass">额外服务:</span><span class="spanclass">{{getDetail.extraName}}	</span>
