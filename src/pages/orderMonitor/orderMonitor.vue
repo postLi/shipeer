@@ -454,10 +454,10 @@
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
             var v = res.data.carNumber;
-            if(v==null)
-              v="";
-            carInfo.carNumber=v;
-            document.getElementById("infoWindowCarNo").innerText=v;
+            if (v == null)
+              v = "";
+            carInfo.carNumber = v;
+            document.getElementById("infoWindowCarNo").innerText = v;
             v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
@@ -541,6 +541,10 @@
               infoWindow.open(this.mp, pos);
               this.translateAddr();
             }
+
+            var l = this.carList;
+            this.carList = [];
+            this.carList = l;
 
             v = res.data.track;
             if (v != null && (v.length % 2) == 0) {
