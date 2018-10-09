@@ -990,6 +990,61 @@
           ele.innerText = v;
         }
 
+        ele = document.getElementById("infoWindowOrderTime");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderCarType");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderCargo");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderExtraServ");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderMemo");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderPrice");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderPayState");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("mapAddr");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderStartAddr");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderPassAddr");
+        if (ele) {
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowOrderTargetAddr");
+        if (ele) {
+          ele.innerText = v;
+        }
+
         var pos = markerPoint.getPosition();
         if (pos) {
           this.infoWindow2.open(this.mp, pos);
