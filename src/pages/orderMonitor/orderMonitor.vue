@@ -452,20 +452,30 @@
             if (!lnglat && (!trails || trails.length < 1))
               return;
             var lastTrail = trails[trails.length - 1];
-            if (!lastTrail || !lastTrail.longitude || !lastTrail.latitude)
+            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null))
               return;
-            var pos = [lastTrail.longitude, lastTrail.latitude];
-            if (marker != null) {
-
-              if (this.diffPosition(lnglat, pos)) {
-                marker.setPosition(pos);
-                marker.setMap(this.mp);
-                this.infoWindow2.setPosition(pos);
-                this.markerPoint = marker;
-                this.centerMark();
-                this.translateAddr();
+            var pos = null;
+            if (lastTrail.longitude != null && lastTrail.latitude != null)
+              pos = [lastTrail.longitude, lastTrail.latitude];
+            if (pos && this.diffPosition(lnglat, pos)) {
+              marker.setPosition(pos);
+              marker.setMap(this.mp);
+              this.markerPoint = marker;
+              this.centerMark();
+              var infoWindow = this.infoWindow2;
+              if (!this.infoWindow2Init) {
+                var tempEle = document.getElementById("infoWindow");
+                infoWindow.setContent(tempEle.innerHTML);
+                tempEle.innerHTML = "";
+                this.infoWindow2Init = true;
               }
+              infoWindow.open(this.mp, pos);
+              this.translateAddr();
             }
+
+            lnglat = marker.getPosition();
+            if (!lnglat)
+              return;
 
             var v = res.data.useCarTime;
             if (v)
@@ -769,7 +779,7 @@
           v = "";
         document.getElementById("infoWindowMobile").innerText = v;
         var pos = markerPoint.getPosition();
-        if (!pos) {
+        if (pos) {
           var infoWindow = this.infoWindow2;
           if (!this.infoWindow2Init) {
             var tempEle = document.getElementById("infoWindow");
@@ -779,8 +789,9 @@
           }
 
           infoWindow.open(this.mp, pos);
+          this.translateAddr();
         }
-        this.translateAddr();
+
         this.getOrderDetail(carInfo.orderSerial, markerPoint);
       },
       translateAddr() {
