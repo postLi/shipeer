@@ -248,7 +248,6 @@
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
         infoWindow2: null,
-        infoWindow2Init: false,
         orderdetail: null,
         geocoder: null,
         polyline: null,
@@ -328,6 +327,9 @@
         isCustom: true,
         autoMove: true
       });
+      var tempEle = document.getElementById("infoWindow");
+      this.infoWindow2.setContent(tempEle.innerHTML);
+      tempEle.innerHTML = "";
 
       if (!(this.checkLogin()))
         ;
@@ -704,29 +706,20 @@
             marker.setMap(this.mp);
             this.markerPoint = marker;
             this.centerMark();
-            var infoWindow = this.infoWindow2;
-            if (!this.infoWindow2Init) {
-              var tempEle = document.getElementById("infoWindow");
-              infoWindow.setContent(tempEle.innerHTML);
-              tempEle.innerHTML = "";
-              this.infoWindow2Init = true;
-            }
-            infoWindow.open(this.mp, pos);
+            this.infoWindow2.open(this.mp, pos);
             this.translateAddr();
 
             this.orderdetail = res;
             this.getOrderDetail2();
 
-            var v = res.data.track;
-            if (v != null && (v.length % 2) == 0) {
+            if (trails != null && (trails.length) > 0) {
               var i = 0;
-              var j = 0;
-              var len = v.length / 2;
               var pois = [];
               var point = null;
-              for (; i < len; ++i) {
-                j = 2 * i;
-                point = new AMap.LngLat(v[j], v[j + 1]);
+              for (; i < trails.length; ++i) {
+                if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
+                  continue;
+                point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
                 pois.push(point);
               }
               this.track = pois;
@@ -1007,15 +1000,7 @@
 
         var pos = markerPoint.getPosition();
         if (pos) {
-          var infoWindow = this.infoWindow2;
-          if (!this.infoWindow2Init) {
-            var tempEle = document.getElementById("infoWindow");
-            infoWindow.setContent(tempEle.innerHTML);
-            tempEle.innerHTML = "";
-            this.infoWindow2Init = true;
-          }
-
-          infoWindow.open(this.mp, pos);
+          this.infoWindow2.open(this.mp, pos);
           this.translateAddr();
         }
 
