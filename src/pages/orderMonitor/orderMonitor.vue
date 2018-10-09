@@ -993,7 +993,6 @@
         var pos = markerPoint.getPosition();
         if (pos) {
           this.infoWindow2.open(this.mp, pos);
-          this.translateAddr();
         }
 
         this.getOrderDetail(carInfo.orderSerial, markerPoint);
