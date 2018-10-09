@@ -243,6 +243,10 @@
 
 
 
+
+        // this.$router.push({path: '/orderRouter/getPickUp2',query: {
+        //     orderSerial: row.orderSerial,
+        //   }})
       },
 
       handleClickPy(row) {

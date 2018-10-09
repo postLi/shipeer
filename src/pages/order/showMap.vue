@@ -185,15 +185,8 @@
             this.data.mapTo = new AMap.Map(this.$refs.allmap, {
               zoom: 14,
               scrollWheel: true,
-              // center: centerPoint
+              center: this.data.originCoordinate === ""?"":this.data.originCoordinate.split(',').reverse()
             });
-            if(this.data.originCoordinate === ""){
-              // console.log(this.data.mapTo.getCenter())
-              this.data.originCoordinate = [this.data.mapTo.getCenter().lat,this.data.mapTo.getCenter().lng].join(',')
-            }else {
-              centerPoint = this.data.originCoordinate.split(',').reverse();
-              this.data.mapTo.setCenter(centerPoint)
-            }
             AMapUI.loadUI(['misc/PositionPicker'], (PositionPicker) =>{
               var positionPicker = new PositionPicker({
                 mode: 'dragMap',
@@ -204,9 +197,9 @@
                   size: [32,56]
                 }
               });
-
               positionPicker.on('success', (positionResult)=> {
                 console.log(positionResult)
+                this.data.adcode = positionResult.regeocode.addressComponent.adcode;//下单时的发货地belongCity
                 this.data.originCoordinate = [positionResult.position.lat,positionResult.position.lng].join(',');
                 this.data.origin = positionResult.address;
                 this.data.originName = positionResult.regeocode.pois[0].name;

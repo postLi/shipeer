@@ -10,6 +10,7 @@ const UnloadOrder = () => import('@/pages/orderRouter/unloadOrder.vue');
 const InSingle = () => import('@/pages/orderRouter/inSingle.vue');
 const AlOrder = () => import('@/pages/orderRouter/alOrder.vue');
 const GetPickUp = () => import('@/pages/orderRouter/getPickUp.vue');
+const GetPickUp2 = () => import('@/pages/orderRouter/getPickUp2.vue');
 const Order = () => import('@/pages/order/order.vue');
 const ShowMapNext = () => import('@/pages/order/showMapNext.vue');
 const MyDriver = () => import('@/pages/myDriver/index.vue');
@@ -114,8 +115,12 @@ export default new Router({
         },
         {
           path: '/orderRouter/alOrder', component: AlOrder, name: 'AlOrder'
-        }, {
+        },
+        {
           path: '/orderRouter/getPickUp', component: GetPickUp, name: 'GetPickUp'
+        },
+        {
+          path: '/orderRouter/getPickUp2', component: GetPickUp2, name: 'GetPickUp2'
         },
         {
           path: '/allRecod',
