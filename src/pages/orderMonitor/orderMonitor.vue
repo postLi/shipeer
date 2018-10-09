@@ -895,6 +895,21 @@
           return "司机已卸货";
         if (code === "AF0080608HZ")
           return "司机改派";
+        if (code === "AF00801")
+          return "待付款";
+        if (code === "AF00802")
+          return "已付款";
+        if (code === "AF00803")
+          return "已退款";
+        if (code === "AF00804")
+          return "派单中";
+        if (code === "AF00805")
+          return "待指派";
+        if (code === "AF00807")
+          return "已完成";
+        if (code === "AF00808")
+          return "已取消";
+
         return null;
       },
       markerClick(e) {
