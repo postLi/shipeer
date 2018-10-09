@@ -293,6 +293,7 @@
       window.showTrack = this.showTrack;
       window.checkTrack = this.checkTrack;
       window.closeInfoWindow = this.closeInfoWindow;
+      window.translateAddr = this.translateAddr;
       this.redball = new AMap.Marker({
         icon: this.redballUrl,
         offset: new AMap.Pixel(-16, -41),
@@ -463,6 +464,11 @@
               v = "";
             carInfo.driverName = v;
             document.getElementById("infoWindowDriverName").innerText = v;
+            v = res.data.driverMobile;
+            if (v == null)
+              v = "";
+            carInfo.mobile = v;
+            document.getElementById("infoWindowMobile").innerText = v;
             v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
@@ -472,6 +478,7 @@
             v = res.data.carTypeName;
             if (v == null)
               v = "";
+            document.getElementById("infoWindowCarType").innerText = v;
             document.getElementById("infoWindowOrderCarType").innerText = v;
             v = res.data.goodsName;
             if (v == null)
@@ -808,8 +815,10 @@
         var mapAddr = document.getElementById("mapAddr");
         if (mapAddr != null)
           mapAddr.innerText = "";
-        else
+        else {
+          setTimeout("translateAddr()", 1000);
           return;
+        }
         var markerPoint = this.markerPoint;
         if (markerPoint == null)
           return;
