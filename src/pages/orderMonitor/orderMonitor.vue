@@ -454,7 +454,6 @@
               v = "";
             document.getElementById("infoWindowOrderTime").innerText = v;
             v = res.data.carTypeName;
-            alert(v);
             if (v == null)
               v = "";
             document.getElementById("infoWindowOrderCarType").innerText = v;
