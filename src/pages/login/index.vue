@@ -1,4 +1,3 @@
-
 <template>
   <div class="login-con-lll" v-loading="loading" :style="{'background-image':backgroundImg}">
     <div class="login-top">
@@ -30,22 +29,23 @@
           <el-form class="tab-loginClass" v-show="tabId===0" :model="userData" :rules="userRules" ref="userLogin">
             <el-form-item class="" prop="userPhone">
               <el-input :maxlength="11" placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone"
-                        v-model="userData.userPhone" clearable  @keyup.enter.native="subLogin">
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
 
               </el-input>
             </el-form-item>
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
-                         clearable @keyup.enter.native="subLogin">
+                        clearable @keyup.enter.native="subLogin">
 
               </el-input>
               <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
-                        <!--maxlength="6" clearable>-->
+              <!--maxlength="6" clearable>-->
 
               <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
-              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable @keyup.enter.native="subLogin">
+              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable
+                        @keyup.enter.native="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
@@ -55,7 +55,7 @@
           </el-form>
           <el-form class="tab-verClass" v-show="tabId===1" :model="verData" :rules="verRules" ref="verLogin">
             <!--prop="verPhone"-->
-            <el-form-item class="" >
+            <el-form-item class="">
               <el-input placeholder="请输入手机号码" :maxlength="11" prefix-icon="el-icon-mobile-phone"
                         v-model="verData.verPhone" clearable @keyup.enter.native="subLogin">
               </el-input>
@@ -69,7 +69,7 @@
               </el-input>
             </el-form-item>
             <!--prop="verNote"-->
-            <el-form-item class="ver-note" >
+            <el-form-item class="ver-note">
               <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
                 <template slot="append"><span @click="getValidNum">{{getValidtile}}</span></template>
               </el-input>
@@ -100,7 +100,7 @@
 
 <script>
   import {REGEX} from '../../utils/valiRegex'
-  import {login, loginValid, loginCode, validLoginCode, validLoginPhone,validLoginServicePhone} from '@/api/login'
+  import {login, loginValid, loginCode, validLoginCode, validLoginPhone, validLoginServicePhone} from '@/api/login'
   import Axios from 'axios'
   import VueJsCookie from 'vue-js-cookie'
   import {setServerPhone} from '@/utils/auth'
@@ -110,7 +110,7 @@
       let _this = this
       const checkvcode = function (rule, value, callback) {
         if (!value) {
-          callback(new Error('请输入验证码'))
+          callback(new Error('请输入验证码或验证码已失效'))
         } else {
           validLoginCode(value).then(result => {
             if (result.status == 200) {
@@ -127,7 +127,7 @@
         if (!_this.verData.verPhone) {
           callback(new Error('请输入正确手机号码'))
         }
-       else if (!_this.verData.verGra) {
+        else if (!_this.verData.verGra) {
           callback(new Error('请输入图形验证码'))
         }
         else {
@@ -135,8 +135,8 @@
         }
       }
       return {
-        backgroundImg:'url(' + require('../../assets/login/lll01-bg.png') + ')',
-        serverPhone:'',
+        backgroundImg: 'url(' + require('../../assets/login/lll01-bg.png') + ')',
+        serverPhone: '',
         timer: null,
         imgsrc: '',
         getValidtile: '获取验证码',
@@ -144,7 +144,7 @@
         tabId: 0,
         userData: {
           userPhone: '13000000001',
-          userPassword: '123456',
+          userPassword: '123456a',
           pwVcode: ''
         },
         verData: {
@@ -184,16 +184,16 @@
     },
 
     methods: {
-      gotoRegister(){
+      gotoRegister() {
         this.$router.push({path: '/register'})
       },
-      getServerPhone(){
-        return validLoginServicePhone().then(res=>{
-          if(res.status ===200){
+      getServerPhone() {
+        return validLoginServicePhone().then(res => {
+          if (res.status === 200) {
             this.serverPhone = res.data.value
             setServerPhone(this.serverPhone)
-          }else{
-            this.$message.error('客服电话错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+          } else {
+            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
           }
         }).catch(err => {
         })
@@ -216,16 +216,16 @@
           validLoginPhone(this.verData.verPhone).then(res => {
             let wait = 60
 
-            if (res.status === 200 ) {
-              this.$message({
-                message: '发送成功,请留意短信~',
-                type: 'warning'
-              })
+            if (res.status === 200) {
+              // this.$message({
+              //   message: '发送成功,请留意短信~',
+              //   type: 'warning'
+              // })
               if (!this.timer) {
                 this.timer = setInterval(() => {
-                  if (wait > 0) {
+                  if (wait > 1) {
                     wait--
-                    this.getValidtile = wait + '秒后重试'
+                    this.getValidtile = '发送成功' + wait
                   }
                   else {
                     this.getValidtile = '获取验证码'
@@ -236,16 +236,9 @@
 
 
               }
-            }else{
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            } else {
+              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
             }
-          }).catch(() => {
-            // this.loading = true
-            this.$message({
-              message: '您的账号或者密码有误~',
-              type: 'warning'
-            })
-            // this.loading = false
           })
         }
 
@@ -260,24 +253,24 @@
           this.$refs['userLogin'].validate(valid => {
             if (valid) {
               // this.loading = true
-
-              let userPhone = md5(this.userData.userPhone + '|aflc-2')
               let userPassword = md5(this.userData.userPassword)
-              login(this.userData.userPhone + '|aflc-2',userPassword).then((data) => {
-              // login(userPhone,userPassword).then((data) => {
-                if (data) {
-                  VueJsCookie.set('28kytoken', data.access_token)
-                  VueJsCookie.set('28kyuPhone', this.userData.userPhone)
-                  // 跳转到首页
-                  // console.log(data)
-                  this.$router.push({path: '/order'})
-                  // this.loading = false
-                }else{
+              login(this.userData.userPhone + '|aflc-2', userPassword).then(data => {
+                if(data.status) {
                   this.$message({
                     message: '您的账号或者密码有误~',
                     type: 'warning'
                   })
+                }else{
+                  VueJsCookie.set('28kytoken', data.access_token)
+                  VueJsCookie.set('28kyuPhone', this.userData.userPhone)
+                  // 跳转到首页
+                  this.$router.push({path: '/order'})
                 }
+              }).catch(err=>{
+                this.$message({
+                  message: '您的账号或者密码有误~',
+                  type: 'warning'
+                })
               })
             } else {
 
@@ -289,19 +282,17 @@
             if (valid) {
               let verNote = md5(this.verData.verNote)
               loginValid(this.verData.verPhone + '|aflc-2', verNote).then((data) => {
-                if (data) {
-                  VueJsCookie.set('28kytoken', data.access_token)
-                  VueJsCookie.set('28kyuPhone', this.verData.verPhone)
-                  // 跳转到首页
-                  this.$router.push({path: '/order'})
-                  this.loading = false
-                }else{
-                  this.$message({
-                    message: '您的账号或者密码有误~',
-                    type: 'warning'
-                  })
-                  // this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-                }
+
+                VueJsCookie.set('28kytoken', data.access_token)
+                VueJsCookie.set('28kyuPhone', this.verData.verPhone)
+                // 跳转到首页
+                this.$router.push({path: '/order'})
+                this.loading = false
+              }).catch(err=>{
+                this.$message({
+                  message: '您的账号或者密码有误~',
+                  type: 'warning'
+                })
               })
             } else {
 

@@ -111,3 +111,17 @@ export function postAddTip(params ) {
 
   return Axios.post(''+swg2+'/aflcOrderApi/addTip',params)
 }
+///shipperService/confirmGoods
+// 确认收货(货主端)
+export function postConfirmGoods(orderSerial,shipperId) {
+
+  return Axios.post(''+swg2+'/shipperService/confirmGoods'+'?orderSerial='+orderSerial+'&shipperId='+shipperId)
+}
+//
+// /aflcCommonSysDistApi/findAflcCommonSysDictBycode/{code}
+// 根据code值查找当前属性
+// 根据code值查找当前属性  收藏@"AF0051601",  未收藏@"AF0051602"
+export function getFCode(code) {
+
+  return Axios.get(''+swg3+'/aflcCommonSysDistApi/findAflcCommonSysDictBycode/'+code)
+}

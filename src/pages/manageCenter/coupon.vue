@@ -13,7 +13,7 @@
         <el-main>
           <div class="mainClass">
             <h4>减免记录：</h4>
-            <searchTime @change="getSearchParam" :pfrecord="isPfrecord"></searchTime>
+            <!--<searchTime @change="getSearchParam" :pfrecord="isPfrecord"></searchTime>-->
 
             <!--<div class="accountBtn">-->
               <!--<ul>-->
