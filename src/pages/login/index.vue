@@ -144,7 +144,7 @@
         tabId: 0,
         userData: {
           userPhone: '13000000001',
-          userPassword: '123456',
+          userPassword: '123456a',
           pwVcode: ''
         },
         verData: {
