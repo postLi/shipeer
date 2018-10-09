@@ -5,7 +5,7 @@
         <div class="liClass-top">
           <!--<img src="../../assets/role.png"/>-->
           <img v-if="getDetail.driverHeadUrl===''|| getDetail.driverHeadUrl === null " class="user-avatar"
-               src="../../assets/default_tx.png">
+               src="../../assets/myorder/wodesj_tx_def.png">
           <img class="user-avatar" :src="getDetail.driverHeadUrl" v-else>
           <p></p>
           <span class="actClass">{{getDetail.driverName === null ?'xx':getDetail.driverName}}</span>&nbsp;&nbsp;<span
@@ -25,7 +25,7 @@
         </div>
         <div class="liClass-foot">
           <img v-if="getDetail.servicePic===''|| getDetail.servicePic === null " class="user-avatar"
-               src="../../assets/main/xh@3x.png">
+               src="../../assets/myorder/huoche_def.png">
           <img class="user-avatar" :src="getDetail.servicePic" v-else>
 
           <!--<img src="../../assets/main/xh@3x.png"/>-->

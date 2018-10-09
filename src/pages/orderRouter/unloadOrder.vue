@@ -5,26 +5,30 @@
         <div class="height-top">
           <div class="unLeft">
 
-            <div class="clearfix uploadcard">
-              <upload :title="'本地上传'" :showFileList="true" :limit="4" listtype="picture" v-model="liList.img"
-                      />
-            </div>
-            <!--<ul>-->
+            <!--<div class="clearfix uploadcard">-->
+              <!--<upload :title="'本地上传'" :showFileList="true" :limit="4" listtype="picture" v-model="liList.img"-->
+                      <!--/>-->
+            <!--</div>-->
+            <ul>
+              <template v-for="(item,index) in detailData.receiptUrls">
+                <li v-if="detailData.length>0"><img :src="item" alt=""></li>
+
+              </template>
+
+
+              <li><img src="../../assets/login/code.png" alt=""></li>
               <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
-              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
-              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
-              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
-            <!--</ul>-->
+            </ul>
 
 
           </div>
           <div class="unRight">
             <ul>
-              <li>订单号：182839448934</li>
+              <li>订单号：{{isRouteData.qy.orderSerial}}</li>
               <li>司机已卸货</li>
-              <li>订单将于<span>2018-03–05  19:14:13</span> 自动完成<br>
+              <li>订单将于<span>{{isRouteData.qy.autoComplateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span> 自动完成<br>
                 您也可以手动完成哦！</li>
-              <li> <el-button type="success">确认收货</el-button></li>
+              <li> <el-button type="success" @click="submit">确认收货</el-button></li>
               <li></li>
             </ul>
           </div>
@@ -34,6 +38,7 @@
         </div>
 
       </el-header>
+      <div class="bg"></div>
       <el-main>
         <!--<ul class="clearfix">-->
           <!--<li>-->
@@ -112,10 +117,11 @@
 </template>
 
 <script>
-
-  import {getUserInfo} from '@/utils/auth'
+  import {parseTime} from '@/utils/'
+  import {getUserInfo,getOrderDtaial} from '@/utils/auth'
   import Upload from '@/components/Upload/singleImage2'
   import OrderDetail from '@/components/orderDetail/index'
+  import {postConfirmGoods} from '@/api/concentrateAxios/orderManage'
   export default {
     data(){
       return{
@@ -125,9 +131,11 @@
         activeNames: '',
         changeItem: '',
         userData: getUserInfo(),
+        detailData: getOrderDtaial(),
         liList:{
           img:''
-        }
+        },
+        isRouteData:{}
         // activeNames: ['1']
       }
     },
@@ -136,9 +144,21 @@
       OrderDetail
     },
     mounted(){
-      console.log('userinfo":', window.USERDATA)
+      this.isRouteData = this.$route.query
+      console.log(this.isRouteData)
     },
     methods: {
+      submit(){
+        let possObj
+        possObj = postConfirmGoods(this.isRouteData.qy.orderSerial,this.userData.shipperId).then(res=>{
+          if(res.status ===200){
+            this.$message.success('收货成功~')
+            this.$router.push({path: '/order'})
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+          }
+        })
+      },
       changeActive(item,index){
         this.tabId = index
         this.changeItem = item
@@ -156,8 +176,8 @@
   .odPayForClass-lll-un{
     display: flex;
     margin:10px;
-    width: 100%;
-    height: calc(100% - 38px);
+    width: calc(100% - 20px);
+    height: calc(100% - 100px);
 
 
     .el-header {
@@ -169,11 +189,23 @@
       .height-top{
         margin: 20px 0;
         .unLeft{
-          padding: 40px 50px 23px 50px;
+          padding: 40px 40px 23px 50px;
           float: left;
           /*display: inline-block;*/
           /*padding-right: 50px;*/
           border-right: 2px solid #ddd;
+
+          ul{
+            li{
+              float: left;
+              padding-right: 10px;
+              img{
+                width: 195px;
+                height: 158px;
+              }
+            }
+          }
+
           .el-dialog{
             margin-top:10vh !important;
             margin: 0 auto 20px !important;
@@ -248,11 +280,15 @@
       }
 
     }
+    .bg{
+      height: 10px;
+      background:url("../../assets/myorder/flower.png") repeat-x;
+    }
     .el-main{
       background: #fff;
+      /*margin-top: 10px;*/
+      padding:0
     }
-
-
     .el-footer {
       /*background-color: #B3C0D1;*/
       color: #333;
