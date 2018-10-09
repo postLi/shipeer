@@ -446,8 +446,19 @@
         try {
           if (orderId == null || !marker)
             return;
+          var idx = marker.getExtData();
+          if (idx == null)
+            return;
+          var carInfo = this.carList[idx];
+          if (carInfo == null)
+            return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
-            var v = res.data.useCarTime;
+            var v = res.data.carNumber;
+            if(v==null)
+              v="";
+            document.getElementById("infoWindowCarNo").innerText=v;
+            carInfo.car
+            v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
             if (v == null)
@@ -490,22 +501,17 @@
               v = "";
             document.getElementById("infoWindowOrderTargetAddr").innerText = v;
             var status = res.data.orderStatus;
-            var carInfo = null;
             if (status != null) {
-              var idx = marker.getExtData();
-              if (idx != null) {
-                carInfo = this.carList[idx];
-                if (status != carInfo.statusCode) {
-                  carInfo.statusCode = status;
-                  carInfo.statusText = null;
-                  var text = this.statusCode2Text(status);
-                  if (text != null) {
-                    carInfo.statusText = text;
-                  } else
-                    text = this.orderStatus;
-                  text = this.subString(text, 16);
-                  document.getElementById("infoWindowTitle").innerText = text;
-                }
+              if (status != carInfo.status) {
+                carInfo.status = status;
+                carInfo.statusText = null;
+                var text = this.statusCode2Text(status);
+                if (text != null) {
+                  carInfo.statusText = text;
+                } else
+                  text = this.orderStatus;
+                text = this.subString(text, 16);
+                document.getElementById("infoWindowTitle").innerText = text;
               }
             }
 
@@ -1051,7 +1057,7 @@
   #infoWindow {
     position: absolute;
     left: -100000px;
-    top:-100000px
+    top: -100000px
   }
 
   .carPager {
