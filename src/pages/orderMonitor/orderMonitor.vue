@@ -668,15 +668,26 @@
         }
       },
       displayAllMarkers() {
-        if (this.mp == null || this.points == null)
+        if (this.mp == null)
           return;
-        this.mp.setFitView(this.points);
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
+        if (this.points) {
+          var points = this.points;
+          var showPoints = [];
+          var i = 0;
+          for (; i < points.length; ++i) {
+            if (points[i] == null || (points[i].getPosition()) == null || (points[i].getMap()) == null)
+              continue;
+            showPoints.push(points[i]);
+          }
+          if (showPoints.length > 0)
+            this.mp.setFitView(showPoints);
+        }
       },
       displaySatellite() {
         if (this.mp == null)
@@ -707,8 +718,8 @@
         var i = 0;
         var pos = null;
         var marker = null;
-        var err = false;
         this.points = [];
+        var showPoints = [];
         for (; i < l.length; ++i) {
           pos = l[i].pos;
           if (pos == null) {
@@ -717,8 +728,7 @@
               offset: this.markerOffset,
               extData: i
             });
-            err = true;
-          } else
+          } else {
             marker = new AMap.Marker({
               icon: this.carUrl,
               position: pos,
@@ -726,12 +736,15 @@
               extData: i,
               map: this.mp
             });
+            showPoints.push(marker);
+          }
           marker.on("click", this.markerClick);
           this.points.push(marker);
         }
-        if (this.mp == null || this.points == null || err)
+        if (this.mp == null)
           return;
-        this.mp.setFitView(this.points);
+        if (showPoints.length > 0)
+          this.mp.setFitView(showPoints);
       },
       centerMark() {
         if (this.markerPoint != null)
