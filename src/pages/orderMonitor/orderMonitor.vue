@@ -104,7 +104,7 @@
                 {{item.orderSerial}}
               </div>
               <div class="cell2">
-                {{item.carNo}}
+                {{item.carNumber}}
               </div>
               <div class="cell2">
                 {{item.driverName}}
@@ -456,8 +456,8 @@
             var v = res.data.carNumber;
             if(v==null)
               v="";
+            carInfo.carNumber=v;
             document.getElementById("infoWindowCarNo").innerText=v;
-            carInfo.car
             v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
