@@ -614,20 +614,47 @@
           v = "";
         document.getElementById("infoWindowOrderPayState").innerText = v;
 
-        v = res.data.startAddr;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowOrderStartAddr").innerText = v;
+        v = res.data.addresses;
+        if (v == null || v.length < 1) {
+          document.getElementById("infoWindowOrderStartAddr").innerText = "";
+          document.getElementById("infoWindowOrderPassAddr").innerText = "";
+          document.getElementById("infoWindowOrderTargetAddr").innerText = "";
+        } else {
+          var addr = v[0];
+          if (addr != null)
+            addr = addr.viaAddressName;
+          if (addr == null)
+            addr = "";
+          document.getElementById("infoWindowOrderStartAddr").innerText = addr;
 
-        v = res.data.passAddr;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowOrderPassAddr").innerText = v;
+          if (v.length > 2) {
+            var i = 1;
+            var str = null;
+            for (; i < v.length; ++i) {
+              addr = v[i];
+              if (addr == null)
+                continue;
+              addr = addr.viaAddressName;
+              if (addr == null)
+                continue;
+              if (str == null)
+                str = addr;
+              else
+                str = str + "<br><br>" + addr;
+            }
+            if (str != null)
+              document.getElementById("infoWindowOrderPassAddr").innerHTML = str;
+          }
 
-        v = res.data.targetAddr;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowOrderTargetAddr").innerText = v;
+          if (v.length > 1) {
+            addr = v[v.length - 1];
+            if (addr != null)
+              addr = addr.viaAddressName;
+            if (addr == null)
+              addr = "";
+            document.getElementById("infoWindowOrderTargetAddr").innerText = addr;
+          }
+        }
         var status = res.data.orderStatus;
         if (status != null) {
           if (status != carInfo.status) {
