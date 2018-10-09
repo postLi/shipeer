@@ -225,7 +225,7 @@
 </template>
 
 <script>
-  import {postApi} from '@/api/api.js';
+  import {postApi, getApi} from '@/api/api.js';
   import localStorage from '@/utils/localStorage';
   import VueJsCookie from 'vue-js-cookie';
 
@@ -294,6 +294,7 @@
       window.checkTrack = this.checkTrack;
       window.closeInfoWindow = this.closeInfoWindow;
       window.translateAddr = this.translateAddr;
+      window.translateCode = this.translateCode;
       window.getOrderDetail2 = this.getOrderDetail2;
       this.redball = new AMap.Marker({
         icon: this.redballUrl,
@@ -711,6 +712,7 @@
 
             this.orderdetail = res;
             this.getOrderDetail2();
+            this.translateCode();
 
             if (trails != null && (trails.length) > 0) {
               var i = 0;
@@ -952,23 +954,13 @@
 
         var ele = document.getElementById("infoWindowTitle");
         if (ele) {
-          var status = carInfo.statusText;
-          if (status == null && carInfo.status != null) {
-            status = this.statusCode2Text(carInfo.status);
-          }
-          if (status == null) {
-            status = this.orderStatus;
-          } else {
-            carInfo.statusText = status;
-          }
-          status = this.subString(status, 16);
-          ele.innerText = status;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowCarNo");
         var v = null;
         if (ele) {
-          v = carInfo.carNo;
+          v = carInfo.carNumber;
           if (v == null)
             v = "";
           ele.innerText = v;
@@ -1005,6 +997,72 @@
         }
 
         this.getOrderDetail(carInfo.orderSerial, markerPoint);
+      },
+      translateCode() {
+        if (this.orderdetail == null || this.orderdetail.data == null)
+          return;
+        if (this.orderdetail.code_translate == null) {
+          try {
+            var q = null;
+            if (this.orderdetail.data.orderStatus != null)
+              q = this.orderdetail.data.orderStatus;
+            if (this.orderdetail.data.payStatus != null) {
+              if (q == null)
+                q = this.orderdetail.data.payStatus;
+              else
+                q = q + "," + this.orderdetail.data.payStatus;
+            }
+            if (q == null)
+              return;
+            getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
+              if (res == null || res.data == null)
+                return;
+              this.orderdetail.code_translate = res.data;
+            });
+          } catch (e) {
+          }
+        }
+
+        if (this.orderdetail.code_translate == null) {
+          setTimeout("translateCode()", 1000);
+          return;
+        }
+
+        var ele = document.getElementById("infoWindowTitle");
+        if (ele == null) {
+          setTimeout("translateCode()", 1000);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderPayState");
+        if (ele == null) {
+          setTimeout("translateCode()", 1000);
+          return;
+        }
+
+        var s = this.orderdetail.data.orderStatus;
+        if (s != null) {
+          s = this.orderdetail.code_translate[s];
+          if (s == null)
+            s = "";
+          else
+            s = s.name;
+          if (s == null)
+            s = "";
+          document.getElementById("infoWindowTitle").innerText = s;
+        }
+
+        s = this.orderdetail.data.payStatus;
+        if (s != null) {
+          s = this.orderdetail.code_translate[s];
+          if (s == null)
+            s = "";
+          else
+            s = s.name;
+          if (s == null)
+            s = "";
+          document.getElementById("infoWindowOrderPayState").innerText = s;
+        }
       },
       translateAddr() {
         var mapAddr = document.getElementById("mapAddr");
