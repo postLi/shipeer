@@ -12,7 +12,8 @@
                 </div>
                 <div class="liMessage">
                   <span>欢迎您,&nbsp;&nbsp;{{userInfoData.mobile}}</span>
-                  <span>更换手机号</span>
+                  <span></span>
+                  <!--<span>更换手机号</span>-->
                 </div>
                 <div class="liOther" style="padding-top:22px">
                   <span>企业名称:</span>
