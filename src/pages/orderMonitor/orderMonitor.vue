@@ -447,42 +447,11 @@
           if (orderId == null || !marker)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
-            var trails = res.data.aflcOrderCarTrails;
-            var lnglat = marker.getPosition();
-            if (!lnglat && (!trails || trails.length < 1))
-              return;
-            var lastTrail = trails[trails.length - 1];
-            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null))
-              return;
-            var pos = null;
-            if (lastTrail.longitude != null && lastTrail.latitude != null)
-              pos = [lastTrail.longitude, lastTrail.latitude];
-            if (pos && this.diffPosition(lnglat, pos)) {
-              marker.setPosition(pos);
-              marker.setMap(this.mp);
-              this.markerPoint = marker;
-              this.centerMark();
-              var infoWindow = this.infoWindow2;
-              if (!this.infoWindow2Init) {
-                var tempEle = document.getElementById("infoWindow");
-                infoWindow.setContent(tempEle.innerHTML);
-                tempEle.innerHTML = "";
-                this.infoWindow2Init = true;
-              }
-              infoWindow.open(this.mp, pos);
-              this.translateAddr();
-            }
-
-            lnglat = marker.getPosition();
-            if (!lnglat)
-              return;
-
             var v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
             if (v == null)
               v = "";
-            alert(document.getElementById("infoWindowOrderTime"));
             document.getElementById("infoWindowOrderTime").innerText = v;
             v = res.data.carTypeName;
             alert(v);
@@ -523,7 +492,7 @@
             document.getElementById("infoWindowOrderTargetAddr").innerText = v;
             var status = res.data.orderStatus;
             var carInfo = null;
-            if (status != null && marker != null) {
+            if (status != null) {
               var idx = marker.getExtData();
               if (idx != null) {
                 carInfo = this.carList[idx];
@@ -539,6 +508,33 @@
                   document.getElementById("infoWindowTitle").innerText = text;
                 }
               }
+            }
+
+            var trails = res.data.aflcOrderCarTrails;
+            var lnglat = marker.getPosition();
+            if (!lnglat && (!trails || trails.length < 1))
+              return;
+            var lastTrail = trails[trails.length - 1];
+            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null))
+              return;
+            var pos = null;
+            if (lastTrail.longitude != null && lastTrail.latitude != null)
+              pos = [lastTrail.longitude, lastTrail.latitude];
+
+            if (pos && this.diffPosition(lnglat, pos)) {
+              marker.setPosition(pos);
+              marker.setMap(this.mp);
+              this.markerPoint = marker;
+              this.centerMark();
+              var infoWindow = this.infoWindow2;
+              if (!this.infoWindow2Init) {
+                var tempEle = document.getElementById("infoWindow");
+                infoWindow.setContent(tempEle.innerHTML);
+                tempEle.innerHTML = "";
+                this.infoWindow2Init = true;
+              }
+              infoWindow.open(this.mp, pos);
+              this.translateAddr();
             }
 
             v = res.data.track;
@@ -1054,7 +1050,9 @@
   }
 
   #infoWindow {
-    display: none
+    position: absolute;
+    left: -100000px;
+    top:-100000px
   }
 
   .carPager {
