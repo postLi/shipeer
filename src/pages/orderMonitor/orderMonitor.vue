@@ -249,6 +249,7 @@
         markerPoint: null,
         infoWindow2: null,
         infoWindow2Init: false,
+        orderdetail: null,
         geocoder: null,
         polyline: null,
         passedPolyline: null,
@@ -294,6 +295,7 @@
       window.checkTrack = this.checkTrack;
       window.closeInfoWindow = this.closeInfoWindow;
       window.translateAddr = this.translateAddr;
+      window.getOrderDetail2 = this.getOrderDetail2;
       this.redball = new AMap.Marker({
         icon: this.redballUrl,
         offset: new AMap.Pixel(-16, -41),
@@ -382,17 +384,21 @@
         this.getOrder(this.orderStatusCode, true, true);
       },
       clear() {
-        var points = this.points;
-        this.points = [];
-        if (points != null && this.mp != null)
-          this.mp.remove(points);
-        this.mp.clearInfoWindow();
+        this.orderdetail = null;
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
+
+        if (!this.mp)
+          return;
+        this.mp.clearInfoWindow();
+        var points = this.points;
+        this.points = [];
+        if (points != null)
+          this.mp.remove(points);
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         var s = "";
@@ -443,6 +449,200 @@
           }
         });
       },
+      getOrderDetail2() {
+        var res = this.orderdetail;
+        if (res == null)
+          return;
+        var marker = this.markerPoint;
+        if (marker == null)
+          return;
+        var idx = marker.getExtData();
+        if (idx == null)
+          return;
+        if (this.carList == null)
+          return;
+        var carInfo = this.carList[idx];
+        if (carInfo == null)
+          return;
+        var ele = document.getElementById("infoWindowTitle");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowCarNo");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowDriverName");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowMobile");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderTime");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowCarType");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderCarType");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderCargo");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderExtraServ");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderMemo");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderPrice");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderPayState");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderStartAddr");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderPassAddr");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        ele = document.getElementById("infoWindowOrderTargetAddr");
+        if (!ele) {
+          setTimeout("getOrderDetail2()", 100);
+          return;
+        }
+
+        var v = res.data.carNumber;
+        if (v == null)
+          v = "";
+        carInfo.carNumber = v;
+        document.getElementById("infoWindowCarNo").innerText = v;
+
+        v = res.data.driverName;
+        if (v == null)
+          v = "";
+        carInfo.driverName = v;
+        document.getElementById("infoWindowDriverName").innerText = v;
+
+        v = res.data.driverMobile;
+        if (v == null)
+          v = "";
+        carInfo.mobile = v;
+        document.getElementById("infoWindowMobile").innerText = v;
+
+        v = res.data.useCarTime;
+        if (v)
+          v = this.formatDate(v);
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderTime").innerText = v;
+
+        v = res.data.carTypeName;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowCarType").innerText = v;
+        document.getElementById("infoWindowOrderCarType").innerText = v;
+
+        v = res.data.goodsName;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderCargo").innerText = v;
+
+        v = res.data.extraName;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderExtraServ").innerText = v;
+
+        v = res.data.sendWord;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderMemo").innerText = v;
+
+        v = res.data.orderPrice;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderPrice").innerText = v;
+
+        v = res.data.payStatus;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderPayState").innerText = v;
+
+        v = res.data.startAddr;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderStartAddr").innerText = v;
+
+        v = res.data.passAddr;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderPassAddr").innerText = v;
+
+        v = res.data.targetAddr;
+        if (v == null)
+          v = "";
+        document.getElementById("infoWindowOrderTargetAddr").innerText = v;
+        var status = res.data.orderStatus;
+        if (status != null) {
+          if (status != carInfo.status) {
+            carInfo.status = status;
+            carInfo.statusText = null;
+            var text = this.statusCode2Text(status);
+            if (text != null) {
+              carInfo.statusText = text;
+            } else
+              text = this.orderStatus;
+            text = this.subString(text, 16);
+            document.getElementById("infoWindowTitle").innerText = text;
+          }
+        }
+
+        var l = this.carList;
+        this.carList = [];
+        this.carList = l;
+      },
       getOrderDetail(orderId, marker) {
         try {
           if (orderId == null || !marker)
@@ -454,79 +654,6 @@
           if (carInfo == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
-            var v = res.data.carNumber;
-            if (v == null)
-              v = "";
-            carInfo.carNumber = v;
-            document.getElementById("infoWindowCarNo").innerText = v;
-            v = res.data.driverName;
-            if (v == null)
-              v = "";
-            carInfo.driverName = v;
-            document.getElementById("infoWindowDriverName").innerText = v;
-            v = res.data.driverMobile;
-            if (v == null)
-              v = "";
-            carInfo.mobile = v;
-            document.getElementById("infoWindowMobile").innerText = v;
-            v = res.data.useCarTime;
-            if (v)
-              v = this.formatDate(v);
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderTime").innerText = v;
-            v = res.data.carTypeName;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowCarType").innerText = v;
-            document.getElementById("infoWindowOrderCarType").innerText = v;
-            v = res.data.goodsName;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderCargo").innerText = v;
-            v = res.data.extraName;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderExtraServ").innerText = v;
-            v = res.data.sendWord;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderMemo").innerText = v;
-            v = res.data.orderPrice;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderPrice").innerText = v;
-            v = res.data.payStatus;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderPayState").innerText = v;
-            v = res.data.startAddr;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderStartAddr").innerText = v;
-            v = res.data.passAddr;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderPassAddr").innerText = v;
-            v = res.data.targetAddr;
-            if (v == null)
-              v = "";
-            document.getElementById("infoWindowOrderTargetAddr").innerText = v;
-            var status = res.data.orderStatus;
-            if (status != null) {
-              if (status != carInfo.status) {
-                carInfo.status = status;
-                carInfo.statusText = null;
-                var text = this.statusCode2Text(status);
-                if (text != null) {
-                  carInfo.statusText = text;
-                } else
-                  text = this.orderStatus;
-                text = this.subString(text, 16);
-                document.getElementById("infoWindowTitle").innerText = text;
-              }
-            }
-
             var trails = res.data.aflcOrderCarTrails;
             var lnglat = marker.getPosition();
             if (!lnglat && (!trails || trails.length < 1))
@@ -537,28 +664,29 @@
             var pos = null;
             if (lastTrail.longitude != null && lastTrail.latitude != null)
               pos = [lastTrail.longitude, lastTrail.latitude];
+            if (pos == null)
+              pos = lnglat;
+            if (pos == null)
+              return;
 
-            if (pos && this.diffPosition(lnglat, pos)) {
-              marker.setPosition(pos);
-              marker.setMap(this.mp);
-              this.markerPoint = marker;
-              this.centerMark();
-              var infoWindow = this.infoWindow2;
-              if (!this.infoWindow2Init) {
-                var tempEle = document.getElementById("infoWindow");
-                infoWindow.setContent(tempEle.innerHTML);
-                tempEle.innerHTML = "";
-                this.infoWindow2Init = true;
-              }
-              infoWindow.open(this.mp, pos);
-              this.translateAddr();
+            marker.setPosition(pos);
+            marker.setMap(this.mp);
+            this.markerPoint = marker;
+            this.centerMark();
+            var infoWindow = this.infoWindow2;
+            if (!this.infoWindow2Init) {
+              var tempEle = document.getElementById("infoWindow");
+              infoWindow.setContent(tempEle.innerHTML);
+              tempEle.innerHTML = "";
+              this.infoWindow2Init = true;
             }
+            infoWindow.open(this.mp, pos);
+            this.translateAddr();
 
-            var l = this.carList;
-            this.carList = [];
-            this.carList = l;
+            this.orderdetail = res;
+            this.getOrderDetail2();
 
-            v = res.data.track;
+            var v = res.data.track;
             if (v != null && (v.length % 2) == 0) {
               var i = 0;
               var j = 0;
@@ -668,14 +796,14 @@
         }
       },
       displayAllMarkers() {
-        if (this.mp == null)
-          return;
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
+        if (this.mp == null)
+          return;
         if (this.points) {
           var points = this.points;
           var showPoints = [];
@@ -771,6 +899,7 @@
       },
       markerClick(e) {
         this.track = null;
+        this.orderdetail = null;
         this.mp.clearInfoWindow();
         var markerPoint = this.markerPoint = e.target;
         var idx = markerPoint.getExtData();
@@ -781,33 +910,55 @@
           carInfo = this.carList[idx];
         if (carInfo == null)
           return;
-        var status = carInfo.statusText;
-        if (status == null && carInfo.status != null) {
-          status = this.statusCode2Text(carInfo.status);
+
+        var ele = document.getElementById("infoWindowTitle");
+        if (ele) {
+          var status = carInfo.statusText;
+          if (status == null && carInfo.status != null) {
+            status = this.statusCode2Text(carInfo.status);
+          }
+          if (status == null) {
+            status = this.orderStatus;
+          } else {
+            carInfo.statusText = status;
+          }
+          status = this.subString(status, 16);
+          ele.innerText = status;
         }
-        if (status == null) {
-          status = this.orderStatus;
-        } else {
-          carInfo.statusText = status;
+
+        ele = document.getElementById("infoWindowCarNo");
+        var v = null;
+        if (ele) {
+          v = carInfo.carNo;
+          if (v == null)
+            v = "";
+          ele.innerText = v;
         }
-        status = this.subString(status, 16);
-        document.getElementById("infoWindowTitle").innerText = status;
-        var v = carInfo.carNo;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowCarNo").innerText = v;
-        v = carInfo.driverName;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowDriverName").innerText = v;
-        v = carInfo.carType;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowCarType").innerText = v;
-        v = carInfo.mobile;
-        if (v == null)
-          v = "";
-        document.getElementById("infoWindowMobile").innerText = v;
+
+        ele = document.getElementById("infoWindowDriverName");
+        if (ele) {
+          v = carInfo.driverName;
+          if (v == null)
+            v = "";
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowCarType");
+        if (ele) {
+          v = carInfo.carType;
+          if (v == null)
+            v = "";
+          ele.innerText = v;
+        }
+
+        ele = document.getElementById("infoWindowMobile");
+        if (ele) {
+          v = carInfo.mobile;
+          if (v == null)
+            v = "";
+          ele.innerText = v;
+        }
+
         var pos = markerPoint.getPosition();
         if (pos) {
           var infoWindow = this.infoWindow2;
@@ -1086,9 +1237,7 @@
   }
 
   #infoWindow {
-    position: absolute;
-    left: -100000px;
-    top: -100000px
+    display: none;
   }
 
   .carPager {
