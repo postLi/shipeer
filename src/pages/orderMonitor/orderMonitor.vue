@@ -458,6 +458,11 @@
               v = "";
             carInfo.carNumber = v;
             document.getElementById("infoWindowCarNo").innerText = v;
+            v = res.data.driverName;
+            if (v == null)
+              v = "";
+            carInfo.driverName = v;
+            document.getElementById("infoWindowDriverName").innerText = v;
             v = res.data.useCarTime;
             if (v)
               v = this.formatDate(v);
