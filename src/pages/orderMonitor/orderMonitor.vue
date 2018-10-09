@@ -606,6 +606,10 @@
         document.getElementById("infoWindowOrderPrice").innerText = v;
 
         v = res.data.payStatus;
+        if (v != null)
+          v = this.statusCode2Text(v);
+        if (v == null)
+          v = res.data.payStatus;
         if (v == null)
           v = "";
         document.getElementById("infoWindowOrderPayState").innerText = v;
