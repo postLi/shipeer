@@ -617,11 +617,11 @@
           v = "";
         document.getElementById("infoWindowOrderPayState").innerText = v;
 
+        document.getElementById("infoWindowOrderStartAddr").innerText = "";
+        document.getElementById("infoWindowOrderPassAddr").innerText = "";
+        document.getElementById("infoWindowOrderTargetAddr").innerText = "";
         v = res.data.addresses;
         if (v == null || v.length < 1) {
-          document.getElementById("infoWindowOrderStartAddr").innerText = "";
-          document.getElementById("infoWindowOrderPassAddr").innerText = "";
-          document.getElementById("infoWindowOrderTargetAddr").innerText = "";
         } else {
           var addr = v[0];
           if (addr != null)
