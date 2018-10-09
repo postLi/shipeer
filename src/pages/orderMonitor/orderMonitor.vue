@@ -450,9 +450,6 @@
         });
       },
       getOrderDetail2() {
-        var res = this.orderdetail;
-        if (res == null)
-          return;
         var marker = this.markerPoint;
         if (marker == null)
           return;
@@ -464,6 +461,7 @@
         var carInfo = this.carList[idx];
         if (carInfo == null)
           return;
+
         var ele = document.getElementById("infoWindowTitle");
         if (!ele) {
           setTimeout("getOrderDetail2()", 100);
@@ -553,7 +551,9 @@
           setTimeout("getOrderDetail2()", 100);
           return;
         }
-
+        var res = this.orderdetail;
+        if (res == null || res.data == null)
+          res = {data: {}};
         var v = res.data.carNumber;
         if (v == null)
           v = "";
