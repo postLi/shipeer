@@ -747,8 +747,8 @@
         if (carInfo == null)
           return;
         var status = carInfo.statusText;
-        if (status == null && carInfo.statusCode != null) {
-          status = this.statusCode2Text(carInfo.statusCode);
+        if (status == null && carInfo.status != null) {
+          status = this.statusCode2Text(carInfo.status);
         }
         if (status == null) {
           status = this.orderStatus;
