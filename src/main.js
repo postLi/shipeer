@@ -101,7 +101,7 @@ Axios.interceptors.response.use(
           status: 100
         }
 
-      } else if (status === 401 && response && response.config.url.indexOf('/uaa/mobile/token') === -1) {
+      } else if (status === 401) {
         err = {
           text: '',
           status: 200
