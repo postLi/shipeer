@@ -19,7 +19,7 @@
               <el-popover
                 ref="popoveruser"
                 placement="top-start"
-                width="200"
+                width="140"
                 trigger="hover"
                 class="user-center"
 
@@ -28,7 +28,7 @@
                   <el-col ><span @click="gotoManageC">管理中心</span></el-col>
                 </el-row>
                 <el-row>
-                  <el-col>修改密码</el-col>
+                  <el-col><span @click="gotochangePW">修改密码</span></el-col>
                 </el-row>
                 <el-row>
                   <el-col><span @click="laygot">退出登录</span></el-col>
@@ -84,6 +84,10 @@
         ...mapActions(['setBodyWidth']),
         gotoManageC(){
           this.$router.push({path: '/manageCenter'})
+        },
+  // /changePassword
+        gotochangePW(){
+          this.$router.push({path: '/changePassword'})
         },
         laygot(){
           return deleteToken().then(res =>{
@@ -165,15 +169,17 @@
     }
   }
   .el-popover.el-popper{
-    width: 150px !important;
+    /*width: 120px !important;*/
     .el-row{
       .el-col{
         padding: 10px 0;
         text-align: center;
         cursor: pointer;
+
       }
       .el-col:hover{
-        background: #ffe;
+        background: #ddd;
+        color: #1890ff;
       }
     }
   }

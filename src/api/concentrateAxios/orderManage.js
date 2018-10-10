@@ -48,12 +48,12 @@ export function getSysDictByCodesGet(codes) {
 }
 
 
-// /common/aflcMemberCenter/v1/getAuroraSignature
-// 获取极光签名
+// /common/aflcMemberCenter/v1/getAuroraAuthInfo
+// 获取极光鉴权信息
 // 用户类型（1：车主；2：货主）
-export function getAuroraSignature(type ) {
+export function getAuroraSignature()  {
 
-  return Axios.get(''+swg3+'/common/aflcMemberCenter/v1/getAuroraSignature/'+'?type='+type)
+  return Axios.get(''+swg3+'/common/aflcMemberCenter/v1/getAuroraAuthInfo/'+'?type='+2)
 }
 
 

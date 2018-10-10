@@ -195,6 +195,7 @@
 <style lang="scss">
  .driver-lll-my{
    margin: 10px;
+   background: #fff;
    .info-table{
      /*display: flex;*/
      padding: 20px 10px 0 20px;

@@ -13,7 +13,7 @@
     </el-form>
     <div class="search-btn">
       <!--<el-row>-->
-        <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
+        <el-button type="success" size="mini" @click="onSubmit">查询</el-button>
         <el-button type="info" size="mini" @click="clearForm">重置</el-button>
       <!--</el-row>-->
     </div>

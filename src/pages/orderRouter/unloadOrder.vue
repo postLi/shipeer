@@ -40,79 +40,10 @@
       </el-header>
       <div class="bg"></div>
       <el-main>
-        <!--<ul class="clearfix">-->
-          <!--<li>-->
-            <!--<div class="liClass-top">-->
-              <!--<img src="../../assets/role.png"/>-->
-              <!--<p></p>-->
-              <!--<span class="actClass">网显示</span>&nbsp;&nbsp;<span class="unClass">(外星人)</span>-->
-              <!--<el-rate-->
-                <!--v-model="value5"-->
-                <!--disabled-->
-                <!--show-score-->
-                <!--text-color="#ff9900"-->
-                <!--score-template="{value}">-->
-              <!--</el-rate>-->
-              <!--<i><icon-svg iconClass="lll03xin"></icon-svg></i>-->
-              <!--<span class="unClass">13344单</span>-->
-
-            <!--</div>-->
-            <!--<div class="liClass-foot">-->
-              <!--<img src="../../assets/main/xh@3x.png"/>-->
-              <!--<p></p>-->
-              <!--<p class="actClass">苏**v99</p>-->
-              <!--<p class="unClass">广州</p>-->
-              <!--<span class="unClass">承载16方,&nbsp;2.4吨</span>-->
-            <!--</div>-->
-          <!--</li>-->
-          <!--<li>-->
-            <!--<div class="divClass">-->
-              <!--<span class="actClass">用车时间:</span><span class="blueClass">2019-1-10 09:3</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">付款方式:</span><span>发货人付款(现金支付)</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">运输支付:</span><span>￥66.00</span>&nbsp;&nbsp;<span class="blueClass">费用明细</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">需要车型:</span><span>巍面</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">货物名称:</span><span>家具</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">货物重量:</span><span><8,1-2方	</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">额外服务:</span><span>需要回单	</span>-->
-            <!--</div>-->
-            <!--<div class="divClass last">-->
-              <!--<span class="unClass">备注:</span><span>协助装货</span>-->
-            <!--</div>-->
-          <!--</li>-->
-        <!--</ul>-->
-        <!--<ul>-->
-          <!--<li>-->
-            <!--<p>猎德村复建房五区</p>-->
-            <!--<span>南山区兴南路10号</span>-->
-          <!--</li>-->
-          <!--<li>-->
-            <!--<p>猎德村复建房五区</p>-->
-            <!--<span>南山区兴南路10号</span>-->
-          <!--</li>-->
-          <!--<li>-->
-            <!--<p>猎德村复建房五区</p>-->
-            <!--<span>南山区兴南路10号</span>-->
-          <!--</li>-->
-        <!--</ul>-->
         <OrderDetail></OrderDetail>
       </el-main>
 
     </el-container>
-    <!--<div class="payFor-hearder">-->
-    <!--支付收银台-->
-    <!--</div>-->
   </div>
 </template>
 

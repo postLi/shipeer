@@ -28,6 +28,7 @@ const ChargeStandard = () => import('@/pages/chargeStandard/chargeStandard.vue')
 const AddressManage = () => import('@/pages/addressManage/addressManage.vue');
 const RouteManage = () => import('@/pages/routeManage/routeManage.vue');
 const PassWordEdit = () => import('@/pages/passWordEdit/passWordEdit.vue');
+const ChangePassword = () => import('@/pages/changePassword/index.vue');
 const OrderMonitor = () => import('@/pages/orderMonitor/orderMonitor.vue');
 const Track = () => import('@/pages/orderMonitor/track.vue');
 
@@ -166,6 +167,8 @@ export default new Router({
     },
     {
       path: '/passWordEdit', component: PassWordEdit, name: 'PassWordEdit'
+    },{
+      path: '/changePassword', component: ChangePassword, name: 'ChangePassword'
     },
     {
       path: '/order1',

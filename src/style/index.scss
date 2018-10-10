@@ -2,7 +2,7 @@
 //@import './element-ui.scss';
 //@import './mixin.scss';
 //@import './animate.scss';
-//@import './tab.scss';
+@import './tab.scss';
 //@import './flow.scss';
 //// 页面基本样式
 //@import './page.scss';
@@ -101,6 +101,10 @@ table{
     clear: both;
     height: 0;
   }
+}
+
+.search-form{
+
 }
 
 // .info-require::before{
