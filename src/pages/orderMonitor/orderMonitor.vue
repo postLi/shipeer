@@ -992,57 +992,57 @@
 
         ele = document.getElementById("infoWindowOrderTime");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderCarType");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderCargo");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderExtraServ");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderMemo");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPrice");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPayState");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("mapAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderStartAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPassAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderTargetAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         var pos = markerPoint.getPosition();
