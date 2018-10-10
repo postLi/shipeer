@@ -677,6 +677,13 @@
         this.carList = [];
         this.carList = l;
       },
+      noPosition() {
+        this.$confirm('未获取到该订单的位置数据，请稍后再试. ', '', {
+          confirmButtonText: '确定',
+          showCancelButton: false,
+          type: 'warning'
+        });
+      },
       getOrderDetail(orderId, marker) {
         try {
           if (orderId == null || !marker)
@@ -688,20 +695,30 @@
           if (carInfo == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
+            if (res.data == null) {
+              this.noPosition();
+              return;
+            }
             var trails = res.data.aflcOrderCarTrails;
             var lnglat = marker.getPosition();
-            if (!lnglat && (!trails || trails.length < 1))
+            if (!lnglat && (!trails || trails.length < 1)) {
+              this.noPosition();
               return;
+            }
             var lastTrail = trails[trails.length - 1];
-            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null))
+            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null)) {
+              this.noPosition();
               return;
+            }
             var pos = null;
             if (lastTrail.longitude != null && lastTrail.latitude != null)
               pos = [lastTrail.longitude, lastTrail.latitude];
             if (pos == null)
               pos = lnglat;
-            if (pos == null)
+            if (pos == null) {
+              this.noPosition();
               return;
+            }
 
             marker.setPosition(pos);
             marker.setMap(this.mp);
@@ -1143,7 +1160,11 @@
       showTrack(orderId) {
         var pois = this.track;
         if (pois == null || pois.length < 2) {
-          alert("未获取到轨迹数据，请稍后再试. ");
+          this.$confirm('未获取到轨迹数据，请稍后再试. ', '', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'warning'
+          });
           return;
         }
         var d = AMap.GeometryUtil.distanceOfLine(pois);
