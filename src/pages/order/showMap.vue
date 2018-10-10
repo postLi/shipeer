@@ -199,7 +199,6 @@
               });
               positionPicker.on('success', (positionResult)=> {
                 console.log(positionResult)
-                this.data.adcode = positionResult.regeocode.addressComponent.adcode;//下单时的发货地belongCity
                 this.data.originCoordinate = [positionResult.position.lat,positionResult.position.lng].join(',');
                 this.data.origin = positionResult.address;
                 this.data.originName = positionResult.regeocode.pois[0].name;

@@ -10,7 +10,7 @@
           <input type="text" v-model="queryKeyword" class="my-input margin_l_10" placeholder="请输入关键字搜索">
         </div>
 
-        <div class="search-right height_100 flex pointer" @click="getList()">
+        <div class="search-right height_100 flex pointer window-title-left" @click="getList()">
           搜索
         </div>
 

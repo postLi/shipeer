@@ -117,7 +117,7 @@
                       <div class="flex_1 height_100 search-left flex_a">
                         <input type="text" v-model="search_route" class="my-input margin_l_10" placeholder="请输入关键字搜索">
                       </div>
-                      <div class="search-right height_100 flex pointer">搜索</div>
+                      <div class="search-right height_100 flex pointer window-title-left">搜索</div>
                     </div>
                     <div class="p_r">
                       <el-button size="small" @click="$refs.show[0].showWindow()" type="primary">新增常用路线</el-button>
@@ -475,7 +475,7 @@
             originName: "",
             provinceCityArea: "",
             shipperSort: i,
-            show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''
+            show:false,mapTo:null,zoom:14,checkP:true,checkMap:true
           });
           // this.form.to[i].floorHousenum =item;
           // this.form.to[i].consignee =item;
@@ -697,37 +697,36 @@
           originName: "",
           provinceCityArea: "",
           shipperSort: i,
-          show:false,mapTo:'',zoom:14,checkP:true,checkMap:true,adcode:''})
+          show:false,mapTo:'',zoom:14,checkP:true,checkMap:true})
       },
 
       next(){
         this.$refs['orderRules'].validate((valid) => {
           if (valid) {
-            // let check = this.form.to.some((item)=>{
-            //   return item.origin === ''
-            // });
-            // if(check){
-            //   this.$message.warning('收发货地址必填');
-            //   return
-            // }
+            let geocoder = new AMap.Geocoder({});
+            geocoder.getAddress(this.form.to[0].originCoordinate.split(',').reverse(), (status, result) =>{
+              if (status === 'complete' && result.info === 'OK') {
+                this.form.belongCity  = result.regeocode.addressComponent.adcode;
+                this.form.to.forEach((item)=>{
+                  delete item.mapTo;
+                });
+                let extraServiceDtoList = [];
+                let list =  this.requestList.filter((item)=>{
+                  return item.selected === true
+                });
+                list.forEach((item)=>{
+                  extraServiceDtoList.push({
+                    extraId:item.extraId,
+                    remark:item.remark
+                  })
+                });
+                this.form.extraServiceDtoList = extraServiceDtoList;
+                this.$localStorage.set("formDown",this.form);
+                this.setForm(this.form);
+                this.$router.push('/order/showMapNext');
+              }
+            });
 
-            this.form.to.forEach((item)=>{
-              delete item.mapTo;
-            });
-            let extraServiceDtoList = [];
-            let list =  this.requestList.filter((item)=>{
-              return item.selected === true
-            });
-            list.forEach((item)=>{
-              extraServiceDtoList.push({
-                extraId:item.extraId,
-                remark:item.remark
-              })
-            });
-            this.form.extraServiceDtoList = extraServiceDtoList;
-            this.$localStorage.set("formDown",this.form);
-            this.setForm(this.form);
-            this.$router.push('/order/showMapNext');
           } else {
             console.log('error submit!!');
             return false;

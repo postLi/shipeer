@@ -6,7 +6,7 @@
     <div id="myPageTop">
      <div class="headerClass">
        <span>{{title}}</span>
-       <span @click="gotoOrder"><i class="el-icon-close"></i>取消订单</span>
+       <span @click="gotoOrder" v-if="title === '待付款' || title === '司机已接单' || title === '司机赶往提货地'"><i class="el-icon-close"></i>取消订单</span>
      </div>
       <div class="contentClass">
         <div class="topClass">
@@ -22,21 +22,21 @@
 
         </div>
         <div class="centClass">
-          <route-line :data="myOrderDetail.addresses" from="getPickUp2"></route-line>
+          <route-line :data="getDetail.addresses" from="getPickUp2"></route-line>
 
         </div>
         <div class="footClass">
           <ul>
-            <li><span class="dateClass">用车时间:</span><span class="timeClass">2018-09-12 09:08</span></li>
-            <!--<li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>-->
-            <li><span>付款方式:</span><span>发货人付款(现金付款)</span></li>
-            <li><span>实际支付:</span><span>(已支付) &nbsp;￥99.00</span></li>
-            <li><span>运输费用:</span><span>¥80.56 <el-button type="success" size="mini"  class="btnClass" @click="add">加小费</el-button></span></li>
-            <li><span>需要车型:</span><span>未免</span></li>
-            <li><span>货物名称:</span><span>电脑</span></li>
-            <li><span>货物重量:</span><span><0.7吨,1-2方</span></li>
-            <li><span>额外服务:</span><span>需要回单</span></li>
-            <li><span>备注:</span><span>协助装货</span></li>
+            <li><span class="dateClass">用车时间:</span><span class="timeClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span></li>
+            <li><span class="dateClass">订单号:</span ><span class="timeClass" style="margin-left: 14px;">{{$route.query.orderSerial}}</span></li>
+            <li><span>付款方式:</span><span>{{getDetail.payStatus || 0}}&nbsp;&nbsp; ({{getDetail.payWay}}付款)</span></li>
+            <li><span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{getDetail.factPay || 0}}</span></li>
+            <li><span>运输费用:</span><span>¥{{getDetail.orderPrice || 0}} </span></li>
+            <li><span>需要车型:</span><span>{{getDetail.carTypeName}}</span></li>
+            <li><span>货物名称:</span><span>{{getDetail.goodsName}}</span></li>
+            <li><span>货物重量:</span><span>{{getDetail.goodsWeight?getDetail.goodsWeight + '吨':''}}&nbsp;{{getDetail.goodsVolume?getDetail.goodsVolume + '方':''}}	</span></li>
+            <li><span>额外服务:</span><span>{{getDetail.extraName}}</span></li>
+            <li><span>备注:</span><span>{{getDetail.sendWord}}</span></li>
           </ul>
         </div>
         <div class="myPageFoot">
@@ -58,7 +58,7 @@
           </ul>
           <ul>
             <li>
-              <img src="../../assets/role.png" alt="">
+              <img :src="getDetail.servicePic" alt="" height="36">
               <p>桂**v895</p>
               <p class="c-9 window-title-12">广东</p>
               <p class="c-9 window-title-12">承载16方，2.5吨</p>
@@ -67,31 +67,6 @@
         </div>
       </div>
 
-      <div class="diaClass">
-        <el-dialog
-          title="提示:优惠券不能抵扣小费费用"
-          :visible.sync="centerDialogVisible"
-          width="30%"
-          center>
-          <div class="radioList">
-            <el-radio-group v-model="radio3">
-              <el-radio-button label="radioList[0].name">￥{{radioList[0].name}}元</el-radio-button>
-              <el-radio-button label="radioList[1].name">￥{{radioList[1].name}}元</el-radio-button>
-              <el-radio-button label="radioList[2].name">￥{{radioList[2].name}}元</el-radio-button>
-              <!--<el-radio-button label="北京"></el-radio-button>-->
-              <!--<el-radio-button label="广州"></el-radio-button>-->
-            </el-radio-group>
-          </div>
-          <div class="textarea">
-            <el-input type="type" placeholder="其他金额,在此输入,(最高200元)～" ></el-input>
-          </div>
-          <!--<span>需要注意的是内容是默认不居中的</span>-->
-          <span slot="footer" class="dialog-footer">
-    <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="success" @click="centerDialogVisible = false">确 定</el-button>
-  </span>
-        </el-dialog>
-      </div>
     </div>
 
 
@@ -99,9 +74,9 @@
   </div>
 </template>
 <script>
-  import {loadJs} from '@/utils/'
+  import {loadJs,parseTime} from '@/utils/'
   import {getAuroraSignature} from '@/api/concentrateAxios/orderManage'
-  import { getApi ,postApi} from "@/api/api.js";
+  import { getApi ,postApi,pustApiX} from "@/api/api.js";
   import routeLine from '../order/routeLine.vue'
   export default {
     components:{routeLine},
@@ -109,12 +84,6 @@
     },
     data() {
       return {
-        radio3: '10',
-        radioList:[
-          {name:10},
-          {name:20},
-          {name:30}
-        ],
         jimInfo:{
           appkey: "02c4b4f0341b60405b3c99e7",
           key: "ce2f5588bd87f228b514e847",
@@ -127,23 +96,32 @@
         popVisibleTitle:'',
         value5: 3.7,
         noinfo: true,
-        dialogTableVisible: false,
-        thepos: '',
-        thename: '',
-        theobj: {},
+
         map:{},
-        myOrderDetail:{},//我的订单详情(货主)
-        title:''
+        getDetail:{},//我的订单详情(货主)
+        title:'',
+        carUrl: require("../../assets/orderMonitor/car.png"),
       }
     },
     mounted() {
-
-
-      this.init()
-
+      //this.loadMsg()
+      //我的订单详情(货主)
       postApi(`/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=${this.$route.query.orderSerial}`).then((res)=>{
-        console.log(res)
         if(res.status === 200){
+
+
+          this.getDetail = res.data;
+          this.roadMap(res.data)
+        } else {
+
+        }
+      });
+
+      //状态跟踪(货主)
+      pustApiX(`/aflc-order/aflcMyOrderApi/statusFollowing?orderSerial=${this.$route.query.orderSerial}`).then((res)=>{
+        console.log(res)
+
+        if(res.data.longitude && res.status === 200){
           switch (res.data.orderStatus) {
             case "AF00801":
               this.title = '待付款';
@@ -167,23 +145,37 @@
               this.title = '司机已到目的地';
               break ;
           }
+          let marker = new AMap.Marker({
+            // icon: this.carUrl,
+            icon:new AMap.Icon({
+              size: new AMap.Size(48,60),
+              image:this.carUrl,
+              imageSize:new AMap.Size(48,60)
+            }),
+            map: this.map,
+            position: [113.33368,23.131493],
+            offset:new AMap.Pixel(-24, -60),
+          });
+          let content = [];
 
-          this.myOrderDetail = res.data;
+          switch (res.data.orderStatus) {
+            case "":
 
-          this.roadMap(res.data)
-        } else {
+              break;
 
+          }
+
+          content.push("司机达到提货地后，装卸各有<span style='color:#44c0ff'>30</span>分钟的免费服务时间");
+
+          let infoWindow = new AMap.InfoWindow({
+            isCustom: true,  //使用自定义窗体
+            content: this.createInfoWindow(content.join("<br/>")),
+            offset: new AMap.Pixel(0, -71),
+            showShadow:true
+          });
+          infoWindow.open(this.map, marker.getPosition());
         }
-      });
-
-    },
-    created() {
-
-
-    },
-// 关闭时清空地图数据
-    destoryed() {
-      this.exit()
+      })
     },
 
     methods: {
@@ -207,10 +199,11 @@
         this.map.plugin(['AMap.ToolBar'],  () =>{
           this.map.addControl(new AMap.ToolBar())
         });
+
         let truckOptions = {
           map: this.map,
           // policy:1,
-          size:1,
+          size:size || 1,
           //city:'',
           //panel:'panel'
         };
@@ -220,7 +213,7 @@
           path.push({lnglat:[item.longitude,item.latitude]});
         });
         driving.search(path,(status, result) =>{
-
+console.log(result)
         });
       },
       add(){
@@ -234,31 +227,25 @@
           this.map.destroy();
           this.map = {}
         }
-        this.thepos = ''
-        this.thename = ''
-        this.theobj = {}
+
         this.noinfo = true
       },
-      init() {
 
-       // this.loadMsg()
-      },
-      initMsg(){
+     async initMsg(){
         let JIM = new JMessage({
           debug : true
         })
-
-
 
         JIM.onDisconnect(function(){
           console.log("【disconnect】");
         }); //异常断线监听
 
-        this.getSignature()
+      await this.getSignature()
         console.log(this.jimInfo,'几率')
         const md5 = require("js-md5");
         const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
-        JIM.init({
+
+       JIM.init({
           "appkey":this.jimInfo.appkey,
           "random_str": this.jimInfo.random_str,
           "signature":  md5(this.jimInfo.signature),
@@ -286,26 +273,6 @@
         }
       },
 
-      close(done) {
-        this.exit()
-        this.$emit('update:popVisible', false)
-        if (typeof done === 'function') {
-          done()
-        }
-      },
-
-// 设置获取到的信息
-      setData(pos, addr, obj) {
-        this.thepos = pos
-        this.thename = addr
-        this.theobj = obj
-        this.noinfo = false
-        console.log(obj)
-      },
-      submitForm() {
-        this.$emit('success', this.thepos, this.thename, this.theobj)
-        this.close()
-      },
       getSignature(){
         return getAuroraSignature(2).then(res => {
           if(res.status===200){
@@ -315,8 +282,40 @@
             this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
           }
         })
+      },
+      //构建自定义信息窗体
+      createInfoWindow(content) {
+        var info = document.createElement("div");
+        info.className = "info";
+
+        // 定义中部内容
+        var middle = document.createElement("div");
+        middle.className = "info-middle";
+        middle.style.backgroundColor = 'white';
+        middle.innerHTML = content;
+        info.appendChild(middle);
+
+        // 定义底部内容
+        var bottom = document.createElement("div");
+        bottom.className = "info-bottom";
+        bottom.style.position = 'relative';
+        bottom.style.top = '-3px';
+        bottom.style.margin = '0 auto';
+        var sharp = document.createElement("img");
+        sharp.src = "https://webapi.amap.com/ui/1.0/ui/overlay/SimpleInfoWindow/assets/sharp.png";
+        sharp.width = "20";
+        bottom.appendChild(sharp);
+        info.appendChild(bottom);
+
+        return info;
       }
-    }
+    },
+    created() {
+
+    },
+    destroyed() {
+      this.exit()
+    },
   }
 </script>
 
@@ -403,7 +402,7 @@
       width: 380px;
       font-family: "Microsoft Yahei", "微软雅黑", "Pinghei";
       font-size: 14px;
-
+      z-index: 1000;
       .headerClass{
         font-size: 14px;
         color: #fff;
@@ -564,50 +563,6 @@
           }
         }
       }
-      .diaClass{
-        .el-dialog.el-dialog--center{
-          margin-top: 30vh !important;
-          /*.el-dialog__wrapper{*/
-            .el-dialog__header{
-
-            }
-            .el-dialog__body{
-
-              .radioList{
-                text-align: center;
-                .el-radio-group{
-                  .el-radio-button{
-                    margin-left: 10px;
-                    /*background: #ffe;*/
-                    .el-radio-button__inner{
-                      background: #ffe;
-                    }
-                  }
-                  .el-radio-button.is-active{
-                    .el-radio-button__inner{
-                      background: #67c23a;
-                    }
-                  }
-                }
-
-              }
-              .textarea{
-                text-align: center;
-                display: inline-block;
-                width: 100%;
-                margin-top: 10px;
-                .el-input{
-                  width: 50%;
-                }
-              }
-            }
-          .el-dialog__footer{
-
-          }
-          /*}*/
-        }
-
-      }
     }
 
     .myPageFoot{
@@ -640,5 +595,32 @@
 
 
 
+  }
+
+  .info {
+    border: solid 1px silver;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px 1px silver;
+  }
+  div.info-middle {
+    padding: 6px;
+    border-radius: 5px;
+  }
+  div.info-bottom {
+    height: 0px;
+    width: 100%;
+    clear: both;
+    text-align: center;
+  }
+  div.info-bottom img {
+    position: relative;
+    z-index: 104;
+  }
+  span {
+
+  }
+  .info-middle img {
+    float: left;
+    margin-right: 6px;
   }
 </style>

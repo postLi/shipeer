@@ -39,7 +39,7 @@ const state = {
       originName: "",//地点名称
       provinceCityArea: "",//省市区（格式:广东省广州市天河区）
       shipperSort: 0,//线路排序号
-      show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''
+      show:false,mapTo:null,zoom:14,checkP:true,checkMap:true
     },
       {
         consignee: "",
@@ -50,7 +50,7 @@ const state = {
         originName: "",
         provinceCityArea: "",
         shipperSort: 1,
-        show:false,mapTo:null,zoom:14,checkP:true,checkMap:true,adcode:''}
+        show:false,mapTo:null,zoom:14,checkP:true,checkMap:true}
     ],
     remark:''//给司机捎句话
   },

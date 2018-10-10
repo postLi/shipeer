@@ -194,7 +194,7 @@
           return this.reward + this.remissionDiscount;
         },
         _totalAmount:function () {//总价格(计算,原价+小费-优惠金-优惠卷)
-          return this.parm.orderPrice + this.parm.extraPrice * 1 - this.reward - this.remissionDiscount
+          return this.parm.orderPrice  - this.reward - this.remissionDiscount
         }
       },
       watch:{
@@ -295,7 +295,6 @@
              }else {
                this.remissionDiscount = this.parm.orderPrice - this.parm.orderPrice * item.remissionDiscount/10;
              }
-             //this.parm._totalAmount = this.parm._orderPrice + this.parm.extraPrice * 1  - this.reduce;
            }
 
          }else{
@@ -313,6 +312,7 @@
               currentPage: 1,
               pageSize: 100,
               vo: {
+                areaCode:this.$localStorage.get("28ky-userdata").areaCode,//货主的地区id
                 couponStatusName: "未使用",
                 carType:this.form.carId,
                 userId: this.$localStorage.get("28ky-userdata").shipperId
@@ -321,7 +321,6 @@
             postApi('/aflc-sm/aflcCouponExchangeApiOwner/exchangeOwner',parm).then((res)=>{
               if(res.status === 200){
                 this.couponList = res.data.list;
-                console.log(this.couponList.length)
               }
             });
           }
@@ -360,7 +359,7 @@
             this.$message.warning("距离必须大于0.1公里");
             return
           }
-
+          this.math();
           if(this.payTypeId === 1){
             if(this.payChannel === "ye"){
             await this.findMywallet();
@@ -439,8 +438,10 @@
           };
           await postApi('/aflc-order/aflcOrderApi/getPreferential',parm).then((res)=>{
             if(res.status === 200 && res.data.aflcShipperPreferentialtDetailDto !== null){
-              this.parm.preferentialAmountId = res.data.aflcShipperPreferentialtDetailDto.id;
-              this.reward = this.rewardShow = res.data.aflcShipperPreferentialtDetailDto.reward;
+              if(this.form.belongCity === res.data.aflcShipperPreferentialtDetailDto.areaCode){
+                this.parm.preferentialAmountId = res.data.aflcShipperPreferentialtDetailDto.id;
+                this.reward = this.rewardShow = res.data.aflcShipperPreferentialtDetailDto.reward;
+              }
             } else {
               this.$message.warning(res.errorInfo)
             }
@@ -448,7 +449,6 @@
         },
        async createOrder(){
          await postApi('/aflc-order/aflcOrderApi/createOrder',this.parm).then((res)=>{
-            console.log(res)
             if(res.status === 200){
               this.orderId = res.data;
             } else {
@@ -466,11 +466,11 @@
             this.outstripPrice = Math.ceil(distance * outstripPrice);
 
             // console.log(this.outstripPrice)
-            this.parm.orderPrice =  this.price + this.outstripPrice;
+            this.parm.orderPrice =  this.price + this.outstripPrice + this.form.tipName * 1;
           }else {
-            this.parm.orderPrice =  this.price;
+            this.parm.orderPrice =  this.price + this.form.tipName * 1;
           }
-          this.parm.totalAmount  = this.parm.orderPrice + this.parm.extraPrice * 1;
+          this.parm.totalAmount  = this.parm.orderPrice  - this.reward - this.remissionDiscount;
 
         }
       },
@@ -496,7 +496,7 @@
               priceType: priceType,//定价类型 1标准定价 2区域定价
               spec: this.form.specCode//车辆规格
             },
-            belongCity: this.form.to[0].adcode,//订单所属区域(定位的城市id)
+            belongCity: this.form.belongCity,//订单所属区域(定位的城市id)
             couponId: "",//优惠券id
             distance: 0,//实际总距离(地图计算)
             extraPrice: this.form.tipName,//附加小费
