@@ -245,6 +245,7 @@
         trafficVisible: false,
         trafficLayer: null,
         carUrl: require("../../assets/orderMonitor/car.png"),
+        grayCarUrl: require("../../assets/orderMonitor/car_gray.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
         infoWindow2: null,
