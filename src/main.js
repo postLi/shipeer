@@ -8,10 +8,10 @@ import ElementUI from 'element-ui';
 import Axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css';
 import VueJsCookie from 'vue-js-cookie'
-import {getUserInfo,removeUserInfo} from '@/utils/auth'
-import { Message, MessageBox } from 'element-ui'
+import {getUserInfo, removeUserInfo} from '@/utils/auth'
+import {Message, MessageBox} from 'element-ui'
 import '@/icons' // icon
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import * as filters from './filters'
 
 Vue.config.productionTip = false;
@@ -49,12 +49,12 @@ Axios.interceptors.request.use(config => {
     // console.log(config.url, config.params)
   }
 
-  if(localStorage.get("28ky-userdata")){
+  if (localStorage.get("28ky-userdata")) {
     config.headers['user_token'] = localStorage.get("28ky-userdata").userToken
   }
 
   if (config.url.indexOf('http://') === -1) {
-     config.url = '/api' + config.url
+    config.url = '/api' + config.url
   }
 
   return config
@@ -101,7 +101,7 @@ Axios.interceptors.response.use(
           status: 100
         }
 
-      } else if (status === 401 && response.config.url.indexOf('/uaa/mobile/token') === -1) {
+      } else if (status === 401 && response && response.config.url.indexOf('/uaa/mobile/token') === -1) {
         err = {
           text: '',
           status: 200
@@ -110,7 +110,7 @@ Axios.interceptors.response.use(
         Message({
           type: 'info',
           message: '登录信息已失效，请重新登录. ',
-          onClose: ()=>{
+          onClose: () => {
             location.href = '/#/'
           }
         })
@@ -139,21 +139,21 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 
-Date.prototype.format = function(fmt) {
+Date.prototype.format = function (fmt) {
   var o = {
-    "M+" : this.getMonth()+1,                 //月份
-    "d+" : this.getDate(),                    //日
-    "h+" : this.getHours(),                   //小时
-    "m+" : this.getMinutes(),                 //分
-    "s+" : this.getSeconds(),                 //秒
-    "q+" : Math.floor((this.getMonth()+3)/3), //季度
-    "S"  : this.getMilliseconds()             //毫秒
+    "M+": this.getMonth() + 1,                 //月份
+    "d+": this.getDate(),                    //日
+    "h+": this.getHours(),                   //小时
+    "m+": this.getMinutes(),                 //分
+    "s+": this.getSeconds(),                 //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    "S": this.getMilliseconds()             //毫秒
   };
-  if(/(y+)/.test(fmt))
-    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
-  for(var k in o)
-    if(new RegExp("("+ k +")").test(fmt))
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length===1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+  if (/(y+)/.test(fmt))
+    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt))
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
   return fmt;
 };
 
