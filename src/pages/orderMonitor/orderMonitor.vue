@@ -110,7 +110,7 @@
                 {{item.driverName}}
               </div>
               <div class="cell2">
-                {{item.mobile}}
+                {{item.driverMobile}}
               </div>
             </div>
           </div>
@@ -625,7 +625,7 @@
         v = res.data.driverMobile;
         if (v == null)
           v = "";
-        carInfo.mobile = v;
+        carInfo.driverMobile = v;
         document.getElementById("infoWindowMobile").innerText = v;
 
         v = res.data.useCarTime;
