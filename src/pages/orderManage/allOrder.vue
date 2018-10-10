@@ -68,7 +68,7 @@
             fixed
             sortable
 
-            width="110"
+            width="115"
             label="订单状态" >
             <template slot-scope="scope">
               <span class="greenClass">{{ scope.row.status }}</span>
@@ -125,8 +125,8 @@
             width="150"
             label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
-              <!--<el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
+              <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
+              <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
               <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
               <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
 

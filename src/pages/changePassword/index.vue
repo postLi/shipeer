@@ -1,8 +1,8 @@
 <template>
-  <div class="login-con-lll" v-loading="loading" :style="{'background-image':backgroundImg}">
+  <div class="changePW-con-lll" v-loading="loading">
     <div class="login-top">
       <div class="top-wrapper clearfix">
-        <img src="../../assets/login/lll01-ky.png" alt="">
+        <img src="../../assets/register/logo_green.png" alt="">
         <div class="top-telphone">
           <span>合作热线：</span><span>{{serverPhone}}</span>
         </div>
@@ -10,88 +10,50 @@
 
     </div>
     <div class="login-centent">
-      <div class="centent-left">
-        <img src="../../assets/login/code.png" alt="">
-        <div class="left-word">
-          <span>28快运</span>
-          <span>快好省您的物流</span>
-        </div>
-      </div>
-      <div class="centent-right">
-        <el-form class="centent-form">
-          <h3>企业用户登录</h3>
-          <div class="form-tab">
-            <!--class="tabLogin"-->
-            <!--class="tabVer"-->
-            <span @click="tabId=0" :class="[tabId === 0 ? 'activet' : 'unatctiv']">账户登录 </span>|
-            <span @click="tabId=1" :class="[tabId === 1 ? 'activet' : 'unatctiv']">验证码登录</span>
-          </div>
-          <el-form class="tab-loginClass" v-show="tabId===0" :model="userData" :rules="userRules" ref="userLogin">
-            <el-form-item class="" prop="userPhone">
-              <el-input :maxlength="11" placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone"
+      <div class="chang-cont">
+        <img v-if="status ===1" class="contImg" src="../../assets/register/one.png" alt="">
+        <img v-if="status ===2" class="contImg" src="../../assets/register/two.png" alt="">
+        <img v-if="status ===3" class="contImg" src="../../assets/register/three.png" alt="">
+        <!--<div class="pw-status">-->
+          <!--<el-steps :active="active" finish-status="success">-->
+            <!--<el-step title="步骤 1"></el-step>-->
+            <!--<el-step title="步骤 2"></el-step>-->
+            <!--<el-step title="步骤 3"></el-step>-->
+          <!--</el-steps>-->
+        <!--</div>-->
+        <div class="pw-form">
+          <el-form class="tab-loginClass":model="userData" :rules="userRules" ref="userLogin">
+            <el-form-item class="" prop="userPhone" label="手机号:">
+              <el-input :maxlength="11" placeholder="请输入注册手机号"
                         v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
 
               </el-input>
             </el-form-item>
-            <el-form-item class="" prop="userPassword">
-              <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
-                        clearable @keyup.enter.native="subLogin">
+            <el-form-item class="first" prop="userPhone" label="验证码:">
+              <el-input :maxlength="11" placeholder="请输入验证码"
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+                <template slot="append">
+                  <img src="../../assets/role.png" alt="">
+                  <span>看不清楚，点击换一张图片</span>
+                </template>
+
 
               </el-input>
-              <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
-              <!--maxlength="6" clearable>-->
-
-              <!--</el-input>-->
             </el-form-item>
-            <el-form-item class="" prop="pwVcode">
-              <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable
-                        @keyup.enter.native="subLogin">
-                <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
+            <el-form-item class="last" prop="userPhone" label="校验码:" >
+              <el-input :maxlength="11" placeholder="请输入验证码"
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+                <template slot="append" >
+                  <el-button type="primary" @click="next">获取校验码</el-button>
                 </template>
               </el-input>
-            </el-form-item>
 
-          </el-form>
-          <el-form class="tab-verClass" v-show="tabId===1" :model="verData" :rules="verRules" ref="verLogin">
-            <!--prop="verPhone"-->
-            <el-form-item class="">
-              <el-input placeholder="请输入手机号码" :maxlength="11" prefix-icon="el-icon-mobile-phone"
-                        v-model="verData.verPhone" clearable @keyup.enter.native="subLogin">
-              </el-input>
-            </el-form-item>
-
-            <el-form-item class="" prop="verGra">
-              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable @keyup.enter.native="subLogin">
-                <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
-                </template>
-              </el-input>
-            </el-form-item>
-            <!--prop="verNote"-->
-            <el-form-item class="ver-note">
-              <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
-                <template slot="append"><span @click="getValidNum">{{getValidtile}}</span></template>
-              </el-input>
             </el-form-item>
           </el-form>
-          <div class='login-rember'>
-            <ul>
-              <li>
-                <img src="../../assets/login/wechat.png" alt="">
-                微信登录
-              </li>
-              <li @click="gotoRegister"> 注册</li>
-
-              <li v-show="tabId===0" @click="$router.push('/passWordEdit')">忘记密码 <span>|</span></li>
-
-            </ul>
-          </div>
-          <div class="login-btn">
-            <el-button type="success" @click="subLogin">登录</el-button>
-          </div>
-        </el-form>
-
+        </div>
+        <div class="pw-foot">
+          <el-button type="success" @click="next">下一步</el-button>
+        </div>
       </div>
 
     </div>
@@ -135,6 +97,8 @@
         }
       }
       return {
+        status:1,
+        active: 0,
         backgroundImg: 'url(' + require('../../assets/login/lll01-bg.png') + ')',
         serverPhone: '',
         timer: null,
@@ -184,6 +148,9 @@
     },
 
     methods: {
+      next() {
+        if (this.active++ > 2) this.active = 0;
+      },
       gotoRegister() {
         this.$router.push({path: '/register'})
       },
@@ -255,18 +222,18 @@
               // this.loading = true
               let userPassword = md5(this.userData.userPassword)
               login(this.userData.userPhone + '|aflc-2', userPassword).then(data => {
-                if(data.status) {
+                if (data.status) {
                   this.$message({
                     message: '您的账号或者密码有误~',
                     type: 'warning'
                   })
-                }else{
+                } else {
                   VueJsCookie.set('28kytoken', data.access_token)
                   VueJsCookie.set('28kyuPhone', this.userData.userPhone)
                   // 跳转到首页
                   this.$router.push({path: '/order'})
                 }
-              }).catch(err=>{
+              }).catch(err => {
                 this.$message({
                   message: '您的账号或者密码有误~',
                   type: 'warning'
@@ -288,7 +255,7 @@
                 // 跳转到首页
                 this.$router.push({path: '/order'})
                 this.loading = false
-              }).catch(err=>{
+              }).catch(err => {
                 this.$message({
                   message: '您的账号或者密码有误~',
                   type: 'warning'
@@ -307,13 +274,7 @@
 </script>
 
 <style lang="scss">
-  ul, li {
-    padding: 0;
-    margin: 0;
-    list-style: none
-  }
-
-  .login-con-lll {
+  .changePW-con-lll {
     position: relative;
     height: 100%;
     min-height: 86px;
@@ -322,25 +283,27 @@
     background-size: cover;
     background-position: center;
     overflow: hidden;
-    min-width: 1230px;
+    min-width: 1138px;
     .login-top {
-      background-color: #000;
+      background-color: #fff;
       opacity: 0.5;
       position: fixed;
       top: 0;
       z-index: 2;
       width: 100%;
-      padding: 20px 0 20px 70px;
-
+      padding: 20px 0 15px 70px;
+      border-bottom: 1px solid #ddd;
       .top-wrapper {
-        max-width: 1230px;
+        max-width: 1138px;
         width: 100%;
         margin-left: auto;
         margin-right: auto;
         position: relative;
         min-width: 600px;
         img {
-          height: 35px;
+          width: 270px;
+          height: 64px;
+          /*height: 35px;*/
           margin: 0 auto;
           vertical-align: middle;
         }
@@ -363,151 +326,63 @@
 
     }
     .login-centent {
-      height: 100%;
+      /*height: 100%;*/
       min-height: 800px;
-      max-width: 1230px;
+      max-width: 1138px;
       width: 100%;
       margin-left: auto;
       margin-right: auto;
       position: relative;
-      .centent-left {
-        float: left;
-        margin: 320px 165px 0;
-        width: 335px;
-        .left-word {
-          color: #fff;
-          span:first-of-type {
-            margin: 20px 0 12px;
-            display: block;
-            font-size: 30px;
-            letter-spacing: 4px;
+      .chang-cont {
+        height: calc(100% - 284px);
+        width: 1138px;
+        border: 1px solid #ddd;
+        margin: 176px 0 0 35px;
+        img.contImg{
+          padding: 75px 200px;
+        }
+      }
+      .pw-form{
+        margin: 0 265px 50px 265px;
+        .el-form.tab-loginClass{
+          display: inline-grid;
+          .el-form-item {
+            display: inline-flex;
           }
-          span:last-of-type {
-            font-size: 25px;
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 2px;
+          .el-form-item.first{
+            display: inline-flex;
+            .el-input-group__append{
+              background: #fff;
+              margin-left: 50px;
+              border: 1px solid #fff;
+              img{
+                vertical-align: middle;
+                cursor: pointer;
+              }
+              span{
+                text-align: center;
+                vertical-align: middle;
+                color: #2577e3;
+
+                /*line-height: 36px;*/
+              }
+            }
+
+          }
+          .el-form-item.last{
+            .el-button--primary {
+              color: #fff;
+               background-color: #409EFF;
+               border-color: #409EFF;
+            }
           }
         }
       }
-      .centent-right {
-        float: right;
-        margin: 170px 100px 0;
-        width: 335px;
-        .centent-form {
-          width: 100%;
-          display: inline-block;
-          padding: 0 25px 23px;
-          background: rgba(255, 255, 255, .9);
-          /*border: 1px solid #13407c;*/
-          /*border-radius: 5px;*/
-          /*border-radius: 10px;*/
-          transition: .5s;
-          h3 {
-            font-size: 18px;
-            color: #333;
-            margin: 24px auto 30px;
-            text-align: center;
-          }
-          .form-tab {
-            text-align: center;
-            color: #333;
-            font-size: 14px;
-            padding-bottom: 25px;
-            span:first-of-type {
-              margin-right: 30px;
-            }
-            span:last-of-type {
-              margin-left: 30px;
-              /*color: skyblue;*/
-              /*padding-left: 60px;*/
-            }
-            .tabLogin {
-              color: red;
-            }
-            .activet {
-              color: #1890ff;
-              border-bottom: 1px solid #1890ff;
-            }
-            .unatctiv {
-              /*color:red;*/
-            }
-          }
-          .el-form-item {
-            /*border-radius: 2px;*/
-            color: #9b9b9b;
-            margin-bottom: 20px !important;
-            .el-input__inner {
-
-              border-top: 2px solid #ccc;
-              border-right: 1px solid #ccc;
-              border-bottom: 1px solid #ccc;
-              border-left: 1px solid #ccc;
-            }
-            .el-input-group--append {
-              .el-input-group__append {
-                cursor: pointer;
-                padding: 0 3px;
-                color: #1890ff;
-                img {
-                  width: 100px;
-                }
-              }
-            }
-          }
-          .ver-note {
-            .el-input-group--append {
-              .el-input-group__append {
-                color: #1890ff;
-                padding: 0 2px;
-              }
-            }
-
-          }
-          .login-btn {
-            margin: 42px 0 40px 0;
-            padding: 20px 0;
-            height: 40px;
-            .el-button {
-              width: 100%;
-            }
-          }
-          .login-rember {
-
-            ul {
-
-              li:first-of-type {
-                float: left;
-                cursor: pointer;
-              }
-              li:nth-of-type(3), li:nth-of-type(2) {
-                float: right;
-                color: #1890ff;
-                cursor: pointer;
-              }
-              li:nth-of-type(2) {
-                padding-left: 10px;
-              }
-              li:nth-of-type(3) {
-                padding-right: 20px;
-                span {
-                  padding-left: 20px;
-                }
-              }
-            }
-            font-size: 14px;
-            color: #333;
-            margin-top: 20px;
-          }
-          .tab-loginClass {
-
-          }
-        }
-        .centent-form:hover {
-          transform: 2s;
-          box-shadow: 0 1px 30px rgba(0, 0, 0, .3);
-        }
-
+      .pw-foot{
+        text-align: center;
+        margin-bottom: 170px;
       }
     }
   }
 </style>
+

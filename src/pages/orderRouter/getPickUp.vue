@@ -1,5 +1,5 @@
 <template>
-  <div class="map-lll">
+  <div class="my-map-lll">
     <div id="mapcontainer"></div>
 
     <!--<div id="panel"></div>-->
@@ -77,34 +77,6 @@
         </el-dialog>
       </div>
     </div>
-
-    <div class="myPageFoot" v-if="$route.query.tab!=='派单中'">
-      <ul>
-        <li>
-          <img src="../../assets/role.png" alt="">
-          <p>忘二狗<span>（四川人）</span></p>
-          <div>
-            <el-rate
-              v-model="value5"
-              disabled
-              show-score
-              text-color="#ff9900"
-              score-template="{value}">
-            </el-rate>
-          </div>
-          <span>12344</span>
-        </li>
-      </ul>
-      <ul>
-        <li>
-          <img src="../../assets/role.png" alt="">
-          <p>忘二狗<span>（四川人）</span></p>
-          <p>广东</p>
-          <p>承载16方，2.5吨</p>
-        </li>
-      </ul>
-    </div>
-
   </div>
 </template>
 <script>
@@ -158,7 +130,7 @@
         addTitle: '',
         changeInput: '',
         radio3: '10',
-        getDetail: {addresses:[{}]},
+        getDetail: {addresses: [{}]},
         radioList: [
           // {name:10},
           // {name:20},
@@ -167,7 +139,7 @@
         jimInfo: {
           appkey: "02c4b4f0341b60405b3c99e7",
           key: "ce2f5588bd87f228b514e847",
-          random_str: new Date().getTime(),
+          random_str: 'f690f592a2b79622d28fac23ce0892b1',
           timestamp: new Date().getTime(),
           signature: ''
         },
@@ -183,9 +155,9 @@
         isRouteData: {},
         isRadio: '',
         timer: null,
-        wait:0,
-        getFCodes:'',
-        isHiddenCar:false
+        wait: 0,
+        getFCodes: '',
+        isHiddenCar: false
       }
     },
     mounted() {
@@ -212,16 +184,16 @@
 
     methods: {
 
-      fetchCode(){
-        if(this.isRouteData.qy.isEnshrine ===true){
+      fetchCode() {
+        if (this.isRouteData.qy.isEnshrine === true) {
           this.getFCodes = 'AF0051601'
-        }else{
+        } else {
           this.getFCodes = 'AF0051602'
         }
-        return getFCode(this.getFCodes).then(res=>{
-          if(res.status ===200){
+        return getFCode(this.getFCodes).then(res => {
+          if (res.status === 200) {
             this.wait = res.data.value
-          }else{
+          } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
           }
         })
@@ -350,48 +322,76 @@
           console.log("【disconnect】");
         }); //异常断线监听
         //接口
-        // this.getSignature().then(res => {
-        //   // console.log(res,'请求的数据');
-        //   JIM.init({
-        //     "appkey": this.jimInfo.appkey,
-        //     "random_str": this.jimInfo.random_str,
-        //     "signature": this.jimInfo.signature,
-        //     "timestamp": this.jimInfo.timestamp,
-        //     "flag": 1
-        //   }).onSuccess(function (data) {
-        //     // console.log('success:' + JSON.stringify(data));
-        //     console.log(data, '成功了');
-        //     JIM.onMsgReceive(function (data) {
-        //       data = JSON.stringify(data);
-        //       console.log('1msg_receive:' + data, '成功了1');
-        //
-        //     });
-        //   }).onFail(function (data) {
-        //     console.log('error2:' + JSON.stringify(data))
-        //   });
-        // })
+        this.getSignature().then(res => {
+          const md5 = require("js-md5");
+          // const signature = md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
+          // console.log('diff signature:',this.jimInfo, this.jimInfo.signature, signature)
+          JIM.init({
+            "appkey": this.jimInfo.appkey,
+            "random_str": this.jimInfo.random_str,
+            "signature": this.jimInfo.signature,
+            "timestamp": this.jimInfo.timestamp,
+            "flag": 1
+          }).onSuccess(function (data) {
+            // 注册用户
+            JIM.login({
+              'username' : getUserInfo().shipperId,
+              'password' : md5(getUserInfo().mobile),
+              }).onSuccess(function(data) {
+                  //data.code 返回码
+                  //data.message 描述
+                }).onFail(function(data) {
+                  // 同上
+                });
 
+            JIM.onMsgReceive(function (data) {
+              //data = JSON.stringify(data);
+              console.log('1msg_receive:', data, '实时消息');
 
-        // console.log(this.jimInfo,'几率')
-        const md5 = require("js-md5");
-        const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
-        JIM.init({
-          "appkey":this.jimInfo.appkey,
-          "random_str": this.jimInfo.random_str,
-          "signature":  signature,
-          "timestamp":  this.jimInfo.timestamp,
-          "flag": 1
-        }).onSuccess(function(data) {
-          // console.log('success:' + JSON.stringify(data));
-          console.log(data,'成功了');
-          JIM.onMsgReceive(function(data) {
-            data = JSON.stringify(data);
-            console.log('1msg_receive:' + data,'成功了1');
-
+            });
+            JIM.onSyncConversation(function(data){
+              // console.log('离线消息： ', data)
+            })
+          }).onFail(function (data) {
+            console.log('error2:' + JSON.stringify(data))
           });
-        }).onFail(function(data) {
-          console.log('error2:' + JSON.stringify(data))
-        });
+        })
+        //接口
+
+        //模拟
+        // const md5 = require("js-md5");
+        // const signature = md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
+        // JIM.init({
+        //   "appkey": this.jimInfo.appkey,
+        //   "random_str": this.jimInfo.random_str,
+        //   "signature": signature,
+        //   "timestamp": this.jimInfo.timestamp,
+        //   "flag": 1
+        // }).onSuccess(function (data) {
+        //   // console.log('success:' + JSON.stringify(data));
+        //   console.log(data, '成功了');
+        //   JIM.onMsgReceive(function (data) {
+        //     data = JSON.stringify(data);
+        //     console.log('1msg_receive:' + data, '成功了1');
+        //
+        //   });
+        // }).onFail(function (data) {
+        //   console.log('error2:' + JSON.stringify(data))
+        // });
+        //模拟
+      },
+      getSignature() {
+        return getAuroraSignature().then(res => {
+          if (res.status === 200) {
+            this.jimInfo.appkey = res.data.appkey
+            this.jimInfo.random_str = res.data.randomStr
+            this.jimInfo.signature = res.data.signature
+            this.jimInfo.timestamp = res.data.timestamp
+            return res
+          } else {
+            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+          }
+        })
       },
       loadMsg() {
         if (window.JMessage) {
@@ -416,8 +416,8 @@
           })
         }
       },
-      loadAddToolbar(){
-        loadJs('https://cache.amap.com/lbs/static/addToolbar.js').then(()=>{
+      loadAddToolbar() {
+        loadJs('https://cache.amap.com/lbs/static/addToolbar.js').then(() => {
 
         })
 
@@ -445,10 +445,7 @@
         })
 
 
-
-
-
-  // this.setCircle()
+        // this.setCircle()
 
         // //轨迹
         // var truckOptions = {
@@ -469,7 +466,7 @@
         // });
 
       },
-      setCircle(){
+      setCircle() {
         var map = this.map
         // 纬度
         var latitude = this.getDetail.addresses[0].latitude || 30
@@ -515,12 +512,10 @@
 // 单独将点标记添加到地图上
 // map.add(marker);
 // add方法可以传入一个覆盖物数组，将点标记和矢量圆同时添加到地图上
-        map.add([marker,circle]);
-        map.add([marker,circle2]);
-        map.add([marker,circle3]);
+        map.add([marker, circle]);
+        map.add([marker, circle2]);
+        map.add([marker, circle3]);
         map.setFitView();
-
-
 
 
         // 设置鼠标划过点标记显示的文字提示
@@ -529,14 +524,14 @@
         // 设置label标签
         // label默认蓝框白底左上角显示，样式className为：amap-marker-label
 
-        if(this.isRouteData.qy.isEnshrine ===true){
-          if(this.isHiddenCar = true){
+        if (this.isRouteData.qy.isEnshrine === true) {
+          if (this.isHiddenCar = true) {
             marker.setLabel({
               //修改label相对于maker的位置
               offset: new AMap.Pixel(-70, -90),
               content: "<div class='info'>已为您通知到<span>200</span>名司机</div>"
             });
-          }else{
+          } else {
             // this.isShowNum()
             marker.setLabel({
               //修改label相对于maker的位置
@@ -545,7 +540,7 @@
             });
           }
 
-        }else{
+        } else {
           // this.isHideNum()
           marker.setLabel({
             //修改label相对于maker的位置
@@ -567,17 +562,7 @@
         this.$emit('success', this.thepos, this.thename, this.theobj)
         this.close()
       },
-      getSignature() {
-        return getAuroraSignature(2).then(res => {
-          if (res.status === 200) {
-            this.jimInfo.signature = res.data
 
-            console.log(this.jimInfo.signature, '请求的');
-          } else {
-            this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
-          }
-        })
-      }
     }
   }
 </script>
@@ -585,7 +570,8 @@
 
 <style lang="scss">
   @import "https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css";
-  .map-lll {
+
+  .my-map-lll {
     width: 100%;
     height: 100%;
     position: relative;
@@ -593,14 +579,14 @@
     max-height: calc(100% - 20px);
     max-width: calc(100% - 20px);
 
-    .amap-marker-label{
+    .amap-marker-label {
       border: 0;
       /*background-color: transparent;*/
       background-color: #ffffff;
       border-radius: 10px;
     }
 
-    .info{
+    .info {
       position: relative;
       top: 0;
       right: 0;
@@ -610,20 +596,20 @@
       padding: 18px;
       font-weight: 600;
 
-      span{
+      span {
         color: #ff300d;
       }
     }
-    .info:before{
+    .info:before {
       display: block;
       content: '';
-      width:0;
-      height:0;
-      border-width:20px 12px 0;;
-      border-style:solid;
-      border-color:#fff transparent transparent;/*灰 透明 透明 */
+      width: 0;
+      height: 0;
+      border-width: 20px 12px 0;;
+      border-style: solid;
+      border-color: #fff transparent transparent; /*灰 透明 透明 */
       /*margin:40px auto;*/
-      position:absolute;
+      position: absolute;
       top: 53px;
       left: 104px;
     }
@@ -739,11 +725,11 @@
             color: #3b99f0;
             padding: 10px 0;
           }
-          p.changeTitle{
+          p.changeTitle {
             font-size: 30px;
             color: #333333;
             padding-top: 10px;
-            span{
+            span {
               color: #ff300d;
             }
           }

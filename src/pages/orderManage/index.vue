@@ -13,39 +13,30 @@
 </template>
 
 <script>
-    export default {
-        name: "index"
-    }
+  export default {
+    name: "index"
+  }
 </script>
 
 <style lang="scss">
-  a, a:focus, a:hover {
-    cursor: pointer;
-    color: inherit;
-    text-decoration: none;
-  }
   .tab-wrapper {
-    /*background: red;*/
-    margin: 10px 10px 0 10px;
-    /*height: 100%;*/
-    /*padding-top: 8px;*/
-     .eltab {
-      width: 100%;
-      /*height: 32px;*/
-      /*line-height: 30px;*/
-       display: flex;
-       background: #fff;
-      /*border-bottom: 1px solid #91cbf7;*/
+    padding: 10px;
+    height: 100%;
+    width: calc(100% - 20px);
 
+    .eltab {
+      width: calc(100% - 20px);
+      display: flex;
+      background: #fff;
     }
 
     .tab-label {
       float: left;
       padding: 15px 60px 20px 60px;
-      /*padding-left: 60px;*/
-      /*padding-right: 60px;*/
+      padding-left: 60px;
+      padding-right: 60px;
       border-radius: 3px 3px 0 0;
-      border-right: 1px solid #d2d2d2;
+      /*border-right: 1px solid #d2d2d2;*/
       font-size: 16px;
       border-left-width: 0;
       background: #fff;
@@ -54,35 +45,48 @@
       top: 0;
       color: #999;
       cursor: pointer;
-      span{
+
+      span {
         /*padding: 10px 0 10px 0;*/
         /*text-align: center;*/
         /*border-right: 1px solid #d2d2d2;*/
+        position: relative;
+
+      }
+      span:after{
+        content: '';
+        display: block;
+        width: 2px;
+        height: 30px;
+        background: #d2d2d2;
+        position: absolute;
+        top: -5px;
+        left: 135px;
       }
     }
-    .tab-label:last-of-type{
+    .tab-label:last-of-type {
       border-right: none;
     }
-    .tab-label:first-of-type{
+    .tab-label:first-of-type {
       border-left: none;
     }
-    .tab-label:hover{
-      background: #ffe;
+    .tab-label:hover {
+      /*background: #ffe;*/
     }
     .tab-label:first-child {
       margin-left: 1px;
       border-left-width: 1px;
     }
 
-
   }
+
   .tab-wrapper .active-tab, .tab-wrapper .router-link-active {
     color: #333;
     font-weight: 600;
     font-size: 16px;
     /*border-color: #3e9ff1;*/
     border-bottom: 2px solid #2fb301;
-    border-left: 1px solid #d2d2d2;
+    /*border-left: 1px solid #d2d2d2;*/
     z-index: 2;
     left: -1px;
     top: -1px;

@@ -212,7 +212,7 @@
     margin: 10px;
     background: #fff;
     h4{
-      margin: 40px 0 15px 40px;
+      margin: 0px 0 15px 40px;
     }
     .info-table{
       /*display: flex;*/

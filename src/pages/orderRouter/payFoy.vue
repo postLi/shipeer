@@ -2,86 +2,6 @@
   <div class="odPayForClass-lll">
     <el-container class="clearfix">
       <el-header class="clearfix">
-        <!--<ul class="clearfix">-->
-          <!--<li>-->
-            <!--<div class="liClass-top">-->
-              <!--&lt;!&ndash;<img src="../../assets/role.png"/>&ndash;&gt;-->
-              <!--<img v-if="getDetail.driverHeadUrl===''|| getDetail.driverHeadUrl === null " class="user-avatar" src="../../assets/default_tx.png">-->
-              <!--<img class="user-avatar" :src="getDetail.driverHeadUrl" v-else>-->
-              <!--<p></p>-->
-              <!--<span class="actClass">{{getDetail.driverName === null ?'xx':getDetail.driverName}}</span>&nbsp;&nbsp;<span class="unClass">({{getDetail.belongCityName === null ? 'xx' : getDetail.belongCityName}})</span>-->
-              <!--<el-rate-->
-                <!--v-model="getDetail.evaluateScore===null ? 0:getDetail.evaluateScore"-->
-                <!--disabled-->
-                <!--show-score-->
-                <!--text-color="#ff9900"-->
-                <!--score-template="{value}">-->
-              <!--</el-rate>-->
-              <!--<i><icon-svg iconClass="lll03xin"></icon-svg></i>-->
-              <!--<span class="unClass">{{getDetail.completeOrderNums ===null ? 0: getDetail.completeOrderNums}}单</span>-->
-
-            <!--</div>-->
-            <!--<div class="liClass-foot">-->
-              <!--<img v-if="getDetail.servicePic===''|| getDetail.servicePic === null " class="user-avatar" src="../../assets/main/xh@3x.png">-->
-              <!--<img class="user-avatar" :src="getDetail.servicePic" v-else>-->
-
-              <!--&lt;!&ndash;<img src="../../assets/main/xh@3x.png"/>&ndash;&gt;-->
-              <!--<p></p>-->
-              <!--<p class="actClass">苏**v99</p>-->
-              <!--<p class="unClass">广州</p>-->
-              <!--&lt;!&ndash;<span class="unClass">承载16方,&nbsp;2.4吨</span>&ndash;&gt;-->
-              <!--<span class="unClass">承载{{getDetail.carSpec}}吨</span>-->
-            <!--</div>-->
-          <!--</li>-->
-          <!--<li>-->
-            <!--<div class="divClass">-->
-              <!--<span class="actClass">用车时间:</span><span class="blueClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">付款方式:</span><span class="spanclass">发货人付款({{getDetail.payWay}}支付)</span>-->
-              <!--&lt;!&ndash;payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付&ndash;&gt;-->
-
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice}}</span>&nbsp;&nbsp;<span class="blueClass">费用明细</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">需要车型:</span><span class="spanclass">{{getDetail.carTypeName}}</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">货物名称:</span><span class="spanclass">{{getDetail.goodsName}}</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">货物重量:</span><span class="spanclass"><{{getDetail.goodsWeight===''?0:getDetail.goodsWeight}}吨,{{getDetail.goodsVolume==='' ?0:getDetail.goodsVolume}}方	</span>-->
-            <!--</div>-->
-            <!--<div class="divClass">-->
-              <!--<span class="unClass">额外服务:</span><span class="spanclass">{{getDetail.extraName}}	</span>-->
-            <!--</div>-->
-            <!--<div class="divClass last">-->
-              <!--<span class="unClass" style="text-align: right">备注:</span><span class="spanclass">协助装货</span>-->
-            <!--</div>-->
-          <!--</li>-->
-        <!--</ul>-->
-        <!--<ul>-->
-          <!--<template v-for="(item,index) in getDetail.addresses">-->
-            <!--<li>-->
-              <!--<p>{{item.viaAddressName}}</p>-->
-              <!--<span>{{item.viaAddress}}</span>-->
-            <!--</li>-->
-          <!--</template>-->
-          <!--&lt;!&ndash;<li>&ndash;&gt;-->
-            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
-          <!--&lt;!&ndash;</li>&ndash;&gt;-->
-          <!--&lt;!&ndash;<li>&ndash;&gt;-->
-            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
-          <!--&lt;!&ndash;</li>&ndash;&gt;-->
-          <!--&lt;!&ndash;<li>&ndash;&gt;-->
-            <!--&lt;!&ndash;<p>猎德村复建房五区</p>&ndash;&gt;-->
-            <!--&lt;!&ndash;<span>南山区兴南路10号</span>&ndash;&gt;-->
-          <!--&lt;!&ndash;</li>&ndash;&gt;-->
-        <!--</ul>-->
         <OrderDetail  :orderid="$route.query.qy.orderSerial"></OrderDetail>
       </el-header>
       <el-main class="clearfix">
@@ -194,9 +114,7 @@
         <el-button type="success" @click="onSubmit">确认付款</el-button>
       </el-footer>
     </el-container>
-    <!--<div class="payFor-hearder">-->
-    <!--支付收银台-->
-    <!--</div>-->
+
   </div>
 </template>
 
@@ -376,6 +294,8 @@
 
     }
     .el-main.clearfix{
+      padding: 0;
+
       .mainClass{
         .titleClass{
           font-size: 18px;
