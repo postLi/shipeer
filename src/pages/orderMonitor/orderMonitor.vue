@@ -944,7 +944,11 @@
         this.points = [];
         var showPoints = [];
         for (; i < l.length; ++i) {
-          pos = l[i].pos;
+          pos = l[i].aflcOrderCarTrail;
+          if (pos != null && pos.latitude != null && pos.longitude != null)
+            pos = [pos.longitude, pos.latitude];
+          else
+            pos = null;
           if (pos == null) {
             marker = new AMap.Marker({
               icon: this.carUrl,
