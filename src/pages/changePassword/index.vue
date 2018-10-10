@@ -22,7 +22,7 @@
           <!--</el-steps>-->
         <!--</div>-->
         <div class="pw-form">
-          <el-form class="tab-loginClass":model="userData" :rules="userRules" ref="userLogin">
+          <el-form class="tab-loginClass":model="userData" :rules="userRules" ref="userLogin" v-if="status ===1">
             <el-form-item class="" prop="userPhone" label="手机号:">
               <el-input :maxlength="11" placeholder="请输入注册手机号"
                         v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
@@ -44,6 +44,37 @@
               <el-input :maxlength="11" placeholder="请输入验证码"
                         v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
                 <template slot="append" >
+                  <span></span>
+                  <el-button type="primary" @click="next">获取校验码</el-button>
+                </template>
+              </el-input>
+
+            </el-form-item>
+          </el-form>
+
+          <el-form class="tab-serClass":model="userData" :rules="userRules" ref="userLogin" v-if="status ===2">
+            <el-form-item class="" prop="userPhone" label="手机号:">
+              <el-input :maxlength="11" placeholder="请输入注册手机号"
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+
+              </el-input>
+            </el-form-item>
+            <el-form-item class="first" prop="userPhone" label="验证码:">
+              <el-input :maxlength="11" placeholder="请输入验证码"
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+                <template slot="append">
+                  <img src="../../assets/role.png" alt="">
+                  <span>看不清楚，点击换一张图片</span>
+                </template>
+
+
+              </el-input>
+            </el-form-item>
+            <el-form-item class="last" prop="userPhone" label="校验码:" >
+              <el-input :maxlength="11" placeholder="请输入验证码"
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+                <template slot="append" >
+                  <span></span>
                   <el-button type="primary" @click="next">获取校验码</el-button>
                 </template>
               </el-input>
@@ -97,7 +128,7 @@
         }
       }
       return {
-        status:1,
+        status:2,
         active: 0,
         backgroundImg: 'url(' + require('../../assets/login/lll01-bg.png') + ')',
         serverPhone: '',
@@ -370,10 +401,57 @@
 
           }
           .el-form-item.last{
+            /*background: #fff;*/
+            /*border: 1px solid #fff;*/
+            span{
+              margin-left: 20px;
+              /*background: #fff;*/
+            }
             .el-button--primary {
               color: #fff;
                background-color: #409EFF;
                border-color: #409EFF;
+
+            }
+          }
+        }
+        .tab-serClass{
+          display: inline-grid;
+          .el-form-item {
+            display: inline-flex;
+          }
+          .el-form-item.first{
+            display: inline-flex;
+            .el-input-group__append{
+              background: #fff;
+              margin-left: 50px;
+              border: 1px solid #fff;
+              img{
+                vertical-align: middle;
+                cursor: pointer;
+              }
+              span{
+                text-align: center;
+                vertical-align: middle;
+                color: #2577e3;
+
+                /*line-height: 36px;*/
+              }
+            }
+
+          }
+          .el-form-item.last{
+            /*background: #fff;*/
+            /*border: 1px solid #fff;*/
+            span{
+              margin-left: 20px;
+              /*background: #fff;*/
+            }
+            .el-button--primary {
+              color: #fff;
+              background-color: #409EFF;
+              border-color: #409EFF;
+
             }
           }
         }
