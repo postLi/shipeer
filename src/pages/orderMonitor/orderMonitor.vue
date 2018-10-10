@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText">
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText" clearable @keyup.enter.native="clickOrder(null,true)">
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton" @click="clickOrder(null,true)">搜索
         </el-button>
       </el-input>
