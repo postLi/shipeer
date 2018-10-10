@@ -132,6 +132,10 @@ Axios.interceptors.response.use(
       console.log('response err:', error)// for debug
 
     }
+    Message({
+      type: 'info',
+      message: '服务器端返回数据错误，请稍后再试. '
+    });
     return Promise.reject(err)
   }
 )

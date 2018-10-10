@@ -113,7 +113,7 @@
       }
     },
     mounted() {
-      //this.loadMsg()
+      this.loadMsg()
       this.map = new AMap.Map('mapcontainer', {});
       this.map.plugin(['AMap.ToolBar'],  () =>{
         this.map.addControl(new AMap.ToolBar())
