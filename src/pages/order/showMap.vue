@@ -202,7 +202,7 @@
                 this.data.originCoordinate = [positionResult.position.lat,positionResult.position.lng].join(',');
                 this.data.origin = positionResult.address;
                 this.data.originName = positionResult.regeocode.pois[0].name;
-                this.data.provinceCityArea =  `${positionResult.regeocode.addressComponent.province}${positionResult.regeocode.addressComponent.city}${positionResult.regeocode.addressComponent.district}`
+                this.data.provinceCityArea =  `${positionResult.regeocode.addressComponent.province},${positionResult.regeocode.addressComponent.city},${positionResult.regeocode.addressComponent.district}`
                 this.parm  ={
                   address: positionResult.address,//详细地址
                   cityCode: positionResult.regeocode.addressComponent.city,//城市编码（格式440100）
@@ -210,7 +210,7 @@
                   contactsPhone: this.data.consigneeMobile,//联系电话
                   coordinate: [positionResult.position.lat,positionResult.position.lng].join(','),//发货地坐标
                   floorHousenum: this.data.floorHousenum,//楼层及门牌号
-                  provinceCityArea: `${positionResult.regeocode.addressComponent.province}${positionResult.regeocode.addressComponent.city}${positionResult.regeocode.addressComponent.district}`,//省市区（格式:广东省广州市天河区）
+                  provinceCityArea: `${positionResult.regeocode.addressComponent.province},${positionResult.regeocode.addressComponent.city},${positionResult.regeocode.addressComponent.district}`,//省市区（格式:广东省广州市天河区）
                   summary: positionResult.regeocode.pois[0].name,//地点简称
                   type: (this.data.shipperSort === 0)?0:1,//区分货主(0为发货人，1为收货人)
                 }

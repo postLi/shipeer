@@ -104,7 +104,7 @@
                 //result.regeocode.addressComponent.adcode
                 this.data.cityCode = result.regeocode.addressComponent.city;
                 this.data.coordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
-                this.data.provinceCityArea = `${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`;
+                this.data.provinceCityArea = `${result.regeocode.addressComponent.province},${result.regeocode.addressComponent.city},${result.regeocode.addressComponent.district}`;
                 this.data.summary = poiResult.item.name;
                 this.data.type = this.type;
               }
