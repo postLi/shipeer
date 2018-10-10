@@ -372,14 +372,16 @@
                   type: ''
                 }).then(async () => {
                   await this.createOrder();//3.加上优惠金优惠卷创建订单
-                  postApi(`/aflc-uc/aflcMywalletApi/mywalletPay/${this.orderId}`).then((res)=>{
-                    if(res.status === 200){
-                      this.$message.success("支付成功");
-                      this.$router.replace('/OrderManage/already')
-                    } else {
+                  if(this.orderId){
+                    postApi(`/aflc-uc/aflcMywalletApi/mywalletPay/${this.orderId}`).then((res)=>{
+                      if(res.status === 200){
+                        this.$message.success("支付成功");
+                        this.$router.replace('/OrderManage/already')
+                      } else {
 
-                    }
-                  });
+                      }
+                    });
+                  }
                 }).catch(() => {
             //
                 });
@@ -396,18 +398,23 @@
                   this.centerDialogVisiblezfb = true;
                   this.fr(res);
                 }
-
               })
 
             }
           }
           if(this.payTypeId === 4){
             await this.createOrder();
-            this.cashOnDelivery(1);
+            if(this.orderId){
+              this.cashOnDelivery(1);
+            }
+
           }
           if(this.payTypeId === 3){
             await this.createOrder();
-            this.cashOnDelivery(0);
+            if(this.orderId){
+              this.cashOnDelivery(0);
+            }
+
           }
 
         },
@@ -453,7 +460,7 @@
             if(res.status === 200){
               this.orderId = res.data;
             } else {
-              this.$message.warning(res.errorInfo)
+              this.$message.warning('服务器返回错误，请稍后再试')
             }
           });
         },

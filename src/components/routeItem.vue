@@ -84,7 +84,7 @@
               this.data.cityCode = result.regeocode.addressComponent.adcode;
               this.data.originCoordinate = `${poiResult.item.location.lat},${poiResult.item.location.lng}`;
               this.data.originName = poiResult.item.name;
-              this.data.provinceCityArea = `${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`;
+              this.data.provinceCityArea = `${result.regeocode.addressComponent.province},${result.regeocode.addressComponent.city},${result.regeocode.addressComponent.district}`;
             }
           });
 
@@ -93,7 +93,7 @@
           // this.$set(item,'cityCode',result.regeocode.addressComponent.adcode);
           // this.$set(item,'originCoordinate',`${poiResult.item.location.lat},${poiResult.item.location.lng}`);
           // this.$set(item,'originName',poiResult.item.name);
-          // this.$set(item,'provinceCityArea',`${result.regeocode.addressComponent.province}${result.regeocode.addressComponent.city}${result.regeocode.addressComponent.district}`);
+          // this.$set(item,'provinceCityArea',`${result.regeocode.addressComponent.province},${result.regeocode.addressComponent.city},${result.regeocode.addressComponent.district}`);
 
         });
       },
