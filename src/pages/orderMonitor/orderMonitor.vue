@@ -732,9 +732,9 @@
         this.carList = [];
         this.carList = l;
       },
-      noPosition() {
+      error(msg) {
         this.$message({
-          message: '未获取到该订单的位置数据，请稍后再试. ',
+          message:msg,
           type: 'warning'
         });
       },
@@ -750,18 +750,18 @@
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
             if (res.data == null) {
-              this.noPosition();
+              this.error("未获取到该订单的数据，请稍后再试. ");
               return;
             }
             var trails = res.data.aflcOrderCarTrails;
             var lnglat = marker.getPosition();
             if (!lnglat && (!trails || trails.length < 1)) {
-              this.noPosition();
+              this.error("未获取到该订单的位置数据，请稍后再试. ");
               return;
             }
             var lastTrail = trails[trails.length - 1];
             if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null)) {
-              this.noPosition();
+              this.error("未获取到该订单的位置数据，请稍后再试. ");
               return;
             }
             var pos = null;
@@ -770,7 +770,7 @@
             if (pos == null)
               pos = lnglat;
             if (pos == null) {
-              this.noPosition();
+              this.error("未获取到该订单的位置数据，请稍后再试. ");
               return;
             }
 
