@@ -453,16 +453,20 @@
           this.orderNumGaipai = v;
         });
 
-        var s = "";
-        if (orderStatus != null)
-          s = "&status=" + orderStatus;
+        var vo = {};
+        if (orderStatus == null)
+          orderStatus = "AF00806HZ";
+        vo.orderStatus = orderStatus;
         if (searchFlag) {
           var t = this.filterText;
-          if (t != null) {
-            s = s + "&searchText=" + t;
-          }
+          if (t != null)
+            vo.keywordQuery = t;
         }
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
+        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorList", {
+          currentPage: this.currentPage,
+          pageSize: this.pageSize,
+          vo: vo
+        }).then((res) => {
           var c = "";
           try {
             c = res.data.totalCount;
