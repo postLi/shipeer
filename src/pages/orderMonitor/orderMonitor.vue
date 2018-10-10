@@ -244,6 +244,7 @@
         satelliteLayer: null,
         trafficVisible: false,
         trafficLayer: null,
+        lostTime: 3600000,
         carUrl: require("../../assets/orderMonitor/car.png"),
         grayCarUrl: require("../../assets/orderMonitor/car_gray.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
@@ -957,6 +958,11 @@
               extData: i
             });
           } else {
+            // var time = l[i].aflcOrderCarTrail.coordinateTime;
+            // var carUrl = this.grayCarUrl;
+            // if (time != null) {
+            //
+            // }
             marker = new AMap.Marker({
               icon: this.carUrl,
               position: pos,
