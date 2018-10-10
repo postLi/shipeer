@@ -678,9 +678,8 @@
         this.carList = l;
       },
       noPosition() {
-        this.$confirm('未获取到该订单的位置数据，请稍后再试. ', '', {
-          confirmButtonText: '确定',
-          showCancelButton: false,
+        this.$message({
+          message: '未获取到该订单的位置数据，请稍后再试. ',
           type: 'warning'
         });
       },
@@ -1160,9 +1159,8 @@
       showTrack(orderId) {
         var pois = this.track;
         if (pois == null || pois.length < 2) {
-          this.$confirm('未获取到轨迹数据，请稍后再试. ', '', {
-            confirmButtonText: '确定',
-            showCancelButton: false,
+          this.$message({
+            message: '未获取到轨迹数据，请稍后再试. ',
             type: 'warning'
           });
           return;
