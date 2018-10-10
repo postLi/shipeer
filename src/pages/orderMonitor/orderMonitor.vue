@@ -958,13 +958,14 @@
               extData: i
             });
           } else {
-            // var time = l[i].aflcOrderCarTrail.coordinateTime;
-            // var carUrl = this.grayCarUrl;
-            // if (time != null) {
-            //
-            // }
+            var time = l[i].aflcOrderCarTrail.coordinateTime;
+            var carUrl = this.grayCarUrl;
+            if (time != null) {
+              if (((new Date()).getTime() - time) < this.lostTime)
+                carUrl = this.carUrl;
+            }
             marker = new AMap.Marker({
-              icon: this.carUrl,
+              icon: carUrl,
               position: pos,
               offset: this.markerOffset,
               extData: i,
