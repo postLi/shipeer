@@ -3,7 +3,7 @@
 
   <div>
     <div v-for='(item,index) in data' style="line-height: 50px;">
-      <div v-if="count === 0 " class=" flex_a border0" style="height: 50px;position: relative">
+      <div v-if="count === 0 " class=" flex_a border0" style="height: 50px;position: relative" :style="{'color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgba(255, 255, 255,0.65)','background':(item.selected && item.children.length === 0)? 'rgb(47, 179, 1)' : ''}">
 
         <!--<i  class="iconfont icon-yingyong margin_r_10" v-if="item.id === 228" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
         <!--<i  class="iconfont icon-qiaquan margin_r_10" v-if="item.id === 315" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
@@ -135,6 +135,7 @@
   }
   .border0:hover{
     background-color: black;
+
 
   }
   /*.border1:hover{*/
