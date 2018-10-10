@@ -404,6 +404,55 @@
           this.mp.remove(points);
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
+        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
+          if (res === null || res.data === null)
+            return;
+          var v = res.data.af00806HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumAll = v;
+
+          v = res.data.af0080601HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumJiedan = v;
+
+          v = res.data.af0080602HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumGanwangtwd = v;
+
+          v = res.data.af0080603HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYidaotwd = v;
+
+          v = res.data.af0080604HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYizhuanghuo = v;
+
+          v = res.data.af0080605HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYunshuzhong = v;
+
+          v = res.data.af0080606HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYidaomdd = v;
+
+          v = res.data.af0080607HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYixiehuo = v;
+
+          v = res.data.af0080608HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumGaipai = v;
+        });
+
         var s = "";
         if (orderStatus != null)
           s = "&status=" + orderStatus;
