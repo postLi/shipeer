@@ -4,17 +4,20 @@
 
     <!--<div id="panel"></div>-->
     <div id="myPageTop">
-     <div class="headerClass">
+     <div class="headerClass flex_sb">
        <span>{{title}}</span>
        <span @click="gotoOrder" v-if="title === '待付款' || title === '司机已接单' || title === '司机赶往提货地'"><i class="el-icon-close"></i>取消订单</span>
      </div>
       <div class="contentClass">
         <div class="topClass">
-          <p class="changeDriver" v-if="title === '司机已接单'">司机距您<span>1.5</span>公里，预计<span>1分钟</span>后达到…</p>
-          <p class="changeDriver" v-if="title === '司机赶往提货地' || title === '司机已到提货地'">司机距您<span>1.5</span>公里，稍后将电话联系您…</p>
-          <div v-if="title === '司机已装货' || title === '运输中'">
-            <p class="changeDriver">司机预计<span>45</span>分钟后到达卸货地：<span>武山</span></p>
-            <p class="changeDriver">目前路况中度拥堵，预计到达时间：<span>14:56分</span></p>
+          <p class="changeDriver" v-if="title === '司机已接单'">司机距您<span>{{distance}}</span>公里，稍后将电话联系您…</p>
+          <p class="changeDriver" v-if="title === '司机赶往提货地'">司机距您<span>{{distance}}</span>公里，预计<span>{{time}}</span>后达到…</p>
+          <p class="changeDriver" v-if="title === '司机已到提货地'">司机已到提货地</p>
+          <p class="changeDriver" v-if="title === '司机已装货'">司机已装货</p>
+          <div v-if="title === '运输中'">
+            <p class="changeDriver">司机预计<span>{{time}}</span>后到达卸货地：<span>{{distAddressName}}</span></p>
+            <!--目前路况中度拥堵，-->
+            <p class="changeDriver">预计到达时间：<span>{{estimateTime}}</span></p>
           </div>
           <p class="changeDriver" v-if="title === '司机已到目的地'">司机已到<span>卸货地</span>，正在卸货…</p>
           <!--<p class="changeTime">00:20</p>-->
@@ -29,7 +32,7 @@
           <ul>
             <li><span class="dateClass">用车时间:</span><span class="timeClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span></li>
             <li><span class="dateClass">订单号:</span ><span class="timeClass" style="margin-left: 14px;">{{$route.query.orderSerial}}</span></li>
-            <li><span>付款方式:</span><span>{{getDetail.payStatus || 0}}&nbsp;&nbsp; ({{getDetail.payWay}}付款)</span></li>
+            <li><span>付款方式:</span><span>{{getDetail.payTimeType}}&nbsp;&nbsp; {{getDetail.payWay}}</span></li>
             <li><span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{getDetail.factPay || 0}}</span></li>
             <li><span>运输费用:</span><span>¥{{getDetail.orderPrice || 0}} </span></li>
             <li><span>需要车型:</span><span>{{getDetail.carTypeName}}</span></li>
@@ -42,25 +45,25 @@
         <div class="myPageFoot">
           <ul>
             <li>
-              <img src="../../assets/role.png" alt="">
-              <p class="c-3 window-title-left">忘二狗<span class="c-9 window-title-12">（四川人）</span></p>
+              <img :src="getDetail.driverHeadUrl" alt="" class="driverUrl">
+              <p class="c-3 window-title-left">{{getDetail.driverName}}<span class="c-9 window-title-12"></span></p>
               <div>
                 <el-rate
-                  v-model="value5"
+                  v-model="evaluateScore"
                   disabled
                   show-score
                   text-color="#ff9900"
                   score-template="{value}">
                 </el-rate>
               </div>
-              <span class="c-9 window-title-12">12344单</span>
+              <span class="c-9 window-title-12">{{getDetail.completeOrderNums || 0}}单</span>
             </li>
           </ul>
           <ul>
             <li>
               <img :src="getDetail.servicePic" alt="" height="36">
-              <p>桂**v895</p>
-              <p class="c-9 window-title-12">广东</p>
+              <p>{{getDetail.carNumber}}</p>
+              <p class="c-9 window-title-12">{{getDetail.belongCityName}}</p>
               <p class="c-9 window-title-12">承载16方，2.5吨</p>
             </li>
           </ul>
@@ -94,24 +97,60 @@
 
         centerDialogVisible: false,
         popVisibleTitle:'',
-        value5: 3.7,
+        evaluateScore: 0,
         noinfo: true,
 
-        map:{},
+        map:null,
         getDetail:{},//我的订单详情(货主)
         title:'',
         carUrl: require("../../assets/orderMonitor/car.png"),
+        loadingFreeTime:'',
+        distance:'',//司机与货主距离
+        time:'',
+        content:[],//图标的提示
+        estimateTime:'',
+        distAddressName:''//目的地
       }
     },
     mounted() {
       //this.loadMsg()
+      this.map = new AMap.Map('mapcontainer', {});
+      this.map.plugin(['AMap.ToolBar'],  () =>{
+        this.map.addControl(new AMap.ToolBar())
+      });
       //我的订单详情(货主)
       postApi(`/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=${this.$route.query.orderSerial}`).then((res)=>{
         if(res.status === 200){
-
-
+          switch (res.data.payTimeType) {
+            case "0":
+              res.data.payTimeType = "立即付款";
+              break;
+            case "1":
+              res.data.payTimeType = "发货时付款";
+              break;
+            case "2":
+              res.data.payTimeType = "收货时付款";
+              break;
+          }
+          switch (res.data.payWay) {
+            case "0":
+              res.data.payWay = "(支付宝支付)";
+              break;
+            case "1":
+              res.data.payWay = "(微信支付)";
+              break;
+            case "2":
+              res.data.payWay = "(余额支付)";
+              break;
+            case "3":
+              res.data.payWay = "(收货时付款)";
+              break;
+            case "4":
+              res.data.payWay = "(发货时付款)";
+              break;
+          }
           this.getDetail = res.data;
-          this.roadMap(res.data)
+          this.evaluateScore = res.data.evaluateScore?res.data.evaluateScore:0
         } else {
 
         }
@@ -122,6 +161,8 @@
         console.log(res)
 
         if(res.data.longitude && res.status === 200){
+          this.loadingFreeTime = res.data.loadingFreeTime / 2;
+          this.distAddressName = res.data.aflcShipperAddressDtos[res.data.aflcShipperAddressDtos.length - 1].viaAddressName;
           switch (res.data.orderStatus) {
             case "AF00801":
               this.title = '待付款';
@@ -145,41 +186,16 @@
               this.title = '司机已到目的地';
               break ;
           }
-          let marker = new AMap.Marker({
-            // icon: this.carUrl,
-            icon:new AMap.Icon({
-              size: new AMap.Size(48,60),
-              image:this.carUrl,
-              imageSize:new AMap.Size(48,60)
-            }),
-            map: this.map,
-            position: [113.33368,23.131493],
-            offset:new AMap.Pixel(-24, -60),
-          });
-          let content = [];
-
-          switch (res.data.orderStatus) {
-            case "":
-
-              break;
-
-          }
-
-          content.push("司机达到提货地后，装卸各有<span style='color:#44c0ff'>30</span>分钟的免费服务时间");
-
-          let infoWindow = new AMap.InfoWindow({
-            isCustom: true,  //使用自定义窗体
-            content: this.createInfoWindow(content.join("<br/>")),
-            offset: new AMap.Pixel(0, -71),
-            showShadow:true
-          });
-          infoWindow.open(this.map, marker.getPosition());
+          //司机坐标
+          let longitude = res.data.longitude;
+          let latitude = res.data.latitude;
+          this.roadDriving(res.data,{lng:longitude,lat:latitude});
         }
       })
     },
 
     methods: {
-      roadMap(data){
+      roadDriving(data,cj){
         let size;
         switch (data.carType) {
           case "AF01801":
@@ -195,40 +211,73 @@
             size = 4;
             break;
         }
-        this.map = new AMap.Map('mapcontainer', {});
-        this.map.plugin(['AMap.ToolBar'],  () =>{
-          this.map.addControl(new AMap.ToolBar())
-        });
 
-        let truckOptions = {
-          map: this.map,
-          // policy:1,
-          size:size || 1,
-          //city:'',
-          //panel:'panel'
-        };
-        let driving = new AMap.TruckDriving(truckOptions);
-        let path = [];
-        data.addresses.forEach((item)=>{
-          path.push({lnglat:[item.longitude,item.latitude]});
-        });
-        driving.search(path,(status, result) =>{
-console.log(result)
-        });
+        //司机与货主距离
+        if(this.title === '司机已接单' || this.title === '司机赶往提货地' || this.title === '司机已到提货地' || this.title === '司机已装货'){
+          let truckOptions = {
+            map: this.map,
+            // policy:1,
+            size:size || 1,
+            //city:'',
+            //panel:'panel'
+          };
+          //路线
+          let driving = new AMap.TruckDriving(truckOptions);
+          let path = [];
+          data.aflcShipperAddressDtos.forEach((item)=>{path.push({lnglat:[item.longitude,item.latitude]});});
+          driving.search(path,(status, result) =>{});
+
+          let truckOptions1 = {size:size || 1,};
+          let driving1 = new AMap.TruckDriving(truckOptions1);
+          let path1 = [{lnglat:[cj.lng,cj.lat]}, {lnglat:[data.aflcShipperAddressDtos[0].longitude,data.aflcShipperAddressDtos[0].latitude]}];
+          driving1.search(path1,(status, result) =>{
+            this.distance = result.routes[0].distance/1000;
+            this.time = this.handleTime(result.routes[0].time);
+            this.content =  [`司机达到提货地后，装卸各有<span style='color:#44c0ff'>${this.loadingFreeTime}</span>分钟的免费服务时间`];
+            this.marker(cj);
+          });
+        }
+        //司机与收货地距离
+        if(this.title === '运输中' || this.title === '司机已到目的地'){
+          let truckOptions2 = {
+            map: this.map,
+            size:size || 1,
+            hideMarkers:true,
+          };
+          let driving2 = new AMap.TruckDriving(truckOptions2);
+          let l = data.aflcShipperAddressDtos.length - 1;
+          let path2 = [{lnglat:[cj.lng,cj.lat]}, {lnglat:[data.aflcShipperAddressDtos[l].longitude,data.aflcShipperAddressDtos[l].latitude]}];
+          driving2.search(path2, (status, result) =>{
+            console.log(result)
+            this.distance = result.routes[0].distance/1000;
+
+            this.time = this.handleTime(result.routes[0].time);
+           let now = new Date() * 1;
+          let estimateTime =  new Date(now + result.routes[0].time * 1000);
+            this.estimateTime = estimateTime.format("hh时mm分");
+            if(this.title === '运输中'){
+              this.content =  [`司机已出发，距离送货目的地约${this.distance}公里，预计${this.time}送达`];
+            } else {
+              this.content =  [`免费装卸时长还剩45分23秒，超出后每15分钟收费10元`];
+            }
+
+            let endMarker = new AMap.Marker({
+              position: [data.aflcShipperAddressDtos[l].longitude,data.aflcShipperAddressDtos[l].latitude],
+              icon: 'https://webapi.amap.com/theme/v1.3/markers/n/end.png',
+              map: this.map
+            });
+           // this.map.setFitView([endMarker]);
+            this.marker(cj);
+          });
+        }
+
+
       },
       add(){
         this.centerDialogVisible = true
       },
       gotoOrder(){
         this.$router.push({path: '/order'})
-      },
-      exit() {
-        if (this.map && this.map.destroy && typeof this.map.destroy === 'function') {
-          this.map.destroy();
-          this.map = {}
-        }
-
-        this.noinfo = true
       },
 
      async initMsg(){
@@ -283,6 +332,28 @@ console.log(result)
           }
         })
       },
+      marker(cj){
+        //司机图标与窗口
+        let marker = new AMap.Marker({
+          // icon: this.carUrl,
+          icon:new AMap.Icon({
+            size: new AMap.Size(48,60),
+            image:this.carUrl,
+            imageSize:new AMap.Size(48,60)
+          }),
+          map: this.map,
+          position: [cj.lng,cj.lat],
+          offset:new AMap.Pixel(-24, -60),
+        });
+
+        let infoWindow = new AMap.InfoWindow({
+          isCustom: true,  //使用自定义窗体
+          content: this.createInfoWindow(this.content.join("<br/>")),
+          offset: new AMap.Pixel(0, -71),
+          showShadow:true
+        });
+        infoWindow.open(this.map, marker.getPosition());
+      },
       //构建自定义信息窗体
       createInfoWindow(content) {
         var info = document.createElement("div");
@@ -308,13 +379,32 @@ console.log(result)
         info.appendChild(bottom);
 
         return info;
+      },
+
+      handleTime(leftTime){
+        let time;
+        let d = parseInt(leftTime / 3600 / 24);
+        let h = parseInt((leftTime / 3600) % 24);
+        let m = parseInt((leftTime / 60) % 60);
+        let s = parseInt(leftTime % 60);
+        if(d === 0 && h === 0){
+          time = `${m}分${s}秒`;
+        } else if(d === 0){
+          time = `${h}小时${m}分${s}秒`;
+        } else {
+          time = `${d}天${h}小时${m}分${s}秒`;
+        }
+        return time;
       }
     },
     created() {
 
     },
     destroyed() {
-      this.exit()
+      if (this.map) {
+        this.map.destroy();
+        this.map = null
+      }
     },
   }
 </script>
@@ -599,12 +689,12 @@ console.log(result)
 
   .info {
     border: solid 1px silver;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 2px 2px 5px 1px silver;
   }
   div.info-middle {
-    padding: 6px;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 10px;
   }
   div.info-bottom {
     height: 0px;
@@ -622,5 +712,12 @@ console.log(result)
   .info-middle img {
     float: left;
     margin-right: 6px;
+  }
+
+
+  .driverUrl{
+    border-radius: 80px;
+    border: 1px solid transparent;
+    height: 36px;
   }
 </style>

@@ -4,7 +4,7 @@
     <div class="order flex_f">
       <div class="title flex_sb">
         <div class="left">确认订单信息</div>
-        <div class="right pointer flex_a" @click="toOrderManage()">
+        <div class="right pointer flex_a" @click="toOrder()">
           <img src="../../assets/order/xiugaidd.png" alt="">
          <span>修改订单</span> 
         </div>
@@ -233,6 +233,7 @@
             balance:0,//充值金额
             reward:0,//优惠金金额
             rewardShow:0,//显示的优惠金金额
+            preferentialAmountIdImmutable:'',//不变的优惠金id
             remissionDiscount:0//优惠卷金额 减免/折扣
           }
       },
@@ -271,14 +272,13 @@
             this.getPreferential()
           }
         },
-        toOrderManage(){
-          this.$router.push('/OrderManage/allOrder');
+        toOrder(){
+          this.$router.go(-1);
         },
         selectExchange(item){
         console.log(item)
         this.windowExchange = false;
          if(this.parm.couponId !== item.id){
-           this.math();
            if(item.couponType === "AF046201"){
              if(item.conditionDeduction < this.parm.orderPrice){
                this.parm.couponId = item.id;
@@ -300,7 +300,6 @@
          }else{
            this.parm.couponId = '';
            this.remissionDiscount = 0;
-           this.math();
          }
 
         },
@@ -334,6 +333,7 @@
             postApi(`/aflc-pay/api/pay/shipper/common/v1/tradeQuery/${rid}`,payChannel).then(res=>{
               if(res.status === 200){
                 // 支付成功
+                this.$localStorage.remove('formDown');
                 this.$router.replace("/OrderManage/already");
               } else {
                 // 支付失败
@@ -402,20 +402,20 @@
             }
           }
           if(this.payTypeId === 4){
-            this.parm.preferentialAmountId = '';
             await this.createOrder();
-            this.cashOnDelivery(4);
+            this.cashOnDelivery(1);
           }
           if(this.payTypeId === 3){
-            this.parm.preferentialAmountId = '';
             await this.createOrder();
-            this.cashOnDelivery(3);
+            this.cashOnDelivery(0);
           }
 
         },
         cashOnDelivery(id){
+          //货到付款(货主端),0收货时付款，1发货时付款
           postApi(`/aflc-order/aflcOrderApi/cashOnDelivery?type=${id}&orderSerial=${this.orderId}`).then((res)=>{
             if(res.status === 200){
+              this.$localStorage.remove('formDown');
               this.$router.replace({path: '/orderRouter/getPickUp',query: {
                   tab: "派单中",
                   qy:{orderId:this.orderId},
@@ -425,6 +425,7 @@
         },
         selectPay(id){
           this.payTypeId = id;
+          this.math();
         },
        async getPreferential(){
          //获取优惠金及优惠券(司机端)
@@ -439,7 +440,7 @@
           await postApi('/aflc-order/aflcOrderApi/getPreferential',parm).then((res)=>{
             if(res.status === 200 && res.data.aflcShipperPreferentialtDetailDto !== null){
               if(this.form.belongCity === res.data.aflcShipperPreferentialtDetailDto.areaCode){
-                this.parm.preferentialAmountId = res.data.aflcShipperPreferentialtDetailDto.id;
+                this.parm.preferentialAmountId = this.preferentialAmountIdImmutable = res.data.aflcShipperPreferentialtDetailDto.id;
                 this.reward = this.rewardShow = res.data.aflcShipperPreferentialtDetailDto.reward;
               }
             } else {
@@ -457,20 +458,32 @@
           });
         },
         math(){
-          let outstripPrice =  this.carItem.list[0].outstripPrice;
-          if(this.parm.distance - this.kmPrice > 0){
-            let distance = this.parm.distance - this.kmPrice;
-            // console.log(distance)
-            // console.log( outstripPrice)
-            // console.log(distance * outstripPrice)
-            this.outstripPrice = Math.ceil(distance * outstripPrice);
-
-            // console.log(this.outstripPrice)
-            this.parm.orderPrice =  this.price + this.outstripPrice + this.form.tipName * 1;
+          if(this.payTypeId === 4 || this.payTypeId === 3){
+            this.reward = 0;
+            this.parm.preferentialAmountId = '';
           }else {
-            this.parm.orderPrice =  this.price + this.form.tipName * 1;
+            if(this.payChannel === "ye"){
+              this.reward = 0;
+              this.parm.preferentialAmountId = '';
+            }else {
+              let outstripPrice =  this.carItem.list[0].outstripPrice;
+              if(this.parm.distance - this.kmPrice > 0){
+                let distance = this.parm.distance - this.kmPrice;
+                // console.log(distance)
+                // console.log( outstripPrice)
+                // console.log(distance * outstripPrice)
+                this.outstripPrice = Math.ceil(distance * outstripPrice);
+                // console.log(this.outstripPrice)
+                this.parm.orderPrice =  this.price + this.outstripPrice + this.form.tipName * 1;
+              }else {
+                this.parm.orderPrice =  this.price + this.form.tipName * 1;
+              }
+              this.reward = this.rewardShow;
+              this.parm.preferentialAmountId = this.preferentialAmountIdImmutable;
+            }
+
           }
-          this.parm.totalAmount  = this.parm.orderPrice  - this.reward - this.remissionDiscount;
+          this.parm.totalAmount  = this._totalAmount;
 
         }
       },
@@ -496,7 +509,7 @@
               priceType: priceType,//定价类型 1标准定价 2区域定价
               spec: this.form.specCode//车辆规格
             },
-            belongCity: this.form.belongCity,//订单所属区域(定位的城市id)
+            belongCity: this.form.belongCity,//发货地 订单所属区域(定位的城市id)
             couponId: "",//优惠券id
             distance: 0,//实际总距离(地图计算)
             extraPrice: this.form.tipName,//附加小费
@@ -507,7 +520,7 @@
             goodsWeight: this.form.volumeName,//货物重量（吨）
             ip: "",//客户端ip地址(app端不用传)
             isFirst: (this.form.isFirst)?1:0 ,//我的司机优先接单(1为true，0为false)
-            orderFrom: "web",//订单来源(ios,android)
+            orderFrom: "AF0040006",//订单来源(ios,android)
             orderPrice: 0,//订单原价格(未减优惠券，优惠金的金额)
             preferentialAmountId: "",//优惠金id
             remark: this.form.remark,//给司机捎句话
@@ -563,7 +576,6 @@
             let s = parseInt(leftTime % 60);
             if(d === 0 && h === 0){
               this.time = `${m}分${s}秒`;
-
             } else if(d === 0){
               this.time = `${h}小时${m}分${s}秒`;
             } else {
@@ -594,7 +606,7 @@
 
       },
       destroyed(){
-        //this.$localStorage.remove("formDown");
+
       },
     }
 </script>

@@ -110,7 +110,7 @@
                 {{item.driverName}}
               </div>
               <div class="cell2">
-                {{item.mobile}}
+                {{item.driverMobile}}
               </div>
             </div>
           </div>
@@ -244,7 +244,9 @@
         satelliteLayer: null,
         trafficVisible: false,
         trafficLayer: null,
+        lostTime: 3600000,
         carUrl: require("../../assets/orderMonitor/car.png"),
+        grayCarUrl: require("../../assets/orderMonitor/car_gray.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
         infoWindow2: null,
@@ -404,16 +406,69 @@
           this.mp.remove(points);
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
-        var s = "";
-        if (orderStatus != null)
-          s = "&status=" + orderStatus;
+        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
+          if (res === null || res.data === null)
+            return;
+          var v = res.data.af00806HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumAll = v;
+
+          v = res.data.af0080601HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumJiedan = v;
+
+          v = res.data.af0080602HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumGanwangtwd = v;
+
+          v = res.data.af0080603HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYidaotwd = v;
+
+          v = res.data.af0080604HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYizhuanghuo = v;
+
+          v = res.data.af0080605HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYunshuzhong = v;
+
+          v = res.data.af0080606HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYidaomdd = v;
+
+          v = res.data.af0080607HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumYixiehuo = v;
+
+          v = res.data.af0080608HZ;
+          if (v === null)
+            v = 0;
+          this.orderNumGaipai = v;
+        });
+
+        var vo = {};
+        if (orderStatus == null)
+          orderStatus = "AF00806HZ";
+        vo.orderStatus = orderStatus;
         if (searchFlag) {
           var t = this.filterText;
-          if (t != null) {
-            s = s + "&searchText=" + t;
-          }
+          if (t != null)
+            vo.keywordQuery = t;
         }
-        postApi("/aflc-order/aflcMyOrderApi/myOrderList?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize + s).then((res) => {
+        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorList", {
+          currentPage: this.currentPage,
+          pageSize: this.pageSize,
+          vo: vo
+        }).then((res) => {
           var c = "";
           try {
             c = res.data.totalCount;
@@ -423,24 +478,24 @@
 
           if (c === "" || c == null || isNaN(c))
             return;
-          if (orderStatus === "")
-            this.orderNumAll = c;
-          else if (orderStatus === "AF0080601HZ")
-            this.orderNumJiedan = c;
-          else if (orderStatus === "AF0080602HZ")
-            this.orderNumGanwangtwd = c;
-          else if (orderStatus === "AF0080603HZ")
-            this.orderNumYidaotwd = c;
-          else if (orderStatus === "AF0080604HZ")
-            this.orderNumYizhuanghuo = c;
-          else if (orderStatus === "AF0080605HZ")
-            this.orderNumYunshuzhong = c;
-          else if (orderStatus === "AF0080606HZ")
-            this.orderNumYidaomdd = c;
-          else if (orderStatus === "AF0080607HZ")
-            this.orderNumYixiehuo = c;
-          else if (orderStatus === "AF0080608HZ")
-            this.orderNumGaipai = c;
+          // if (orderStatus === "")
+          //   this.orderNumAll = c;
+          // else if (orderStatus === "AF0080601HZ")
+          //   this.orderNumJiedan = c;
+          // else if (orderStatus === "AF0080602HZ")
+          //   this.orderNumGanwangtwd = c;
+          // else if (orderStatus === "AF0080603HZ")
+          //   this.orderNumYidaotwd = c;
+          // else if (orderStatus === "AF0080604HZ")
+          //   this.orderNumYizhuanghuo = c;
+          // else if (orderStatus === "AF0080605HZ")
+          //   this.orderNumYunshuzhong = c;
+          // else if (orderStatus === "AF0080606HZ")
+          //   this.orderNumYidaomdd = c;
+          // else if (orderStatus === "AF0080607HZ")
+          //   this.orderNumYixiehuo = c;
+          // else if (orderStatus === "AF0080608HZ")
+          //   this.orderNumGaipai = c;
 
           if (updateFlag) {
             this.totalCount = c;
@@ -572,7 +627,7 @@
         v = res.data.driverMobile;
         if (v == null)
           v = "";
-        carInfo.mobile = v;
+        carInfo.driverMobile = v;
         document.getElementById("infoWindowMobile").innerText = v;
 
         v = res.data.useCarTime;
@@ -677,6 +732,12 @@
         this.carList = [];
         this.carList = l;
       },
+      noPosition() {
+        this.$message({
+          message: '未获取到该订单的位置数据，请稍后再试. ',
+          type: 'warning'
+        });
+      },
       getOrderDetail(orderId, marker) {
         try {
           if (orderId == null || !marker)
@@ -688,20 +749,30 @@
           if (carInfo == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
+            if (res.data == null) {
+              this.noPosition();
+              return;
+            }
             var trails = res.data.aflcOrderCarTrails;
             var lnglat = marker.getPosition();
-            if (!lnglat && (!trails || trails.length < 1))
+            if (!lnglat && (!trails || trails.length < 1)) {
+              this.noPosition();
               return;
+            }
             var lastTrail = trails[trails.length - 1];
-            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null))
+            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null)) {
+              this.noPosition();
               return;
+            }
             var pos = null;
             if (lastTrail.longitude != null && lastTrail.latitude != null)
               pos = [lastTrail.longitude, lastTrail.latitude];
             if (pos == null)
               pos = lnglat;
-            if (pos == null)
+            if (pos == null) {
+              this.noPosition();
               return;
+            }
 
             marker.setPosition(pos);
             marker.setMap(this.mp);
@@ -875,7 +946,11 @@
         this.points = [];
         var showPoints = [];
         for (; i < l.length; ++i) {
-          pos = l[i].pos;
+          pos = l[i].aflcOrderCarTrail;
+          if (pos != null && pos.latitude != null && pos.longitude != null)
+            pos = [pos.longitude, pos.latitude];
+          else
+            pos = null;
           if (pos == null) {
             marker = new AMap.Marker({
               icon: this.carUrl,
@@ -883,6 +958,11 @@
               extData: i
             });
           } else {
+            // var time = l[i].aflcOrderCarTrail.coordinateTime;
+            // var carUrl = this.grayCarUrl;
+            // if (time != null) {
+            //
+            // }
             marker = new AMap.Marker({
               icon: this.carUrl,
               position: pos,
@@ -992,57 +1072,57 @@
 
         ele = document.getElementById("infoWindowOrderTime");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderCarType");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderCargo");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderExtraServ");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderMemo");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPrice");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPayState");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("mapAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderStartAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderPassAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         ele = document.getElementById("infoWindowOrderTargetAddr");
         if (ele) {
-          ele.innerText = v;
+          ele.innerText = "";
         }
 
         var pos = markerPoint.getPosition();
@@ -1143,7 +1223,10 @@
       showTrack(orderId) {
         var pois = this.track;
         if (pois == null || pois.length < 2) {
-          alert("未获取到轨迹数据，请稍后再试. ");
+          this.$message({
+            message: '未获取到轨迹数据，请稍后再试. ',
+            type: 'warning'
+          });
           return;
         }
         var d = AMap.GeometryUtil.distanceOfLine(pois);
