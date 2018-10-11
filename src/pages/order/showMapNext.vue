@@ -425,7 +425,7 @@
               this.$localStorage.remove('formDown');
               this.$router.replace({path: '/orderRouter/getPickUp',query: {
                   tab: "派单中",
-                  qy:{orderId:this.orderId},
+                  orderId:this.orderId,
                 }})
             }
           })
@@ -651,7 +651,7 @@
   }
 
   .order-route{
-    width: 467px;
+    width: 100%;
     height: 119px;
     overflow: auto;
   }
