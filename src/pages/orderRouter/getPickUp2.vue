@@ -81,6 +81,7 @@
   import {getAuroraSignature} from '@/api/concentrateAxios/orderManage'
   import { getApi ,postApi,pustApiX} from "@/api/api.js";
   import routeLine from '../order/routeLine.vue'
+  import {getUserInfo, setOrderDtaial, getOrderDtaial} from '@/utils/auth'
   export default {
     components:{routeLine},
     watch: {
@@ -156,45 +157,48 @@
         }
       });
 
-      //状态跟踪(货主)
-      pustApiX(`/aflc-order/aflcMyOrderApi/statusFollowing?orderSerial=${this.$route.query.orderSerial}`).then((res)=>{
-        console.log(res)
-
-        if(res.data.longitude && res.status === 200){
-          this.loadingFreeTime = res.data.loadingFreeTime / 2;
-          this.distAddressName = res.data.aflcShipperAddressDtos[res.data.aflcShipperAddressDtos.length - 1].viaAddressName;
-          switch (res.data.orderStatus) {
-            case "AF00801":
-              this.title = '待付款';
-              break ;
-            case "AF0080601HZ":
-              this.title = '司机已接单';
-              break ;
-            case "AF0080602HZ":
-              this.title = '司机赶往提货地';
-              break ;
-            case "AF0080603HZ":
-              this.title = '司机已到提货地';
-              break ;
-            case "AF0080604HZ":
-              this.title = '司机已装货';
-              break ;
-            case "AF0080605HZ":
-              this.title = '运输中';
-              break ;
-            case "AF0080606HZ":
-              this.title = '司机已到目的地';
-              break ;
-          }
-          //司机坐标
-          let longitude = res.data.longitude;
-          let latitude = res.data.latitude;
-          this.roadDriving(res.data,{lng:longitude,lat:latitude});
-        }
-      })
+     this.roadStatus();
     },
 
     methods: {
+      roadStatus(){
+        //状态跟踪(货主)
+        pustApiX(`/aflc-order/aflcMyOrderApi/statusFollowing?orderSerial=${this.$route.query.orderSerial}`).then((res)=>{
+          console.log(res)
+          if(res.data.longitude && res.status === 200){
+            this.loadingFreeTime = res.data.loadingFreeTime / 2;
+            this.distAddressName = res.data.aflcShipperAddressDtos[res.data.aflcShipperAddressDtos.length - 1].viaAddressName;
+            switch (res.data.orderStatus) {
+              case "AF00801":
+                this.title = '待付款';
+                break ;
+              case "AF0080601HZ":
+                this.title = '司机已接单';
+                break ;
+              case "AF0080602HZ":
+                this.title = '司机赶往提货地';
+                break ;
+              case "AF0080603HZ":
+                this.title = '司机已到提货地';
+                break ;
+              case "AF0080604HZ":
+                this.title = '司机已装货';
+                break ;
+              case "AF0080605HZ":
+                this.title = '运输中';
+                break ;
+              case "AF0080606HZ":
+                this.title = '司机已到目的地';
+                break ;
+            }
+            //司机坐标
+            let longitude = res.data.longitude;
+            let latitude = res.data.latitude;
+            this.roadDriving(res.data,{lng:longitude,lat:latitude});
+          }
+        })
+      },
+
       roadDriving(data,cj){
         let size;
         switch (data.carType) {
@@ -282,35 +286,51 @@
 
      async initMsg(){
         let JIM = new JMessage({
-          debug : true
+          debug : false
         })
 
         JIM.onDisconnect(function(){
           console.log("【disconnect】");
         }); //异常断线监听
 
-      await this.getSignature()
-        console.log(this.jimInfo,'几率')
-        const md5 = require("js-md5");
-        const signature =md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
+       //接口
+       this.getSignature().then(res => {
+         const md5 = require("js-md5");
+         // const signature = md5("appkey=" + this.jimInfo.appkey + "&timestamp=" + this.jimInfo.timestamp + "&random_str=" + this.jimInfo.random_str + "&key=" + this.jimInfo.key)
+         // console.log('diff signature:',this.jimInfo, this.jimInfo.signature, signature)
+         JIM.init({
+           "appkey": this.jimInfo.appkey,
+           "random_str": this.jimInfo.random_str,
+           "signature": this.jimInfo.signature,
+           "timestamp": this.jimInfo.timestamp,
+           "flag": 1
+         }).onSuccess(function (data) {
 
-       JIM.init({
-          "appkey":this.jimInfo.appkey,
-          "random_str": this.jimInfo.random_str,
-          "signature":  md5(this.jimInfo.signature),
-          "timestamp":  this.jimInfo.timestamp,
-          "flag": 1
-        }).onSuccess(function(data) {
-          // console.log('success:' + JSON.stringify(data));
-          console.log(data,'成功了');
-          JIM.onMsgReceive(function(data) {
-            data = JSON.stringify(data);
-            console.log('1msg_receive:' + data,'成功了1');
+           // 注册用户
+           JIM.login({
+             'username' : getUserInfo().shipperId,
+             'password' : md5(getUserInfo().mobile),
+           }).onSuccess(function(data) {
 
-          });
-        }).onFail(function(data) {
-          console.log('error成功了2:' + JSON.stringify(data))
-        });
+             //data.code 返回码
+             //data.message 描述
+           }).onFail(function(data) {
+             console.log(data)
+             // 同上
+           });
+
+           JIM.onMsgReceive(function (data) {
+             //data = JSON.stringify(data);
+             console.log('1msg_receive:', data, '实时消息');
+
+           });
+           JIM.onSyncConversation(function(data){
+             // console.log('离线消息： ', data)
+           })
+         }).onFail(function (data) {
+           console.log('error2:' + JSON.stringify(data))
+         });
+       })
       },
       loadMsg(){
         if(window.JMessage){
@@ -322,12 +342,15 @@
         }
       },
 
-      getSignature(){
-        return getAuroraSignature(2).then(res => {
-          if(res.status===200){
-            this.jimInfo.signature =res.data
-            console.log(this.jimInfo.signature,'请求的');
-          }else{
+      getSignature() {
+        return getAuroraSignature().then(res => {
+          if (res.status === 200) {
+            this.jimInfo.appkey = res.data.appkey
+            this.jimInfo.random_str = res.data.randomStr
+            this.jimInfo.signature = res.data.signature
+            this.jimInfo.timestamp = res.data.timestamp
+            return res
+          } else {
             this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
           }
         })
