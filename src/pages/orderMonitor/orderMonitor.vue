@@ -779,9 +779,9 @@
             this.markerPoint = marker;
             this.centerMark();
             this.infoWindow2.open(this.mp, pos);
-            this.translateAddr();
 
             this.orderdetail = res;
+            this.translateAddr();
             this.getOrderDetail2();
             this.translateCode();
 
@@ -1206,13 +1206,31 @@
         if (markerPoint == null)
           return;
         var pos = markerPoint.getPosition();
+        var t = this.orderdetail;
+        var formatDate = this.formatDate;
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
-            if (mapAddr == null)
-              mapAddr = document.getElementById("mapAddr");
-            if (mapAddr != null)
-              mapAddr.innerText = address;
+            try {
+              if (t != null && t.data != null) {
+                t = t.data.aflcOrderCarTrails;
+                if (t != null && t.length > 0) {
+                  t = t[t.length - 1];
+                } else
+                  t = null;
+                if (t != null)
+                  t = t.coordinateTime;
+                if (t != null)
+                  t = formatDate(t);
+              } else
+                t = null;
+            } catch (e) {
+              t = null;
+            }
+            if (t != null)
+              address = address + "&nbsp;&nbsp;" + t;
+
+            mapAddr.innerHTML = address;
           }
         });
       },
@@ -1449,13 +1467,12 @@
   }
 
   .customInfoWindow #mapAddr {
-    height: 35px;
-    overflow: auto;
+    min-height: 35px;
   }
 
   .customInfoWindow .track {
     position: relative;
-    height: 17px
+    height: 17px;
   }
 
   #infoWindow {
