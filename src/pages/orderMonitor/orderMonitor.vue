@@ -1607,7 +1607,7 @@
     right: 396px;
     top: 200px;
     background-color: white;
-    padding: 60px 2px;
+    padding: 10px 2px;
     font-size: 14px;
     cursor: pointer;
     width: 20px;
