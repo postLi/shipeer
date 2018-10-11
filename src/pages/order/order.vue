@@ -273,7 +273,7 @@
       </div>
 
       <div class="item-margin item-6 flex_r">
-        <div class="item-l">额外需求(选填)：</div>
+        <div class="item-l">额外服务：</div>
         <el-button size="small" @click="requestClick(item)" v-for="(item,index) in requestList" :key="item.extraId"
                    :style="{'background-color':(item.selected)?'#1890ff':'#f2f2f2','color':(item.selected)?'white':'black'}">
           <span v-if="item.extraName ==='需要装卸'">{{item.extraName}}（与司机议价）</span>
@@ -282,7 +282,7 @@
       </div>
 
       <div class="item-margin item-7 flex_r">
-        <div class="item-l">订单备注：</div>
+        <div class="item-l">给司机捎句话：</div>
         <div class="item-7-1 width_100">
           <div class="flex_a number">
             <div class="a">{{form.remark.length}}</div>
