@@ -55,7 +55,7 @@
           <el-form class="tab-serClass":model="userData" :rules="userRules" ref="userLogin" v-if="status ===2">
             <el-form-item class="" prop="userPhone" label="手机号:">
               <el-input :maxlength="11" placeholder="请输入注册手机号"
-                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
+                        v-model="userData.userPhone" clearable @keyup.enter.native="subLogin" disabled>
 
               </el-input>
             </el-form-item>
@@ -379,6 +379,15 @@
           display: inline-grid;
           .el-form-item {
             display: inline-flex;
+            .el-input.is-disabled .el-input__inner{
+
+            }
+            .el-input.is-disabled{
+
+              .el-input__inner{
+
+              }
+            }
           }
           .el-form-item.first{
             display: inline-flex;
@@ -419,6 +428,13 @@
           display: inline-grid;
           .el-form-item {
             display: inline-flex;
+            .el-form-item__content{
+              .el-input.is-disabled {
+                .el-input__inner{
+                  background: #fff;
+                }
+              }
+            }
           }
           .el-form-item.first{
             display: inline-flex;
