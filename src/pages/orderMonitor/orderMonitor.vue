@@ -1544,13 +1544,13 @@
 
   .orderSearchResult .table .cellHeader {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
   }
 
   .orderSearchResult .table .cell2 {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
     color: gray;
     width: 89px;
@@ -1566,7 +1566,7 @@
 
   .orderSearchResult .table .cell4 {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
     color: gray;
     width: 93px;
