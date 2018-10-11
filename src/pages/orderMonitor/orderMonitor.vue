@@ -810,7 +810,29 @@
           var m = d.getMonth() + 1;
           if (m < 10)
             m = "0" + m;
-          return (d.getFullYear() + "-" + m + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
+          var str = d.getFullYear() + "-" + m;
+
+          m = d.getDate();
+          if (m < 10)
+            m = "0" + m;
+          str = str + "-" + m;
+
+          m = d.getHours();
+          if (m < 10)
+            m = "0" + m;
+          str = str + " " + m;
+
+          m = d.getMinutes();
+          if (m < 10)
+            m = "0" + m;
+          str = str + ":" + m;
+
+          m = d.getSeconds();
+          if (m < 10)
+            m = "0" + m;
+          str = str + ":" + m;
+
+          return str;
         } catch (e) {
         }
         return null;
