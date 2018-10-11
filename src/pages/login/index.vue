@@ -62,7 +62,7 @@
             </el-form-item>
 
             <el-form-item class="" prop="verGra">
-              <el-input placeholder="请输入图形验证码" v-model="verData.verGra" clearable @keyup.enter.native="subLogin">
+              <el-input :maxlength="5" placeholder="请输入图形验证码" v-model="verData.verGra" clearable @keyup.enter.native="subLogin">
                 <template slot="append">
                   <img :src="imgsrc" @click="changeVcode" alt="">
                 </template>
@@ -110,7 +110,7 @@
       let _this = this
       const checkvcode = function (rule, value, callback) {
         if (!value) {
-          callback(new Error('请输入验证码,验证码已失效,请更换验证码'))
+          callback(new Error('验证码错误，或者验证码已失效，请重新获取'))
         } else {
           validLoginCode(value).then(result => {
             if (result.status == 200) {
@@ -193,7 +193,7 @@
             this.serverPhone = res.data.value
             setServerPhone(this.serverPhone)
           } else {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+            this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
           }
         }).catch(err => {
         })
@@ -281,7 +281,7 @@
           this.$refs['verLogin'].validate(valid => {
             if (valid) {
               let verNote = md5(this.verData.verNote)
-              loginValid(this.verData.verPhone + '|aflc-2', verNote).then((data) => {
+              loginValid(this.verData.verPhone + '|aflc-2', this.verData.verNote).then((data) => {
 
                 VueJsCookie.set('28kytoken', data.access_token)
                 VueJsCookie.set('28kyuPhone', this.verData.verPhone)

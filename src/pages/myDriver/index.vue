@@ -1,84 +1,80 @@
 <template>
-	<div class="driver-lll-my" >
+  <div class="driver-lll-my" v-loading="loading">
     <Search @change="getSearchParam"></Search>
     <div class="add-coll">
       <el-button type="success" plain size="mini" @click="addCollDriver">添加收藏司机</el-button>
     </div>
     <div class="info-table">
-       <el-table
-         ref="multipleTable"
-         :data="dataset"
-         stripe
-         border
-         @row-dblclick="getDbClick"
-         @row-click="clickDetails"
-         @selection-change="getSelection"
-         height="100%"
-         tooltip-effect="dark"
-         :default-sort = "{prop: 'id', order: 'ascending'}"
-         style="width: 100%"
-         header-align="center">
-         <el-table-column
-           fixed
-           sortable
-           type="selection"
-           width="50">
-         </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="id"
-           label="序号"
-           width="100">
-           <template slot-scope="scope">{{ ((searchForms.currentPage - 1)*searchForms.pageSize) + scope.$index + 1 }}</template>
-         </el-table-column>
-         <el-table-column
-         fixed
-         sortable
-         prop="abnormalNo"
-         width="200"
-         label="车牌号">
-       </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="abnormalNo"
-           width="250"
-           label="车型">
-         </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="abnormalNo"
-           width="250"
-           label="司机">
-         </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="abnormalNo"
-           width="250"
-           label="联系电话">
-         </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="abnormalNo"
-           width="250"
-           label="当前状态">
-         </el-table-column>
-         <el-table-column
-           fixed
-           sortable
-           prop="abnormalNo"
-           width="250"
-           label="操作">
-           <template slot-scope="scope">
-             <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
-           </template>
-         </el-table-column>
-       </el-table>
-   </div>
+      <el-table
+        ref="multipleTable"
+        :data="dataset"
+        stripe
+        border
+        @row-dblclick="getDbClick"
+        @row-click="clickDetails"
+        @selection-change="getSelection"
+        height="100%"
+        tooltip-effect="dark"
+        :default-sort="{prop: 'id', order: 'ascending'}"
+        style="width: 100%"
+        header-align="center">
+
+        <el-table-column
+          fixed
+          sortable
+          prop="id"
+          label="序号"
+          width="100">
+          <template slot-scope="scope">{{ ((senDataList.currentPage - 1)*senDataList.pageSize) + scope.$index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="carNumber"
+          width="200"
+          label="车牌号">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="carTypeName"
+          width="250"
+          label="车型">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="driverName"
+          width="250"
+          label="司机">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="abnormalNo"
+          width="250"
+          label="联系电话">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop="abnormalNo"
+          width="250"
+          label="当前状态">
+        </el-table-column>
+        <el-table-column
+          fixed
+          sortable
+          prop=""
+          width="250"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <el-dialog
       title="收藏司机"
       :visible.sync="centerDialogVisible"
@@ -95,154 +91,195 @@
 
   </span>
     </el-dialog>
-    <div class="info_tab_footer" ref="footer">共计:{{ total }} <div class="show_pager"> <Pager :total="total" @change="handlePageChange" /></div> </div>
+    <div class="info_tab_footer" ref="footer">共计:{{ total }}
+      <div class="show_pager">
+        <Pager :total="total" @change="handlePageChange"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-   import Search from './components/search'
-   import {postDriverList,postDriver} from '@/api/concentrateAxios/myDriver'
-   import {REGEX} from '../../utils/valiRegex'
-   import Pager from '@/components/Pagination/index'
- export default{
-     data(){
-       return {
-         total: 0,
-         // loading : false,
-         centerDialogVisible : false,
-         currentPage3: 5,
-         dataset:[],
-         dialogFn:{
-           driverMobile:''
-         },
-         senDataList:{
-           currentPage:1,
-           pageSize:5,
-           vo:{
+  import Search from './components/search'
+  import {postDriverList, postDriver,deleteDriver} from '@/api/concentrateAxios/myDriver'
+  import {REGEX} from '../../utils/valiRegex'
+  import Pager from '@/components/Pagination/index'
 
-           }
-         },
-         rules:{
-           driverMobile:[
-             {message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
-           ]
-         }
+  export default {
+    data() {
+      return {
+        loading: false,
+        total: 0,
+        // loading : false,
+        centerDialogVisible: false,
+        currentPage3: 5,
+        dataset: [],
+        dialogFn: {
+          driverMobile: ''
+        },
+        senDataList: {
+          currentPage: 1,
+          pageSize: 5,
+          vo: {}
+        },
+        rules: {
+          driverMobile: [
+            {message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
+          ]
+        }
 
-     }
-   },
-   components:{
-     Search,
-     Pager
-   },
-   mounted(){
-    this.getPaymentList()
-   },
-   methods:{
-     onSubForm(dialog){
-       this.$refs[dialog].validate(valid => {
-         if (valid) {
-           return postDriver(this.dialogFn.driverMobile).then(res => {
-             this.$message.success('收藏成功~');
-             this.centerDialogVisible = false
-             this.fetchAllList()
-
-           }).catch(err => {
-             this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
-           })
-         }else{
-           return false
-         }
-       })
-
-   },
-     addCollDriver(){
-      this.centerDialogVisible = true
-      // return postDriver
+      }
     },
-     getPaymentList(){
-       return postDriverList(this.senDataList).then(res =>{
-         // console.log(res);
-         this.dataset = res.data.list
-       }).catch(err => {
-         this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
-       })
-     },
-     fetchAllList(){
-       this.getPaymentList()
-     },
-     getSearchParam(obj){
-       this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
-       this.fetchAllList()
-     },
-     handleClick(row) {
-       console.log(row);
-     },
+    components: {
+      Search,
+      Pager
+    },
+    mounted() {
+      this.getPaymentList()
+    },
+    watch:{
+      centerDialogVisible(n){
+        if(n === false){
+          this.dialogFn.driverMobile = ''
+        }
+      }
+    },
+    methods: {
+      onSubForm(dialog) {
+        this.$refs[dialog].validate(valid => {
+          if (valid) {
+            this.loading = false
+            return postDriver(this.dialogFn.driverMobile).then(res => {
+              if (res.status === 200) {
+                this.$message.success('收藏成功~');
+                this.centerDialogVisible = false
+                this.fetchAllList()
+                this.loading = false
+              } else {
+                this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+              }
 
-     getDbClick(){
+            })
+          } else {
+            return false
+          }
+        })
 
-     },
-     clickDetails(row, event, column){
-       this.$refs.multipleTable.toggleRowSelection(row)
-     },
-     getSelection(selection){
-       this.selected = selection
-     }
-   }
+      },
+      addCollDriver() {
+        this.centerDialogVisible = true
+        // return postDriver
+      },
+      getPaymentList() {
+        this.loading = false
+        return postDriverList(this.senDataList).then(res => {
+          if (res.status === 200) {
+            this.dataset = res.data[0].drivers
+            this.loading = false
+          } else {
+            this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+          }
 
- }
+        })
+      },
+      fetchAllList() {
+        this.getPaymentList()
+      },
+      getSearchParam(obj) {
+        this.senDataList.vo = Object.assign(this.senDataList.vo, obj)
+        this.fetchAllList()
+      },
+      handleClick(row) {
+        console.log(row.driverId);
+        this.$confirm('确定要删除司机吗？', '提示', {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteDriver(row.driverId).then(res => {
+           if(res.status ===200){
+             this.$message({
+               type: 'success',
+               message: '删除成功!'
+             })
+             this.fetchData()
+           }else{
+             this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+           }
+          })
+        })
+
+      },
+
+      getDbClick() {
+
+      },
+      clickDetails(row, event, column) {
+        this.$refs.multipleTable.toggleRowSelection(row)
+      },
+      getSelection(selection) {
+        this.selected = selection
+      },
+      handlePageChange(obj){
+        this.senDataList.currentPage = obj.pageNum
+        this.senDataList.pageSize = obj.pageSize
+      }
+    }
+
+  }
 </script>
 
 <style lang="scss">
- .driver-lll-my{
-   margin: 10px;
-   background: #fff;
-   .info-table{
-     /*display: flex;*/
-     padding: 20px 10px 0 20px;
-     width: 100%;
-     height: calc(100% - 38px);
-     tr{
-       .cell{
-         text-align: center;
-         color: #333;
-       }
-     }
-   }
-   .el-dialog__wrapper{
-     .el-dialog{
-       margin-top: 30vh;
-       .el-dialog__body{
-         .el-form{
-           .el-form-item{
-             display: flex;
-           }
-         }
-       }
-     }
+  .driver-lll-my {
+    margin: 10px;
+    background: #fff;
+    .info-table {
+      /*display: flex;*/
+      padding: 20px 10px 0 20px;
+      width: 100%;
+      height: calc(100% - 38px);
+      tr {
+        .cell {
+          text-align: center;
+          color: #333;
+        }
+      }
+    }
+    .el-dialog__wrapper {
+      .el-dialog {
+        margin-top: 30vh;
+        .el-dialog__body {
+          .el-form {
+            .el-form-item {
+              display: flex;
+            }
+          }
+        }
+      }
 
-   }
-   .add-coll{
-     margin-left: 80px;
-   }
-   .info_tab_footer {
-     padding-left: 20px;
-     background: #fff;
-     height: 40px;
-     line-height: 40px;
-     box-shadow: 0 -2px 2px rgba(0,0,0,.1);
-     position: relative;
-     z-index: 10;
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     width: 100%;
-   }
-   .show_pager {
-     float: right;
-     line-height: 40px;
-     height: 40px;
-     overflow: hidden;
-     margin-right: 40px;
-   }
- }
+    }
+    .add-coll {
+      margin-left: 80px;
+    }
+    .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0, 0, 0, .1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
+    }
+  }
 </style>
