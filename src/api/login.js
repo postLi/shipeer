@@ -1,5 +1,5 @@
 import Axios from 'axios'
-
+let sw1 = '/aflc-common'
 export function login(username, password, orgid) {
   var grant_type = 'password'
   var scope = 'webApp'
@@ -58,17 +58,17 @@ export function validLoginCode(code) {
   return Axios.get('/aflccommonservice/common/aflcMemberCenter/v1/checkImageCode/' + code)
 }
 export function validLoginPhone(code) {
-  return Axios.post('/aflc-common/aflcCommonSms/sendCodeSms/' + code)
+  return Axios.post(''+swg1+'/aflcCommonSms/sendCodeSms/' + code)
 }
 
 export function validLoginServicePhone() {
-  return Axios.get('/aflc-common/aflcCommonSysDistApi/getPlatformCustomerServicePhone')
+  return Axios.get(''+swg1+'/aflcCommonSysDistApi/getPlatformCustomerServicePhone')
 }
 
 
 
 export function getUser(mobile) {
-  return Axios.get('/aflc-common/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)
+  return Axios.get(''+swg1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)
 }
 
 //http://192.168.1.78:7010/uaa/oauth/token?access_token=3b6cde08-1bb6-481d-8e7d-99a653325451
@@ -114,6 +114,17 @@ export function deleteToken() {
     }
   })
 }
-// export function testApi(){
-//   return Axios.get('/sdfsdfsdf')
-// }
+
+///common/aflcMemberCenter/v1/retrievePassword
+// 找回密码  AF0010101
+// "memberType=AF0010101&mobile=1892222222&imageCode=1234&smsCode=334&password=12344&passwordSure=224455"
+
+export function putretrievePassword(mobile,imageCode,smsCode,password,passwordSure) {
+  return Axios.put(''+swg1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?memberType='+AF0010101+'&mobile='+mobile+'&imageCode='+imageCode+'&smsCode='+smsCode+'&password='+password+'&passwordSure='+passwordSure)
+}
+
+// /common/aflcMemberCenter/v1/updatePassword
+// 修改密码
+export function putupdatePassword(mobile,oldPassword,newPassword,surePassword) {
+  return Axios.put(''+swg1+'/common/aflcMemberCenter/v1/updatePassword?memberType='+AF0010101+'&mobile='+mobile+'&oldPassword='+oldPassword+'&newPassword='+newPassword+'&surePassword='+surePassword)
+}
