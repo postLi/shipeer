@@ -6,7 +6,7 @@
         <div class="left">确认订单信息</div>
         <div class="right pointer flex_a" @click="toOrder()">
           <img src="../../assets/order/xiugaidd.png" alt="">
-         <span>修改订单</span> 
+         <span>修改订单</span>
         </div>
       </div>
 
@@ -355,10 +355,10 @@
           }
         },
        async pay(){
-          if(this.parm.distance < 0.1){
-            this.$message.warning("距离必须大于0.1公里");
-            return
-          }
+          // if(this.parm.distance < 0.1){
+          //   this.$message.warning("距离必须大于0.1公里");
+          //   return
+          // }
           this.math();
           if(this.payTypeId === 1){
             if(this.payChannel === "ye"){
@@ -425,7 +425,7 @@
               this.$localStorage.remove('formDown');
               this.$router.replace({path: '/orderRouter/getPickUp',query: {
                   tab: "派单中",
-                  qy:{orderId:this.orderId},
+                  orderId:this.orderId
                 }})
             }
           })

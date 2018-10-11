@@ -58,17 +58,17 @@ export function validLoginCode(code) {
   return Axios.get('/aflccommonservice/common/aflcMemberCenter/v1/checkImageCode/' + code)
 }
 export function validLoginPhone(code) {
-  return Axios.post(''+swg1+'/aflcCommonSms/sendCodeSms/' + code)
+  return Axios.post(''+sw1+'/aflcCommonSms/sendCodeSms/' + code)
 }
 
 export function validLoginServicePhone() {
-  return Axios.get(''+swg1+'/aflcCommonSysDistApi/getPlatformCustomerServicePhone')
+  return Axios.get(''+sw1+'/aflcCommonSysDistApi/getPlatformCustomerServicePhone')
 }
 
 
 
 export function getUser(mobile) {
-  return Axios.get(''+swg1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)
+  return Axios.get(''+sw1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?mobile='+mobile)
 }
 
 //http://192.168.1.78:7010/uaa/oauth/token?access_token=3b6cde08-1bb6-481d-8e7d-99a653325451
@@ -120,11 +120,11 @@ export function deleteToken() {
 // "memberType=AF0010101&mobile=1892222222&imageCode=1234&smsCode=334&password=12344&passwordSure=224455"
 
 export function putretrievePassword(mobile,imageCode,smsCode,password,passwordSure) {
-  return Axios.put(''+swg1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?memberType='+AF0010101+'&mobile='+mobile+'&imageCode='+imageCode+'&smsCode='+smsCode+'&password='+password+'&passwordSure='+passwordSure)
+  return Axios.put(''+sw1+'/common/aflcMemberCenter/v1/getShipperInfoByMobile?memberType='+AF0010101+'&mobile='+mobile+'&imageCode='+imageCode+'&smsCode='+smsCode+'&password='+password+'&passwordSure='+passwordSure)
 }
 
 // /common/aflcMemberCenter/v1/updatePassword
 // 修改密码
 export function putupdatePassword(mobile,oldPassword,newPassword,surePassword) {
-  return Axios.put(''+swg1+'/common/aflcMemberCenter/v1/updatePassword?memberType='+AF0010101+'&mobile='+mobile+'&oldPassword='+oldPassword+'&newPassword='+newPassword+'&surePassword='+surePassword)
+  return Axios.put(''+sw1+'/common/aflcMemberCenter/v1/updatePassword?memberType='+AF0010101+'&mobile='+mobile+'&oldPassword='+oldPassword+'&newPassword='+newPassword+'&surePassword='+surePassword)
 }

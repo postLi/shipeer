@@ -10,10 +10,10 @@
       </div>
       <div class="contentClass">
         <div class="topClass">
-          <p class="changeDriver">{{$route.query.qy.isEnshrine===true?'已为您推送收藏':'系统选择'}}司机</p>
+          <p class="changeDriver">{{getDetail.isFirst === 1?'已为您推送收藏':'系统选择'}}司机</p>
           <!--<p class="changeDriver">系统选择司机</p>-->
           <p class="changeTitle" v-if="isHiddenCar">正在为您<span>优先叫车</span></p>
-          <p class="changeTime" v-if="!isHiddenCar">00:{{wait}}</p>
+          <p class="changeTime" v-if="!isHiddenCar">00:{{wait>=10?wait:'0'+wait}}</p>
           <p class="changeCar" v-if="!isHiddenCar">倒计时结束后无应答将优先为您叫车</p>
 
           <!--司机距您<span class="callClass">1.5</span>公里，稍后将电话联系您…-->
@@ -169,7 +169,15 @@
 
 // this.dialogTableVisible = this.popVisible
       this.init()
-      this.fetchOrderDetail()
+      let orderSerial =''
+      if(this.isRouteData.orderId ){
+        orderSerial = this.isRouteData.orderId
+      }else{
+        orderSerial = this.isRouteData.qy.orderSerial
+      }
+      this.orderSerial = orderSerial
+
+      this.fetchOrderDetail(orderSerial)
       this.dowTime()
 
 
@@ -185,7 +193,7 @@
     methods: {
 
       fetchCode() {
-        if (this.isRouteData.qy.isEnshrine === true) {
+        if (this.getDetail.isFirst === 1) {//0 未接单
           this.getFCodes = 'AF0051601'
         } else {
           this.getFCodes = 'AF0051602'
@@ -215,8 +223,10 @@
           }, 1000)
         }
       },
-      fetchOrderDetail() {
-        return postMyOrderDetail(this.isRouteData.qy.orderSerial).then(res => {
+
+      fetchOrderDetail(orderSerial) {
+
+        return postMyOrderDetail(orderSerial).then(res => {
           if (res.status === 200) {
             this.getDetail = res.data
             // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
@@ -295,7 +305,8 @@
         this.centerDialogVisible = false
       },
       gotoOrder() {
-        this.$router.push({path: '/order'})
+        this.$router.go(-1);
+        // this.$router.push({path: '/order'})
       },
       exit() {
         if (this.map && this.map.destroy && typeof this.map.destroy === 'function') {
@@ -335,7 +346,9 @@
           }).onSuccess(function (data) {
             // 注册用户
             JIM.login({
-              'username' : getUserInfo().shipperId,
+              // shlipid+"dev"
+              // shlipid+"test"
+              'username' : getUserInfo().shipperId+'dev',
               'password' : md5(getUserInfo().mobile),
               }).onSuccess(function(data) {
                   //data.code 返回码
@@ -346,6 +359,13 @@
 
             JIM.onMsgReceive(function (data) {
               //data = JSON.stringify(data);
+              let orderId
+              // text: "{"msgType":1,"data":"AFTC201810111647067588272","msg":""}"
+              orderId=JSON.parse(data.messages[0].content.msg_body.text).data
+
+              if(this.orderSerial === orderId){
+                this.fetchOrderDetail(orderId)
+              }
               console.log('1msg_receive:', data, '实时消息');
 
             });
@@ -524,7 +544,7 @@
         // 设置label标签
         // label默认蓝框白底左上角显示，样式className为：amap-marker-label
 
-        if (this.isRouteData.qy.isEnshrine === true) {
+        if (this.getDetail.isFirst === 1 ) {
           if (this.isHiddenCar = true) {
             marker.setLabel({
               //修改label相对于maker的位置
