@@ -10,7 +10,8 @@
       </div>
     </div>
     <div class="orderSearch">
-      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText" clearable @keyup.enter.native="clickOrder(null,true)">
+      <el-input class="orderSearchInput" placeholder="请输入内容" v-model="filterText" clearable
+                @keyup.enter.native="clickOrder(null,true)">
         <el-button slot="append" icon="el-icon-search" class="orderSearchButton" @click="clickOrder(null,true)">搜索
         </el-button>
       </el-input>
@@ -336,7 +337,7 @@
 
       if (!(this.checkLogin()))
         ;
-      this.getOrder("", true);
+      this.getOrder(null, true);
       this.getOrder("AF0080601HZ", false);
       this.getOrder("AF0080602HZ", false);
       this.getOrder("AF0080603HZ", false);
@@ -456,9 +457,8 @@
         });
 
         var vo = {};
-        if (orderStatus == null)
-          orderStatus = "AF00806HZ";
-        vo.orderStatus = orderStatus;
+        if (orderStatus != null)
+          vo.orderStatus = orderStatus;
         if (searchFlag) {
           var t = this.filterText;
           if (t != null)
@@ -734,7 +734,7 @@
       },
       error(msg) {
         this.$message({
-          message:msg,
+          message: msg,
           type: 'warning'
         });
       },
@@ -832,7 +832,7 @@
         return true;
       },
       logError() {
-        this.$message.error("无法获取服务端数据. ");
+        this.$message.error("无法获取服务器端数据. ");
       },
       clickOrder2(idx) {
         try {
@@ -852,7 +852,7 @@
         this.currentPage = 1;
         this.clear();
         if (ordStatus === "全部服务中")
-          this.orderStatusCode = "";
+          this.orderStatusCode = null;
         else if (ordStatus === "司机已接单")
           this.orderStatusCode = "AF0080601HZ";
         else if (ordStatus === "司机赶往提货地")
@@ -1136,32 +1136,6 @@
       translateCode() {
         if (this.orderdetail == null || this.orderdetail.data == null)
           return;
-        if (this.orderdetail.code_translate == null) {
-          try {
-            var q = null;
-            if (this.orderdetail.data.orderStatus != null)
-              q = this.orderdetail.data.orderStatus;
-            if (this.orderdetail.data.payStatus != null) {
-              if (q == null)
-                q = this.orderdetail.data.payStatus;
-              else
-                q = q + "," + this.orderdetail.data.payStatus;
-            }
-            if (q == null)
-              return;
-            getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
-              if (res == null || res.data == null)
-                return;
-              this.orderdetail.code_translate = res.data;
-            });
-          } catch (e) {
-          }
-        }
-
-        if (this.orderdetail.code_translate == null) {
-          setTimeout("translateCode()", 1000);
-          return;
-        }
 
         var ele = document.getElementById("infoWindowTitle");
         if (ele == null) {
@@ -1175,28 +1149,49 @@
           return;
         }
 
-        var s = this.orderdetail.data.orderStatus;
-        if (s != null) {
-          s = this.orderdetail.code_translate[s];
-          if (s == null)
-            s = "";
-          else
-            s = s.name;
-          if (s == null)
-            s = "";
-          document.getElementById("infoWindowTitle").innerText = s;
-        }
+        try {
+          var q = null;
+          if (this.orderdetail.data.orderStatus != null)
+            q = this.orderdetail.data.orderStatus;
+          if (this.orderdetail.data.payStatus != null) {
+            if (q == null)
+              q = this.orderdetail.data.payStatus;
+            else
+              q = q + "," + this.orderdetail.data.payStatus;
+          }
+          if (q == null)
+            return;
+          getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
+            if (res == null || res.data == null) {
+              this.error("获取订单状态数据出错. ");
+              return;
+            }
 
-        s = this.orderdetail.data.payStatus;
-        if (s != null) {
-          s = this.orderdetail.code_translate[s];
-          if (s == null)
-            s = "";
-          else
-            s = s.name;
-          if (s == null)
-            s = "";
-          document.getElementById("infoWindowOrderPayState").innerText = s;
+            var s = this.orderdetail.data.orderStatus;
+            if (s != null) {
+              s = res.data[s];
+              if (s == null)
+                s = "";
+              else
+                s = s.name;
+              if (s == null)
+                s = "";
+              document.getElementById("infoWindowTitle").innerText = s;
+            }
+
+            s = this.orderdetail.data.payStatus;
+            if (s != null) {
+              s = res.data[s];
+              if (s == null)
+                s = "";
+              else
+                s = s.name;
+              if (s == null)
+                s = "";
+              document.getElementById("infoWindowOrderPayState").innerText = s;
+            }
+          });
+        } catch (e) {
         }
       },
       translateAddr() {
