@@ -680,6 +680,9 @@
         v = res.data.orderPrice;
         if (v == null)
           v = "";
+        else if (v != "" && !isNaN(v)) {
+          v = "￥" + v.toFixed(2);
+        }
         document.getElementById("infoWindowOrderPrice").innerText = v;
 
         v = res.data.payStatus;
