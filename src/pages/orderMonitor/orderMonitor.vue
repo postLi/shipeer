@@ -779,9 +779,9 @@
             this.markerPoint = marker;
             this.centerMark();
             this.infoWindow2.open(this.mp, pos);
-            this.translateAddr();
 
             this.orderdetail = res;
+            this.translateAddr();
             this.getOrderDetail2();
             this.translateCode();
 
@@ -810,7 +810,29 @@
           var m = d.getMonth() + 1;
           if (m < 10)
             m = "0" + m;
-          return (d.getFullYear() + "-" + m + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds());
+          var str = d.getFullYear() + "-" + m;
+
+          m = d.getDate();
+          if (m < 10)
+            m = "0" + m;
+          str = str + "-" + m;
+
+          m = d.getHours();
+          if (m < 10)
+            m = "0" + m;
+          str = str + " " + m;
+
+          m = d.getMinutes();
+          if (m < 10)
+            m = "0" + m;
+          str = str + ":" + m;
+
+          m = d.getSeconds();
+          if (m < 10)
+            m = "0" + m;
+          str = str + ":" + m;
+
+          return str;
         } catch (e) {
         }
         return null;
@@ -1206,13 +1228,31 @@
         if (markerPoint == null)
           return;
         var pos = markerPoint.getPosition();
+        var t = this.orderdetail;
+        var formatDate = this.formatDate;
         this.geocoder.getAddress(pos, function (status, result) {
           if (status === "complete" && result.regeocode) {
             var address = result.regeocode.formattedAddress;
-            if (mapAddr == null)
-              mapAddr = document.getElementById("mapAddr");
-            if (mapAddr != null)
-              mapAddr.innerText = address;
+            try {
+              if (t != null && t.data != null) {
+                t = t.data.aflcOrderCarTrails;
+                if (t != null && t.length > 0) {
+                  t = t[t.length - 1];
+                } else
+                  t = null;
+                if (t != null)
+                  t = t.coordinateTime;
+                if (t != null)
+                  t = formatDate(t);
+              } else
+                t = null;
+            } catch (e) {
+              t = null;
+            }
+            if (t != null)
+              address = address + "&nbsp;&nbsp;" + t;
+
+            mapAddr.innerHTML = address;
           }
         });
       },
@@ -1449,13 +1489,12 @@
   }
 
   .customInfoWindow #mapAddr {
-    height: 35px;
-    overflow: auto;
+    min-height: 35px;
   }
 
   .customInfoWindow .track {
     position: relative;
-    height: 17px
+    height: 17px;
   }
 
   #infoWindow {
@@ -1505,13 +1544,13 @@
 
   .orderSearchResult .table .cellHeader {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
   }
 
   .orderSearchResult .table .cell2 {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
     color: gray;
     width: 89px;
@@ -1527,7 +1566,7 @@
 
   .orderSearchResult .table .cell4 {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: center;
     color: gray;
     width: 93px;
@@ -1568,7 +1607,7 @@
     right: 396px;
     top: 200px;
     background-color: white;
-    padding: 60px 2px;
+    padding: 10px 2px;
     font-size: 14px;
     cursor: pointer;
     width: 20px;
