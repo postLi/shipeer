@@ -1245,6 +1245,10 @@
         if (markerPoint == null)
           return;
         var pos = markerPoint.getPosition();
+        if (pos == null) {
+          mapAddr.innerHTML = "<div style='color: red'>未获取到位置数据. </div>";
+          return;
+        }
         var t = this.orderdetail;
         var formatDate = this.formatDate;
         this.geocoder.getAddress(pos, function (status, result) {
