@@ -390,6 +390,7 @@
         this.getOrder(this.orderStatusCode, true, true);
       },
       clear() {
+        this.track = null;
         this.orderdetail = null;
         if (this.redball != null)
           this.redball.setMap(null);
@@ -405,6 +406,20 @@
         this.points = [];
         if (points != null)
           this.mp.remove(points);
+      },
+      clear2() {
+        this.track = null;
+        this.orderdetail = null;
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.setPath(null);
+        if (this.passedPolyline != null)
+          this.passedPolyline.setPath(null);
+
+        if (!this.mp)
+          return;
+        this.mp.clearInfoWindow();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
@@ -1042,9 +1057,7 @@
         return null;
       },
       markerClick(e) {
-        this.track = null;
-        this.orderdetail = null;
-        this.mp.clearInfoWindow();
+        this.clear2();
         var markerPoint = this.markerPoint = e.target;
         var idx = markerPoint.getExtData();
         if (idx == null)
