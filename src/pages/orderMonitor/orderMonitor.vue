@@ -99,7 +99,8 @@
                 联系电话
               </div>
             </div>
-            <div class="row rowclick" v-for="(item,index) in carList" :key="item.orderSerial"
+            <div :class="{'row':true, 'rowclick':true,'rowFocus':(markerIdx===index)}" v-for="(item,index) in carList"
+                 :key="item.orderSerial"
                  @click="clickOrder2(index)">
               <div class="cell4">
                 {{item.orderSerial}}
@@ -250,6 +251,7 @@
         grayCarUrl: require("../../assets/orderMonitor/car_gray.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
+        markerIdx: null,
         infoWindow2: null,
         orderdetail: null,
         geocoder: null,
@@ -390,6 +392,8 @@
         this.getOrder(this.orderStatusCode, true, true);
       },
       clear() {
+        this.markerIdx = null;
+        this.track = null;
         this.orderdetail = null;
         if (this.redball != null)
           this.redball.setMap(null);
@@ -405,6 +409,21 @@
         this.points = [];
         if (points != null)
           this.mp.remove(points);
+      },
+      clear2() {
+        this.markerIdx = null;
+        this.track = null;
+        this.orderdetail = null;
+        if (this.redball != null)
+          this.redball.setMap(null);
+        if (this.polyline != null)
+          this.polyline.setPath(null);
+        if (this.passedPolyline != null)
+          this.passedPolyline.setPath(null);
+
+        if (!this.mp)
+          return;
+        this.mp.clearInfoWindow();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
@@ -661,6 +680,9 @@
         v = res.data.orderPrice;
         if (v == null)
           v = "";
+        else if (v != "" && !isNaN(v)) {
+          v = "￥" + v.toFixed(2);
+        }
         document.getElementById("infoWindowOrderPrice").innerText = v;
 
         v = res.data.payStatus;
@@ -676,8 +698,9 @@
         document.getElementById("infoWindowOrderPassAddr").innerText = "";
         document.getElementById("infoWindowOrderTargetAddr").innerText = "";
         v = res.data.addresses;
-        if (v == null || v.length < 1) {
-        } else {
+        if (v == null || v.length < 1)
+          ;
+        else {
           var addr = v[0];
           if (addr != null)
             addr = addr.viaAddressName;
@@ -688,7 +711,7 @@
           if (v.length > 2) {
             var i = 1;
             var str = null;
-            for (; i < v.length; ++i) {
+            for (; i < (v.length - 1); ++i) {
               addr = v[i];
               if (addr == null)
                 continue;
@@ -698,7 +721,7 @@
               if (str == null)
                 str = addr;
               else
-                str = str + "<br><br>" + addr;
+                str = str + ">>" + addr;
             }
             if (str != null)
               document.getElementById("infoWindowOrderPassAddr").innerHTML = str;
@@ -732,12 +755,6 @@
         this.carList = [];
         this.carList = l;
       },
-      error(msg) {
-        this.$message({
-          message: msg,
-          type: 'warning'
-        });
-      },
       getOrderDetail(orderId, marker) {
         try {
           if (orderId == null || !marker)
@@ -749,36 +766,42 @@
           if (carInfo == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
-            if (res.data == null) {
-              this.error("未获取到该订单的数据，请稍后再试. ");
-              return;
-            }
-            var trails = res.data.aflcOrderCarTrails;
-            var lnglat = marker.getPosition();
-            if (!lnglat && (!trails || trails.length < 1)) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
-            var lastTrail = trails[trails.length - 1];
-            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null)) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
-            var pos = null;
-            if (lastTrail.longitude != null && lastTrail.latitude != null)
-              pos = [lastTrail.longitude, lastTrail.latitude];
-            if (pos == null)
-              pos = lnglat;
-            if (pos == null) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
+            var lnglat = null;
+            var trails = null;
+            try {
+              if (res.data == null) {
+                this.$message({
+                  message: "未获取到该订单的数据，请稍后再试. ",
+                  type: 'warning'
+                });
+                return;
+              }
+              trails = res.data.aflcOrderCarTrails;
+              var trail = null;
+              if (trails != null && trails.length > 0)
+                trail = trails[trails.length - 1];
 
-            marker.setPosition(pos);
-            marker.setMap(this.mp);
-            this.markerPoint = marker;
-            this.centerMark();
-            this.infoWindow2.open(this.mp, pos);
+              if (trail != null && trail.longitude != null && trail.latitude != null)
+                lnglat = [trail.longitude, trail.latitude];
+
+              if (lnglat == null) {
+                this.$message({
+                  message: "未获取到该订单的位置数据，请稍后再试. ",
+                  type: 'warning'
+                });
+                marker.setMap(null);
+                marker.setPosition(null);
+                var pixel = new AMap.Pixel(100, 200);
+                lnglat = this.mp.containerToLngLat(pixel);
+                this.infoWindow2.open(this.mp, lnglat);
+              } else {
+                marker.setPosition(lnglat);
+                marker.setMap(this.mp);
+                this.markerPoint = marker;
+                this.infoWindow2.open(this.mp, lnglat);
+              }
+            } catch (e) {
+            }
 
             this.orderdetail = res;
             this.translateAddr();
@@ -858,6 +881,7 @@
       },
       clickOrder2(idx) {
         try {
+          this.markerIdx = idx;
           var marker = this.points[idx];
           if (!marker)
             return;
@@ -1042,13 +1066,12 @@
         return null;
       },
       markerClick(e) {
-        this.track = null;
-        this.orderdetail = null;
-        this.mp.clearInfoWindow();
+        this.clear2();
         var markerPoint = this.markerPoint = e.target;
         var idx = markerPoint.getExtData();
         if (idx == null)
           return;
+        this.markerIdx = idx;
         var carInfo = null;
         if (idx >= 0 && idx < this.carList.length)
           carInfo = this.carList[idx];
@@ -1185,7 +1208,10 @@
             return;
           getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
             if (res == null || res.data == null) {
-              this.error("获取订单状态数据出错. ");
+              this.$message({
+                message: "获取订单状态数据出错. ",
+                type: 'warning'
+              });
               return;
             }
 
@@ -1228,6 +1254,10 @@
         if (markerPoint == null)
           return;
         var pos = markerPoint.getPosition();
+        if (pos == null) {
+          mapAddr.innerHTML = "<div style='color: red'>未获取到位置数据. </div>";
+          return;
+        }
         var t = this.orderdetail;
         var formatDate = this.formatDate;
         this.geocoder.getAddress(pos, function (status, result) {
@@ -1445,7 +1475,7 @@
   }
 
   .customInfoWindow .table2 td {
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     padding-left: 4px;
     vertical-align: middle;
     width: 88px;
@@ -1468,7 +1498,7 @@
   .customInfoWindow .table .cell {
     display: table-cell;
     width: 88px;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: left;
     padding-left: 4px;
     vertical-align: middle;
@@ -1477,7 +1507,7 @@
 
   .customInfoWindow .table .cellHeader {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: right;
     background-color: #f2f2f2;
     color: gray;
@@ -1535,6 +1565,10 @@
 
   .rowclick {
     cursor: pointer;
+  }
+
+  .rowFocus {
+    background-color: #f2f2f2;
   }
 
   .orderSearchResult .table .cell {
