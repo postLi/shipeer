@@ -3,8 +3,10 @@
     <div id="monitor_map"></div>
     <div style="position: absolute;left: 0;top:0">
       <div class="ctl">
-        <button class="btn" @click="displaySatellite">卫星图</button>
-        <button class="btn btn2" @click="displayTraffic">实时路况</button>
+        <el-checkbox class="btn3" v-model="satelliteVisible" label="卫星图" border size="medium"
+                     @change="displaySatellite"></el-checkbox>
+        <el-checkbox class="btn2 btn3" v-model="trafficVisible" label="实时路况" border size="medium"
+                     @change="displayTraffic"></el-checkbox>
         <button class="btn btn2" @click="displayAllMarkers">显示全部车辆</button>
         <button class="btn btn2" @click="centerMark">移动到中心点</button>
       </div>
@@ -966,10 +968,9 @@
         if (this.satelliteLayer == null)
           this.satelliteLayer = new AMap.TileLayer.Satellite({map: this.mp});
         if (this.satelliteVisible)
-          this.satelliteLayer.hide();
-        else
           this.satelliteLayer.show();
-        this.satelliteVisible = !(this.satelliteVisible);
+        else
+          this.satelliteLayer.hide();
       },
       displayTraffic() {
         if (this.mp == null)
@@ -977,10 +978,9 @@
         if (this.trafficLayer == null)
           this.trafficLayer = new AMap.TileLayer.Traffic({map: this.mp, autoRefresh: true});
         if (this.trafficVisible)
-          this.trafficLayer.hide();
-        else
           this.trafficLayer.show();
-        this.trafficVisible = !(this.trafficVisible);
+        else
+          this.trafficLayer.hide();
       },
       displayMarkers() {
         var l = this.carList;
@@ -1420,6 +1420,10 @@
   .carPager .el-pagination__jump {
     margin-left: unset;
   }
+
+  .el-checkbox .btn3 .el-checkbox--medium .is-bordered {
+    border: 1px solid #409EFF;
+  }
 </style>
 
 <style scoped>
@@ -1692,5 +1696,9 @@
 
   .btn2 {
     margin-left: 5px;
+  }
+
+  .btn3 {
+    color: #409EFF;
   }
 </style>
