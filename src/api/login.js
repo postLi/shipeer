@@ -126,5 +126,5 @@ export function putretrievePassword(mobile,imageCode,smsCode,password,passwordSu
 // /common/aflcMemberCenter/v1/updatePassword
 // 修改密码
 export function putupdatePassword(mobile,oldPassword,newPassword,surePassword) {
-  return Axios.put(''+sw1+'/common/aflcMemberCenter/v1/updatePassword?memberType='+AF0010101+'&mobile='+mobile+'&oldPassword='+oldPassword+'&newPassword='+newPassword+'&surePassword='+surePassword)
+  return Axios.put(''+sw1+'/common/aflcMemberCenter/v1/updatePassword?memberType='+'AF0010101'+'&mobile='+mobile+'&oldPassword='+oldPassword+'&newPassword='+newPassword+'&surePassword='+surePassword)
 }

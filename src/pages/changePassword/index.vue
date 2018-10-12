@@ -3,9 +3,7 @@
     <div class="login-top">
       <div class="top-wrapper clearfix">
         <img src="../../assets/register/logo_green.png" alt="">
-        <div class="top-telphone">
-          <span>合作热线：</span><span>{{serverPhone}}</span>
-        </div>
+
       </div>
 
     </div>
@@ -16,20 +14,20 @@
             <el-input v-model="verData.verPhone" disabled>
             </el-input>
           </el-form-item>
-          <el-form-item class="" label="旧密码:">
+          <el-form-item class="" label="旧密码:" prop="old_pwd">
             <el-input v-model="verData.old_pwd" placeholder="请输入旧密码">
             </el-input>
           </el-form-item>
-          <el-form-item class="nps" label="新密码:">
-            <el-input v-model="verData.new_pwd" placeholder="请输入新密码">
+          <el-form-item class="nps" label="新密码:" prop="new_pwd">
+            <el-input v-model="verData.new_pwd" placeholder="请输入新密码" >
               <template slot="append">
                 <span>必须是6-20位英文字母、数字</span>
               </template>
             </el-input>
 
           </el-form-item>
-          <el-form-item class="" label="确认新密码:">
-            <el-input v-model="verData.sure_pwd" placeholder="请再次输入新密码">
+          <el-form-item class="" label="确认新密码:" prop="sure_pwd">
+            <el-input type="password" v-model="verData.sure_pwd" placeholder="请再次输入新密码">
             </el-input>
           </el-form-item>
         </el-form>
@@ -48,33 +46,61 @@
   import {login, loginValid, loginCode, validLoginCode, validLoginPhone, validLoginServicePhone,putupdatePassword} from '@/api/login'
   import Axios from 'axios'
   import VueJsCookie from 'vue-js-cookie'
-  import {setServerPhone, getUserInfo} from '@/utils/auth'
+  import {getUserInfo} from '@/utils/auth'
 
   export default {
     data() {
       let _this = this
-      const checkVersure_pwd = function (rule, value, callback) {
-        if (_this.verData.nPW !== _this.verData.surePW) {
-          callback(new Error('两次输入密码不一致！'))
+      const checkVerold_pwd = function (rule, value, callback) {
+       if (!value) {
+          callback(new Error('请输入旧密码'))
         }
-        else if (!_this.verData.surePW) {
+        else {
+          callback()
+        }
+      }
+      const checkVernew_pwd = function (rule, value, callback) {
+       if (!value) {
+          callback(new Error('请输入新密码'))
+        }
+        if(!REGEX.NUM_AND_LETTER.test(value)){
+         callback(new Error('必须是6-20位英文字母、数字'))
+       }
+        else {
+          callback()
+        }
+      }
+      const checkVersure_pwd = function (rule, value, callback) {
+        if (!value) {
           callback(new Error('请再次输入新密码'))
         }
-        else if (!_this.verData.new_pwd) {
-          callback(new Error('请输入新密码'))
+        if (value !== _this.verData.new_pwd) {
+          callback(new Error('两次输入密码不一致！'))
         }
         else {
           callback()
         }
       }
       return {
-        backgroundImg: 'url(' + require('../../assets/login/lll01-bg.png') + ')',
-
-        timer: null,
-        imgsrc: '',
-        getValidtile: '获取校验码',
+        verRules: {
+          old_pwd: [{
+            validator: checkVerold_pwd, trigger: 'blur'
+          }],
+          new_pwd: [
+            {
+              validator: checkVernew_pwd,trigger:'blur'
+            }
+          //   {
+          //   validator: checkVernew_pwd, trigger: 'blur'
+          // },
+            // { min: 6, max: 20, message: '必须是6-20位字符', trigger: 'blur' },
+            // {pattern: REGEX.NUM_AND_LETTER, trigger: 'blur',message: '必须是6-20位英文字母、数字',}
+            ],
+          sure_pwd: [{
+            validator: checkVersure_pwd,trigger: ['blur','change']
+          }]
+        },
         loading: false,
-        tabId: 0,
         changeData:{
           verPhone: '',
           oPW: '',
@@ -91,94 +117,41 @@
           // verGra: '',
           // verNote: ''
         },
-        verRules: {
-          sure_pwd:[{
-            required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur'
-          }],
-          // verPhone: [
-          //   {required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
-          // ],
-          // verGra: [{
-          //   validator: checkvcode, trigger: 'blur'
-          // }],
-          // verNote: [{
-          //   validator: checkVerNote, trigger: 'blur'
-          // }]
-        },
+
       }
     },
     mounted() {
-      this.changeVcode()
     },
 
     methods: {
-      getValidNum() {
-        if (!this.verData.verPhone) {
-          this.$message({
-            message: '请输入正确手机号码~',
-            type: 'warning'
-          })
-        }
-        else if (!this.verData.verGra) {
-          this.$message({
-            message: '请输入图形验证码~',
-            type: 'warning'
-          })
-
-        }
-        else {
-          validLoginPhone(this.verData.verPhone).then(res => {
-            let wait = 60
-
-            if (res.status === 200) {
-              // this.$message({
-              //   message: '发送成功,请留意短信~',
-              //   type: 'warning'
-              // })
-              if (!this.timer) {
-                this.timer = setInterval(() => {
-                  if (wait > 1) {
-                    wait--
-                    this.getValidtile = '发送成功' + wait
-                  }
-                  else {
-                    this.getValidtile = '获取验证码'
-                    clearInterval(this.timer);
-                    this.timer = null;
-                  }
-                }, 1000)
-
-
-              }
-            } else {
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
-            }
-          })
-        }
-
-      },
-      changeVcode() {
-        // this.userData.pwVcode = ''
-        this.imgsrc = loginCode()
-      },
       subLogin() {
         const md5 = require("js-md5");
           this.$refs['verLogin'].validate(valid => {
-            if (valid) {
-              let verNote = md5(this.verData.verNote)
-              putupdatePassword(this.verData.verPhone, this.verData.old_pwd, this.verData.new_pwd, this.verData.sure_pwd).then((data) => {
 
-                // VueJsCookie.set('28kytoken', data.access_token)
-                // VueJsCookie.set('28kyuPhone', this.verData.verPhone)
-                // 跳转到首页
-                this.status=2
-                this.nextTitle = '确定'
-                this.loading = false
-              }).catch(err => {
-                this.$message({
-                  message: '您的账号或者密码有误~',
-                  type: 'warning'
-                })
+            if (valid) {
+              let old_pwd = md5(this.verData.old_pwd)
+              let new_pwd = md5(this.verData.new_pwd)
+              let sure_pwd = md5(this.verData.sure_pwd)
+              putupdatePassword(this.verData.verPhone, old_pwd, new_pwd, sure_pwd).then((res) => {
+                if(res.status ===200){
+                  this.$message.success('修改密码成功')
+                  this.$router.push({path: '/login'})
+                  VueJsCookie.set('28kyuPhone', this.userData.userPhone)
+                }else{
+                  this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+                }
+
+//                 // VueJsCookie.set('28kytoken', data.access_token)
+//                 // VueJsCookie.set('28kyuPhone', this.verData.verPhone)
+//                 // 跳转到首页
+//                 // this.status=2
+//                 // this.nextTitle = '确定'
+//                 // this.loading = false
+//               }).catch(err => {
+//                 this.$message({
+//                   message: '您的账号或者密码有误~',
+//                   type: 'warning'
+//                 })
               })
             } else {
 
@@ -279,6 +252,13 @@
           }
         }
 
+      }
+      .chang-cont:hover{
+        transform: 2s;
+        -webkit-box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        -moz-box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        /*box-shadow: 0 1px 30px rgba(0, 0, 0, .3);*/
       }
 
       .pw-foot {

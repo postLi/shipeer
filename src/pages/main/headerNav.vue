@@ -1,5 +1,5 @@
 <template>
-    <div class="header flex_r">
+    <div class="header flex_r" v-loading='loading'>
       <div class="header-left flex">
         <img src="../../assets/main/jiank_logo.png" alt="">
       </div>
@@ -56,6 +56,7 @@
     export default {
         data(){
           return{
+            loading:false,
             visible: false,
             serverPhone:getServerPhone(),
             userInfoData:{},
@@ -74,7 +75,7 @@
               this.userInfoData = res.data
               setUserInfo(this.userInfoData)
             }else{
-              //this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
+              //this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res)))
             }
 
           })
@@ -98,7 +99,7 @@
             this.$router.push({path: '/'})
 
           }).catch(err => {
-            this.$message.error('错误：' + (err.text || err.errInfo || err.data || JSON.stringify(err)))
+            this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
           })
 
         }
@@ -144,6 +145,7 @@
       top:28px;
       left:1px;
       display: none;
+      z-index: 1;
     }
   }
   .header-phone:hover img.phone-img{

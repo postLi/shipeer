@@ -19,6 +19,7 @@ const ManageAllRecod = () => import('@/pages/manageCenter/allRecod.vue');
 const ManageCoupon = () => import('@/pages/manageCenter/coupon.vue');
 const ManageCouponList = () => import('@/pages/manageCenter/couponList.vue');
 const ManageToPayCoupon = () => import('@/pages/manageCenter/toPayCoupon.vue');
+const ManageAttestation = () => import('@/pages/manageCenter/attestation.vue');
 const OrderManage = () => import('@/pages/orderManage/index.vue');
 const AlcencelOrder = () => import('@/pages/orderManage/alcencel.vue');
 const AllOrderOrder = () => import('@/pages/orderManage/allOrder.vue');
@@ -141,6 +142,12 @@ export default new Router({
           name: 'ManageToPayCoupon',
           component: ManageToPayCoupon,
         },
+        {
+          path: '/attestation',
+          name: 'ManageAttestation',
+          component: ManageAttestation,
+        },
+        //attestation
         {
           path: '/manageCenter',
           name: 'ManageCenter',

@@ -4,7 +4,7 @@
       <router-link to="/OrderManage/allOrder" class="tab-label"><span>全部&nbsp;&nbsp;(100)</span></router-link>
       <router-link to="/OrderManage/server" class="tab-label"><span>服务中&nbsp;&nbsp;(20)</span></router-link>
       <router-link to="/OrderManage/already" class="tab-label"><span>已完成&nbsp;&nbsp;(60)</span></router-link>
-      <router-link to="/OrderManage/alcencel" class="tab-label"><span>已取消&nbsp;&nbsp;(20)</span></router-link>
+      <router-link to="/OrderManage/alcencel" class="tab-label"><span class="last">已取消&nbsp;&nbsp;(20)</span></router-link>
     </div>
     <keep-alive>
       <router-view></router-view>
@@ -62,6 +62,9 @@
         position: absolute;
         top: -5px;
         left: 135px;
+      }
+      span.last:after{
+        background: #fff;
       }
     }
     .tab-label:last-of-type {

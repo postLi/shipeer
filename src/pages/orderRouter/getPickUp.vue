@@ -86,7 +86,8 @@
     postMyOrderDetail,
     getSysDictByCodeGet,
     postAddTip,
-    getFCode
+    getFCode,
+    postStatusFollowing
   } from '@/api/concentrateAxios/orderManage'
   import {getUserInfo, setOrderDtaial, getOrderDtaial} from '@/utils/auth'
 
@@ -178,6 +179,7 @@
       this.orderSerial = orderSerial
 
       this.fetchOrderDetail(orderSerial)
+      this.fetchStatusFollowing(orderSerial)
       this.dowTime()
 
 
@@ -191,7 +193,15 @@
     },
 
     methods: {
-
+      fetchStatusFollowing(orderSerial){
+        return postStatusFollowing(orderSerial).then(res=>{
+          if(res.status===200){
+            console.log(res,'跟踪信息')
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+          }
+        })
+      },
       fetchCode() {
         if (this.getDetail.isFirst === 1) {//0 未接单
           this.getFCodes = 'AF0051601'
@@ -365,6 +375,7 @@
 
               if(this.orderSerial === orderId){
                 this.fetchOrderDetail(orderId)
+                this.fetchStatusFollowing(orderId)
               }
               console.log('1msg_receive:', data, '实时消息');
 

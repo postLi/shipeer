@@ -102,17 +102,17 @@
         },
         sendCodes:{
           codes:''
-        }
+        },
+        isRouteData:{}
         // activeNames: ['1']
       }
     },
     mounted(){
       this.fetchRate('AF0042102')
-      // console.log(this.$route.query)
     },
     methods: {
       onSubmit(){
-
+        this.isRouteData = JSON.parse(this.$route.query.qy)
         if(this.rateDrive.evaluationType.length === 0){
           this.$message.info('请给司机评语~')
           return false
@@ -129,13 +129,14 @@
             "evaluationName": this.userData.contacts,
             "evaluationType": evaluationType,
             // this.$route.query.qy.orderSerial
-            "orderSerial": this.$route.query.qy.orderSerial,
+            "orderSerial": this.isRouteData.orderSerial,
             "starLevel": this.rateDrive.starLevel,
             "userId": this.orderDetailData.driverId,
             // this.$route.query.qy.driverName
-            "userName": this.$route.query.qy.driverName
+            "userName": this.isRouteData.driverName
           }
         }
+        console.log( this.senData)
         let promiseObj
         promiseObj = postEvaluateShipper(this.senData)
         promiseObj.then(res =>{
