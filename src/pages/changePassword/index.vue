@@ -90,6 +90,11 @@
             {
               validator: checkVernew_pwd,trigger:'blur'
             }
+          //   {
+          //   validator: checkVernew_pwd, trigger: 'blur'
+          // },
+            // { min: 6, max: 20, message: '必须是6-20位字符', trigger: 'blur' },
+            // {pattern: REGEX.NUM_AND_LETTER, trigger: 'blur',message: '必须是6-20位英文字母、数字',}
             ],
           sure_pwd: [{
             validator: checkVersure_pwd,trigger: ['blur','change']
@@ -247,6 +252,13 @@
           }
         }
 
+      }
+      .chang-cont:hover{
+        transform: 2s;
+        -webkit-box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        -moz-box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        box-shadow: 3px 3px 4px rgba(0, 0, 0, .3);
+        /*box-shadow: 0 1px 30px rgba(0, 0, 0, .3);*/
       }
 
       .pw-foot {

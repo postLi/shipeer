@@ -290,7 +290,7 @@
                 VueJsCookie.set('28kytoken', data.access_token)
                 VueJsCookie.set('28kyuPhone', this.verData.verPhone)
                 // 跳转到首页
-                this.$router.push({path: '/order'})
+                this.$router.push({path: '/orderMonitor'})
                 this.loading = false
               }).catch(err=>{
                 this.$message({
