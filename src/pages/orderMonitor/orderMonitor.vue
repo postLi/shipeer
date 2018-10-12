@@ -99,7 +99,8 @@
                 联系电话
               </div>
             </div>
-            <div class="row rowclick" v-for="(item,index) in carList" :key="item.orderSerial"
+            <div :class="{'row':true, 'rowclick':true,'rowFocus':(markerIdx===index)}" v-for="(item,index) in carList"
+                 :key="item.orderSerial"
                  @click="clickOrder2(index)">
               <div class="cell4">
                 {{item.orderSerial}}
@@ -250,6 +251,7 @@
         grayCarUrl: require("../../assets/orderMonitor/car_gray.png"),
         redballUrl: require("../../assets/orderMonitor/redball.png"),
         markerPoint: null,
+        markerIdx: null,
         infoWindow2: null,
         orderdetail: null,
         geocoder: null,
@@ -390,6 +392,7 @@
         this.getOrder(this.orderStatusCode, true, true);
       },
       clear() {
+        this.markerIdx = null;
         this.track = null;
         this.orderdetail = null;
         if (this.redball != null)
@@ -408,6 +411,7 @@
           this.mp.remove(points);
       },
       clear2() {
+        this.markerIdx = null;
         this.track = null;
         this.orderdetail = null;
         if (this.redball != null)
@@ -874,6 +878,7 @@
       },
       clickOrder2(idx) {
         try {
+          this.markerIdx = idx;
           var marker = this.points[idx];
           if (!marker)
             return;
@@ -1063,6 +1068,7 @@
         var idx = markerPoint.getExtData();
         if (idx == null)
           return;
+        this.markerIdx = idx;
         var carInfo = null;
         if (idx >= 0 && idx < this.carList.length)
           carInfo = this.carList[idx];
@@ -1556,6 +1562,10 @@
 
   .rowclick {
     cursor: pointer;
+  }
+
+  .rowFocus {
+    background-color: #f2f2f2;
   }
 
   .orderSearchResult .table .cell {
