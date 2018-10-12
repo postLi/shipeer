@@ -1445,7 +1445,7 @@
   }
 
   .customInfoWindow .table2 td {
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     padding-left: 4px;
     vertical-align: middle;
     width: 88px;
@@ -1468,7 +1468,7 @@
   .customInfoWindow .table .cell {
     display: table-cell;
     width: 88px;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: left;
     padding-left: 4px;
     vertical-align: middle;
@@ -1477,7 +1477,7 @@
 
   .customInfoWindow .table .cellHeader {
     display: table-cell;
-    border: 1px solid gray;
+    border: 1px solid #dbdbdb;
     text-align: right;
     background-color: #f2f2f2;
     color: gray;
