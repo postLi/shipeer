@@ -112,7 +112,8 @@
         getDetail: {
           // addresses:[],
         },
-        payStatus:''
+        payStatus:'',
+        isRouteData:{}
       }
     },
     watch: {
@@ -122,19 +123,17 @@
     },
     mounted() {
       this.fetchOrderDetail()
-      // this.fetchCode()
     },
     methods: {
       closeDetail() {
-
         this.DialogVisible = true
-        // console.log(this.DialogVisible)
       },
       openDetail(){
         this.DialogVisible = false
       },
       fetchOrderDetail() {
-        return postMyOrderDetail(this.$route.query.qy.orderSerial).then(res => {
+        this.isRouteData = JSON.parse(this.$route.query.qy)
+        return postMyOrderDetail(this.isRouteData.orderSerial).then(res => {
           if (res.status === 200) {
             this.getDetail = res.data
             // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
@@ -153,22 +152,9 @@
             } else {
               this.getDetail.payWay = ''
             }
-
-
             setOrderDtaial(res.data)
-            this.fetchCode()
-            // console.log(this.getDetail.payStatus,'所以')
           } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
-          }
-        })
-      },
-      fetchCode() {
-        return getSysDictBycode(this.getDetail.payStatus).then(res => {
-          if (res.status === 200) {
-              this.payStatus = res.data.name
-          } else {
-            this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res) || '无法获取服务端数据'))
           }
         })
       },

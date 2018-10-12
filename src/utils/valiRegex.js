@@ -35,6 +35,8 @@ export const REGEX = {
   Number_big: /^([1-9]\d+|0)(\.[0-9]\d+)*$/,
   // 字母和数字
   ONLY_NUMBER_AND_LETTER: /^[0-9a-zA-Z]+$/,
+  NUM_AND_LETTER:/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/,
+
   //  6-32位密码
   PWD_NUMBER_AND_LETTER: /^[0-9a-zA-Z_#]{6,32}$/,
   // 字母和符号

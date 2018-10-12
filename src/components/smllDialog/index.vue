@@ -72,7 +72,7 @@
         // console.log(n,'监听的')
       },
       getDetail(n){
-        console.log(n,'顶替')
+
       }
     }
   }

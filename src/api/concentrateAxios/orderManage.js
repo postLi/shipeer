@@ -125,3 +125,10 @@ export function getFCode(code) {
 
   return Axios.get(''+swg3+'/aflcCommonSysDistApi/findAflcCommonSysDictBycode/'+code)
 }
+
+// /aflcMyOrderApi/statusFollowing
+// 状态跟踪(货主)
+export function postStatusFollowing(orderSerial) {
+
+  return Axios.post(''+swg2+'/aflcMyOrderApi/statusFollowing'+'?orderSerial='+orderSerial)
+}

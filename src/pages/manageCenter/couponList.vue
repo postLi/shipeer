@@ -25,10 +25,6 @@
                     ref="multipleTable"
                     :data="datasetOne"
                     border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-
                     tooltip-effect="dark"
                     :default-sort="{prop: 'id', order: 'ascending'}"
                     style="width: 100%"
@@ -67,7 +63,7 @@
                       fixed
                       sortable
                       prop="couponTypeName"
-                      width="150"
+                      width="128"
                       label="类型">
                     </el-table-column>
                     <el-table-column
@@ -139,10 +135,6 @@
                     ref="multipleTable"
                     :data="datasetSecond"
                     border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-
                     tooltip-effect="dark"
                     :default-sort="{prop: 'id', order: 'ascending'}"
                     style="width: 100%"
@@ -182,7 +174,7 @@
                       fixed
                       sortable
                       prop="couponTypeName"
-                      width="150"
+                      width="118"
                       label="类型">
                     </el-table-column>
                     <el-table-column
@@ -255,10 +247,6 @@
                     ref="multipleTable"
                     :data="datasetThird"
                     border
-                    @row-dblclick="getDbClick"
-                    @row-click="clickDetails"
-                    @selection-change="getSelection"
-
                     tooltip-effect="dark"
                     :default-sort="{prop: 'id', order: 'ascending'}"
                     style="width: 100%"
@@ -298,7 +286,7 @@
                       fixed
                       sortable
                       prop="couponTypeName"
-                      width="150"
+                      width="118"
                       label="类型">
                     </el-table-column>
                     <el-table-column
@@ -369,6 +357,11 @@
         </div>
       </el-main>
     </el-container>
+    <div class="info_tab_footer" ref="footer">
+      <div class="show_pager">
+        <Pager :total="total" @change="handlePageChange"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -377,10 +370,12 @@
   import {postAflcCouponUse, postExchange} from '@/api/concentrateAxios/manageCenter'
   import {getUserInfo} from '@/utils/auth'
   import searchTime from './components/searchTime'
+  import Pager from '@/components/Pagination/index'
 
   export default {
     data() {
       return {
+        total:0,
         activeName: 'first',
         datasetOne: [],
         datasetSecond: [],
@@ -416,7 +411,8 @@
       }
     },
     components: {
-      searchTime
+      searchTime,
+      Pager
     },
     mounted() {
 
@@ -425,22 +421,29 @@
     },
     methods: {
       onsubmit() {
+        if(!this.senData.couponNum){
+          this.$message.info('请输入优惠券码')
+          return false
+        }
         return postExchange(this.senData).then(res => {
-          this.fetchAllList()
-          this.$message.success(res.data)
-        }).catch(err => {
-          this.$message.error('错误：' + (err.errorInfo || err.errorInfo  || err.errorInfo  || JSON.stringify(err )))
+          if(res.status ===200){
+            this.fetchAllList()
+            this.$message.success(res.data)
+          }else{
+            this.$message.error('错误：' + (res.text || res.errorInfo || '无法获取服务端数据~' || res.data ))
+          }
+          // if(res.status)
+
         })
       },
       getPaymentListO() {
         return postAflcCouponUse(this.senDataListO).then(res => {
           if (res.status === 200) {
             this.datasetOne = res.data.list
+            this.total = res.data.totalCount
           } else {
-
+            this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
           }
-        }).catch(err => {
-          this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
         })
       },
       getPaymentListS() {
@@ -448,9 +451,8 @@
           if (res.status === 200) {
             this.datasetSecond = res.data.list
           } else {
+            this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
           }
-        }).catch(err => {
-          this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
         })
       },
       getPaymentListT() {
@@ -458,9 +460,8 @@
           if (res.status === 200) {
             this.datasetThird = res.data.list
           } else {
+            this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
           }
-        }).catch(err => {
-          this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res)))
         })
       },
       fetchAllList() {
@@ -468,21 +469,15 @@
         this.getPaymentListS()
         this.getPaymentListT()
       },
-
-      getDbClick() {
-
-      },
-      clickDetails(row, event, column) {
-        this.$refs.multipleTable.toggleRowSelection(row)
-      },
-      getSelection(selection) {
-        this.selected = selection
-      },
       gotoAllRecod() {
         this.$router.push({path: '/allRecod'})
       },
+      handlePageChange(obj) {
+        this.senDataList.currentPage = obj.pageNum
+        this.senDataList.pageSize = obj.pageSize
+      },
       handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
       }
     }
   }
@@ -491,14 +486,17 @@
 <style lang="scss">
 
   .orderManageClass-lll-couList {
-    background: rgb(242, 242, 242);
-    margin-right: 10px;
+    background: #fff;
+    margin: 10px 0 10px 10px;
+    height:100%;
+    width: calc(100% - 20px);
+    /*height: calc(100% - 86px);*/
     .el-header {
       padding: 0 0;
       background-color: #fff;
       color: #333;
       height: 100% !important;
-      margin: 0 10px 0 10px;
+      /*margin: 0 px 0 10px;*/
       .headerClass {
         display: flex;
         padding: 25px 0 0 40px;
@@ -515,8 +513,23 @@
       /*margin:0 10px 10px 10px;*/
       padding: 0 0;
       .mainClass {
+        .el-tabs__nav-wrap::after {
+          background-color: #fff;
+        }
         .el-tabs__nav-scroll {
           margin-left: 40px;
+          .el-tabs__nav.is-top{
+            .el-tabs__active-bar{
+              background-color: #2fb301;
+            }
+            .el-tabs__item.is-top.is-active{
+              color: #2fb301;
+            }
+
+          }
+          .el-tabs__item:hover{
+            color: #2fb301;
+          }
         }
         .tab_info {
           height: 100%;
@@ -554,15 +567,18 @@
                   p:last-of-type{
                     font-size: 12px;
                   }
-                  /*p:first-of-type:before{*/
-                    /*position: absolute;*/
-                    /*width: 4px;*/
-                    /*height: 4px;*/
-                    /*background: #fff;*/
-                    /*border-radius: 50%;*/
-                    /*top:1px;*/
-                    /*left:1px;*/
-                  /*}*/
+                }
+                .priceClass:before{
+                  content: '';
+                  display: block;
+                  width: 8px;
+                  height: 8px;
+                  border: 1px solid #fff;
+                  border-radius: 50px;
+                  background: #fff;
+                  position: absolute;
+                  top:50%;
+                  left:-4px;
                 }
 
               }
@@ -571,6 +587,26 @@
         }
 
       }
+    }
+    .info_tab_footer {
+      padding-left: 20px;
+      background: #fff;
+      height: 40px;
+      line-height: 40px;
+      box-shadow: 0 -2px 2px rgba(0, 0, 0, .1);
+      position: relative;
+      z-index: 10;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    .show_pager {
+      float: right;
+      line-height: 40px;
+      height: 40px;
+      overflow: hidden;
+      margin-right: 40px;
     }
   }
 </style>

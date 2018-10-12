@@ -10,9 +10,6 @@
         :data="dataset"
         stripe
         border
-        @row-dblclick="getDbClick"
-        @row-click="clickDetails"
-        @selection-change="getSelection"
         height="100%"
         tooltip-effect="dark"
         :default-sort="{prop: 'id', order: 'ascending'}"
@@ -146,9 +143,13 @@
     },
     methods: {
       onSubForm(dialog) {
+        if(!this.dialogFn.driverMobile ){
+          this.$message.info('请输入手机号')
+          return false
+        }
         this.$refs[dialog].validate(valid => {
           if (valid) {
-            this.loading = false
+            this.loading = true
             return postDriver(this.dialogFn.driverMobile).then(res => {
               if (res.status === 200) {
                 this.$message.success('收藏成功~');
@@ -171,7 +172,7 @@
         // return postDriver
       },
       getPaymentList() {
-        this.loading = false
+        // this.loading = true
         return postDriverList(this.senDataList).then(res => {
           if (res.status === 200) {
             this.dataset = res.data[0].drivers
@@ -196,6 +197,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          this.loading = true
           deleteDriver(row.driverId).then(res => {
            if(res.status ===200){
              this.$message({
@@ -203,6 +205,7 @@
                message: '删除成功!'
              })
              this.fetchData()
+             this.loading = false
            }else{
              this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
            }
@@ -211,15 +214,6 @@
 
       },
 
-      getDbClick() {
-
-      },
-      clickDetails(row, event, column) {
-        this.$refs.multipleTable.toggleRowSelection(row)
-      },
-      getSelection(selection) {
-        this.selected = selection
-      },
       handlePageChange(obj){
         this.senDataList.currentPage = obj.pageNum
         this.senDataList.pageSize = obj.pageSize
@@ -233,6 +227,7 @@
   .driver-lll-my {
     margin: 10px;
     background: #fff;
+    height: 100%;
     .info-table {
       /*display: flex;*/
       padding: 20px 10px 0 20px;

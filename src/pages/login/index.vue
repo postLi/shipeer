@@ -181,6 +181,11 @@
     mounted() {
       this.changeVcode()
       this.getServerPhone()
+      //VueJsCookie.get('28kyuPhone')
+      if(VueJsCookie.get('28kyuPhone')){
+        this.userData.userPhone = VueJsCookie.get('28kyuPhone')
+        this.verData.verPhone = VueJsCookie.get('28kyuPhone')
+      }
     },
 
     methods: {
@@ -195,7 +200,6 @@
           } else {
             this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
           }
-        }).catch(err => {
         })
       },
       getValidNum() {
@@ -237,7 +241,7 @@
 
               }
             } else {
-              this.$message.error('错误：' + (res.text || res.errInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
+              this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
             }
           })
         }

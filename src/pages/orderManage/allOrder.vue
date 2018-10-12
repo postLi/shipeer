@@ -207,10 +207,16 @@
         this.senDataList.pageSize = obj.pageSize
       },
       getPaymentList(){
+        this.loading = true
         return postMyOrderList(this.senDataList.currentPage,this.senDataList.pageSize,this.senDataList.status).then(res =>{
-          this.dataset = res.data.list
-          this.total = res.data.totalPage
-          this.totalCount = res.data.totalCount
+          if(res.status ===200){
+            this.dataset = res.data.list
+            this.total = res.data.totalPage
+            this.totalCount = res.data.totalCount
+            this.loading = false
+          }else{
+            this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+          }
         })
       },
       fetchAllList(){
@@ -223,10 +229,6 @@
       handleClickToMap(row){
         this.sendData = row
         if(row.payStatus === 'AF00801'){
-          if(row.isEnshrine === true){
-
-          }
-
           this.$router.push({path: '/orderRouter/getPickUp',query: {
               tab: this.title,
               qy:this.sendData,
@@ -248,31 +250,27 @@
       },
 
       handleClickPy(row) {
-        this.title = '去支付'
-        this.sendData = row
+        this.sendData = JSON.stringify(row)
         this.$router.push({path: '/orderRouter/payFoy',query: {
-            tab: this.title,
-            qy:this.sendData,
-            fn:this.sendFn
+            qy:this.sendData
           }})
       },
 
       handleClickEvaDriver(row){
         this.title = '评价司机'
-        this.sendData = row
+        this.sendData = JSON.stringify(row)
+        // console.log(this.sendData);
         this.$router.push({path: '/orderRouter/evaluateDriver',query: {
             tab: this.title,
-            qy:this.sendData,
-            fn:this.sendFn
+            qy:this.sendData
           }})
       },
       handleClickUnloadOrder(row) {
         this.title = '确认收货'
-        this.sendData = row
+        this.sendData = JSON.stringify(row)
         this.$router.push({path: '/orderRouter/unloadOrder',query: {
             tab: this.title,
-            qy:this.sendData,
-            fn:this.sendFn
+            qy:this.sendData
           }})
       },
       handleClickAgain(row) {
@@ -331,8 +329,10 @@
 
 <style lang="scss">
   .table-lll-al{
-    margin-top: 10px;
+    margin-top: 10px ;
     background: #fff;
+    width: calc(100% - 20px);
+    height: 100%;
     .el-table__body-wrapper .is-scrolling-middle{
       /*overflow-x: none !important;*/
     }
