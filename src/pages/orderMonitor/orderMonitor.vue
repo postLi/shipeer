@@ -691,8 +691,9 @@
         document.getElementById("infoWindowOrderPassAddr").innerText = "";
         document.getElementById("infoWindowOrderTargetAddr").innerText = "";
         v = res.data.addresses;
-        if (v == null || v.length < 1) {
-        } else {
+        if (v == null || v.length < 1)
+          ;
+        else {
           var addr = v[0];
           if (addr != null)
             addr = addr.viaAddressName;
@@ -703,7 +704,7 @@
           if (v.length > 2) {
             var i = 1;
             var str = null;
-            for (; i < v.length; ++i) {
+            for (; i < (v.length - 1); ++i) {
               addr = v[i];
               if (addr == null)
                 continue;
@@ -713,7 +714,7 @@
               if (str == null)
                 str = addr;
               else
-                str = str + "<br><br>" + addr;
+                str = str + ">>" + addr;
             }
             if (str != null)
               document.getElementById("infoWindowOrderPassAddr").innerHTML = str;
@@ -747,12 +748,6 @@
         this.carList = [];
         this.carList = l;
       },
-      error(msg) {
-        this.$message({
-          message: msg,
-          type: 'warning'
-        });
-      },
       getOrderDetail(orderId, marker) {
         try {
           if (orderId == null || !marker)
@@ -764,36 +759,42 @@
           if (carInfo == null)
             return;
           postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
-            if (res.data == null) {
-              this.error("未获取到该订单的数据，请稍后再试. ");
-              return;
-            }
-            var trails = res.data.aflcOrderCarTrails;
-            var lnglat = marker.getPosition();
-            if (!lnglat && (!trails || trails.length < 1)) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
-            var lastTrail = trails[trails.length - 1];
-            if (!lnglat && (!lastTrail || lastTrail.longitude == null || lastTrail.latitude == null)) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
-            var pos = null;
-            if (lastTrail.longitude != null && lastTrail.latitude != null)
-              pos = [lastTrail.longitude, lastTrail.latitude];
-            if (pos == null)
-              pos = lnglat;
-            if (pos == null) {
-              this.error("未获取到该订单的位置数据，请稍后再试. ");
-              return;
-            }
+            var lnglat = null;
+            var trails = null;
+            try {
+              if (res.data == null) {
+                this.$message({
+                  message: "未获取到该订单的数据，请稍后再试. ",
+                  type: 'warning'
+                });
+                return;
+              }
+              trails = res.data.aflcOrderCarTrails;
+              var trail = null;
+              if (trails != null && trails.length > 0)
+                trail = trails[trails.length - 1];
 
-            marker.setPosition(pos);
-            marker.setMap(this.mp);
-            this.markerPoint = marker;
-            this.centerMark();
-            this.infoWindow2.open(this.mp, pos);
+              if (trail != null && trail.longitude != null && trail.latitude != null)
+                lnglat = [trail.longitude, trail.latitude];
+
+              if (lnglat == null) {
+                this.$message({
+                  message: "未获取到该订单的位置数据，请稍后再试. ",
+                  type: 'warning'
+                });
+                marker.setMap(null);
+                marker.setPosition(null);
+                var pixel = new AMap.Pixel(100, 200);
+                lnglat = this.mp.containerToLngLat(pixel);
+                this.infoWindow2.open(this.mp, lnglat);
+              } else {
+                marker.setPosition(lnglat);
+                marker.setMap(this.mp);
+                this.markerPoint = marker;
+                this.infoWindow2.open(this.mp, lnglat);
+              }
+            } catch (e) {
+            }
 
             this.orderdetail = res;
             this.translateAddr();
@@ -1198,7 +1199,10 @@
             return;
           getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
             if (res == null || res.data == null) {
-              this.error("获取订单状态数据出错. ");
+              this.$message({
+                message: "获取订单状态数据出错. ",
+                type: 'warning'
+              });
               return;
             }
 
