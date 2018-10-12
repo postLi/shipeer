@@ -3,9 +3,7 @@
     <div class="login-top">
       <div class="top-wrapper clearfix">
         <img src="../../assets/register/logo_green.png" alt="">
-        <div class="top-telphone">
-          <span>合作热线：</span><span>{{serverPhone}}</span>
-        </div>
+
       </div>
 
     </div>
@@ -17,11 +15,11 @@
             </el-input>
           </el-form-item>
           <el-form-item class="" label="旧密码:">
-            <el-input v-model="verData.old_pwd" placeholder="请输入旧密码">
+            <el-input type="passwprd" v-model="verData.old_pwd" placeholder="请输入旧密码">
             </el-input>
           </el-form-item>
           <el-form-item class="nps" label="新密码:">
-            <el-input v-model="verData.new_pwd" placeholder="请输入新密码">
+            <el-input type="passwprd" v-model="verData.new_pwd" placeholder="请输入新密码">
               <template slot="append">
                 <span>必须是6-20位英文字母、数字</span>
               </template>
@@ -29,7 +27,7 @@
 
           </el-form-item>
           <el-form-item class="" label="确认新密码:">
-            <el-input v-model="verData.sure_pwd" placeholder="请再次输入新密码">
+            <el-input type="passwprd" v-model="verData.sure_pwd" placeholder="请再次输入新密码">
             </el-input>
           </el-form-item>
         </el-form>
@@ -48,7 +46,7 @@
   import {login, loginValid, loginCode, validLoginCode, validLoginPhone, validLoginServicePhone,putupdatePassword} from '@/api/login'
   import Axios from 'axios'
   import VueJsCookie from 'vue-js-cookie'
-  import {setServerPhone, getUserInfo} from '@/utils/auth'
+  import {getUserInfo} from '@/utils/auth'
 
   export default {
     data() {
@@ -92,18 +90,18 @@
           // verNote: ''
         },
         verRules: {
-          sure_pwd:[{
-            required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur'
-          }],
+          // sure_pwd:[{
+          //   required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur'
+          // }],
           // verPhone: [
           //   {required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
           // ],
           // verGra: [{
           //   validator: checkvcode, trigger: 'blur'
           // }],
-          // verNote: [{
-          //   validator: checkVerNote, trigger: 'blur'
-          // }]
+          sure_pwd: [{
+            validator: checkVersure_pwd, trigger: 'blur'
+          }]
         },
       }
     },
@@ -167,13 +165,13 @@
             if (valid) {
               let verNote = md5(this.verData.verNote)
               putupdatePassword(this.verData.verPhone, this.verData.old_pwd, this.verData.new_pwd, this.verData.sure_pwd).then((data) => {
-
+console.log(data)
                 // VueJsCookie.set('28kytoken', data.access_token)
                 // VueJsCookie.set('28kyuPhone', this.verData.verPhone)
                 // 跳转到首页
-                this.status=2
-                this.nextTitle = '确定'
-                this.loading = false
+                // this.status=2
+                // this.nextTitle = '确定'
+                // this.loading = false
               }).catch(err => {
                 this.$message({
                   message: '您的账号或者密码有误~',
