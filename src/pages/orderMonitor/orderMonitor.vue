@@ -1308,64 +1308,6 @@
         redball.moveAlong(pois, s);
         checkTrack();
       },
-      genTrack(orderId) {
-        var pois = [];
-        var point = null;
-        if ("1" === orderId) {
-          point = new AMap.LngLat(113.279201, 23.079731);
-          pois.push(point);
-          point = new AMap.LngLat(113.298245, 23.070488);
-          pois.push(point);
-          point = new AMap.LngLat(113.314486, 23.074478);
-          pois.push(point);
-          point = new AMap.LngLat(113.314774, 23.09755);
-          pois.push(point);
-          point = new AMap.LngLat(113.301694, 23.095688);
-          pois.push(point);
-          point = new AMap.LngLat(113.28804, 23.086912);
-          pois.push(point);
-        } else if (orderId === "2") {
-          point = new AMap.LngLat(116.383141, 39.923679);
-          pois.push(point);
-          point = new AMap.LngLat(116.389105, 39.929378);
-          pois.push(point);
-          point = new AMap.LngLat(116.389105, 39.929378);
-          pois.push(point);
-          point = new AMap.LngLat(116.394855, 39.928382);
-          pois.push(point);
-          point = new AMap.LngLat(116.397154, 39.926224);
-          pois.push(point);
-          point = new AMap.LngLat(116.395645, 39.924232);
-          pois.push(point);
-        } else if (orderId === "3") {
-          point = new AMap.LngLat(106.554291, 29.597066);
-          pois.push(point);
-          point = new AMap.LngLat(106.520299, 29.585509);
-          pois.push(point);
-          point = new AMap.LngLat(106.51958, 29.579164);
-          pois.push(point);
-          point = new AMap.LngLat(106.536397, 29.575709);
-          pois.push(point);
-          point = new AMap.LngLat(106.55156, 29.577531);
-          pois.push(point);
-          point = new AMap.LngLat(106.546242, 29.585069);
-          pois.push(point);
-        } else if (orderId === "4") {
-          point = new AMap.LngLat(103.79549, 36.095664);
-          pois.push(point);
-          point = new AMap.LngLat(103.815396, 36.09718);
-          pois.push(point);
-          point = new AMap.LngLat(103.821361, 36.092164);
-          pois.push(point);
-          point = new AMap.LngLat(103.832859, 36.090473);
-          pois.push(point);
-          point = new AMap.LngLat(103.838465, 36.080264);
-          pois.push(point);
-          point = new AMap.LngLat(103.816546, 36.083181);
-          pois.push(point);
-        }
-        return pois;
-      },
       checkTrack() {
         var polyline = this.polyline;
         var redball = this.redball;
@@ -1421,7 +1363,7 @@
     margin-left: unset;
   }
 
-  .el-checkbox .btn3 .el-checkbox--medium .is-bordered {
+  .btn3 .el-checkbox__inner {
     border: 1px solid #409EFF;
   }
 </style>
@@ -1700,5 +1642,6 @@
 
   .btn3 {
     color: #409EFF;
+    border: 1px solid #409EFF;
   }
 </style>
