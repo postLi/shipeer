@@ -7,8 +7,15 @@
                      @change="displaySatellite"></el-checkbox>
         <el-checkbox class="btn2 btn3" v-model="trafficVisible" label="实时路况" border size="medium"
                      @change="displayTraffic"></el-checkbox>
-        <button class="btn btn2" @click="displayAllMarkers">显示全部车辆</button>
-        <button class="btn btn2" @click="centerMark">移动到中心点</button>
+      </div>
+      <div class="ctl2">
+        <el-button class="btn2 btn4" @click="displayAllMarkers" :loading="processState.displayAllMarkers"
+                   size="medium">
+          显示全部车辆
+        </el-button>
+        <el-button class="btn2 btn4" @click="centerMark" size="medium">
+          移动到中心点
+        </el-button>
       </div>
     </div>
     <div class="orderSearch">
@@ -276,7 +283,8 @@
         pageSize: 10,
         currentPage: 1,
         maxNum: 999,
-        carList: []
+        carList: [],
+        processState: {displayAllMarkers: false}
       }
     },
     mounted() {
@@ -941,14 +949,17 @@
         }
       },
       displayAllMarkers() {
+        this.processState.displayAllMarkers = true;
         if (this.redball != null)
           this.redball.setMap(null);
         if (this.polyline != null)
           this.polyline.setPath(null);
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
-        if (this.mp == null)
+        if (this.mp == null) {
+          this.processState.displayAllMarkers = false;
           return;
+        }
         if (this.points) {
           var points = this.points;
           var showPoints = [];
@@ -961,6 +972,7 @@
           if (showPoints.length > 0)
             this.mp.setFitView(showPoints);
         }
+        this.processState.displayAllMarkers = false;
       },
       displaySatellite() {
         if (this.mp == null)
@@ -1611,37 +1623,32 @@
 
   .ctl {
     position: relative;
-    display: block;
+    display: inline-block;
     padding: 10px;
     left: 60px;
     top: 10px;
   }
 
-  .btn {
+  .ctl2 {
+    position: relative;
     display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    background-color: transparent;
-    background-image: none;
-    color: rgb(37, 165, 247);
-    line-height: 1.5;
-    cursor: pointer;
-    border-width: 1px;
-    border-style: solid;
-    border-image: initial;
-    border-color: rgb(37, 165, 247);
-    padding: 0.25rem 0.5rem;
+    padding: 10px;
+    left: 40px;
+    top: 12px;
   }
 
   .btn2 {
-    margin-left: 5px;
+    margin-left: 10px;
   }
 
   .btn3 {
     color: #409EFF;
     border: 1px solid #409EFF;
+  }
+
+  .btn4 {
+    background: unset;
+    border: 1px solid #409EFF;
+    color: #409EFF;
   }
 </style>
