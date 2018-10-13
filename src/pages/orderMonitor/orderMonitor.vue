@@ -903,6 +903,11 @@
         }
       },
       clickOrder(ordStatus, searchFlag) {
+        if (!this.showOrderSearchResult) {
+          this.showOrderSearchResult = true;
+          this.showOrderSearchResultIcon = "收起";
+          this.showOrderSearchResultStyle = "right:396px";
+        }
         if (ordStatus != null)
           this.orderStatus = ordStatus;
         this.currentPage = 1;
