@@ -499,24 +499,6 @@
 
           if (c === "" || c == null || isNaN(c))
             return;
-          // if (orderStatus === "")
-          //   this.orderNumAll = c;
-          // else if (orderStatus === "AF0080601HZ")
-          //   this.orderNumJiedan = c;
-          // else if (orderStatus === "AF0080602HZ")
-          //   this.orderNumGanwangtwd = c;
-          // else if (orderStatus === "AF0080603HZ")
-          //   this.orderNumYidaotwd = c;
-          // else if (orderStatus === "AF0080604HZ")
-          //   this.orderNumYizhuanghuo = c;
-          // else if (orderStatus === "AF0080605HZ")
-          //   this.orderNumYunshuzhong = c;
-          // else if (orderStatus === "AF0080606HZ")
-          //   this.orderNumYidaomdd = c;
-          // else if (orderStatus === "AF0080607HZ")
-          //   this.orderNumYixiehuo = c;
-          // else if (orderStatus === "AF0080608HZ")
-          //   this.orderNumGaipai = c;
 
           if (updateFlag) {
             this.totalCount = c;
