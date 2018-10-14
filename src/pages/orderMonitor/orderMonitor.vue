@@ -350,14 +350,6 @@
       if (!(this.checkLogin()))
         ;
       this.getOrder(null, true);
-      this.getOrder("AF0080601HZ", false);
-      this.getOrder("AF0080602HZ", false);
-      this.getOrder("AF0080603HZ", false);
-      this.getOrder("AF0080604HZ", false);
-      this.getOrder("AF0080605HZ", false);
-      this.getOrder("AF0080606HZ", false);
-      this.getOrder("AF0080607HZ", false);
-      this.getOrder("AF0080608HZ", false);
     },
     methods: {
       checkLogin() {
