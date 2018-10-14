@@ -1037,8 +1037,11 @@
           this.mp.setFitView(showPoints);
       },
       centerMark() {
-        if (this.markerPoint != null)
-          this.mp.panTo(this.markerPoint.getPosition());
+        if (this.markerPoint != null) {
+          var pos = this.markerPoint.getPosition();
+          if (pos != null)
+            this.mp.panTo(pos);
+        }
       },
       statusCode2Text(code) {
         if (code === "AF0080601HZ")
