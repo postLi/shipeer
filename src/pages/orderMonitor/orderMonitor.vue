@@ -764,7 +764,6 @@
               var trail = null;
               if (trails != null && trails.length > 0)
                 trail = trails[trails.length - 1];
-
               if (trail != null && trail.longitude != null && trail.latitude != null)
                 lnglat = [trail.longitude, trail.latitude];
 
@@ -779,6 +778,17 @@
                 lnglat = this.mp.containerToLngLat(pixel);
                 this.infoWindow2.open(this.mp, lnglat);
               } else {
+                var carUrl = this.grayCarUrl;
+                try {
+                  var time = trail.coordinateTime;
+                  var curTime = res.data.currentTime;
+                  if (time != null && curTime != null) {
+                    if ((curTime - time) < this.lostTime)
+                      carUrl = this.carUrl;
+                  }
+                } catch (e) {
+                }
+                marker.setIcon(carUrl);
                 marker.setPosition(lnglat);
                 marker.setMap(this.mp);
                 this.markerPoint = marker;
@@ -982,6 +992,9 @@
         var marker = null;
         this.points = [];
         var showPoints = [];
+        var time = null;
+        var curTime = null;
+        var carUrl = null;
         for (; i < l.length; ++i) {
           pos = l[i].aflcOrderCarTrail;
           if (pos != null && pos.latitude != null && pos.longitude != null)
@@ -995,11 +1008,16 @@
               extData: i
             });
           } else {
-            var time = l[i].aflcOrderCarTrail.coordinateTime;
-            var carUrl = this.grayCarUrl;
-            if (time != null) {
-              if (((new Date()).getTime() - time) < this.lostTime)
-                carUrl = this.carUrl;
+            carUrl = this.grayCarUrl;
+            try {
+              time = l[i].aflcOrderCarTrail.coordinateTime;
+              curTime = l[i].currentTime;
+              if (time != null && curTime != null) {
+                //(new Date()).getTime()
+                if ((curTime - time) < this.lostTime)
+                  carUrl = this.carUrl;
+              }
+            } catch (e) {
             }
             marker = new AMap.Marker({
               icon: carUrl,
