@@ -241,7 +241,11 @@
         senDataList: {
           currentPage: 1,
           pageSize: 5,
-          vo: {}
+          vo: {
+            "endRechargeTime": "",
+            "startRechargeTime": ""
+
+          }
         },
         balance: '',
         pfimg: '',
