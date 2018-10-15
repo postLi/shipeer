@@ -147,7 +147,7 @@ export function putupdatePassword(mobile, oldPassword, newPassword, surePassword
 // /aflcShipperApi/authentication
 // 货主认证
 export function postAuthentication(params) {
-  return Axios.post('' + sw1 + '/aflcShipperApi/authentication/' , params)
+  return Axios.post('' + sw2 + '/aflcShipperApi/authentication' , params)
 }
 
 

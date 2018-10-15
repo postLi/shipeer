@@ -36,13 +36,13 @@
               <!--</template>-->
             <!--</el-input>-->
           </el-form-item>
-          <el-form-item class="" label="公司货档口门头照:">
+          <el-form-item class="" label="公司货档口门头照:" prop='companyFacadeFile'>
             <div class="clearfix uploadcard">
               <upload :title="'本地上传'" :showFileList="true" :limit="1" listtype="picture" v-model="verData.companyFacadeFile"
               />
             </div>
           </el-form-item>
-          <el-form-item class="" label="发货人名片:">
+          <el-form-item class="" label="发货人名片:" prop='shipperCardFile'>
             <div class="clearfix uploadcard">
               <upload :title="'本地上传'" :showFileList="true" :limit="1" listtype="picture" v-model="verData.shipperCardFile"
               />
@@ -123,6 +123,12 @@
           }],
           contacts: [{
             required: true,validator: checkContacts,trigger: ['blur','change']
+          }],
+          companyFacadeFile: [{
+            required: true,message: "请上传公司货档口门头照",trigger: ['blur','change']
+          }],
+          shipperCardFile: [{
+            required: true,message: "请上传发货人名片",trigger: ['blur','change']
           }]
         },
         loading: false,
@@ -258,6 +264,7 @@
               .el-upload-list--picture-card .el-upload-list__item {
                 width: 158px;
                 height: 86px;
+                margin: 0 8px 0px 0;
               }
               .el-upload-dragger {
                 width: 158px;

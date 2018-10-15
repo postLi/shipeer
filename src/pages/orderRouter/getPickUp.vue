@@ -3,9 +3,9 @@
     <div id="mapcontainer"></div>
 
     <!--<div id="panel"></div>-->
-    <div id="myPageTop" v-if="$route.query.tab === '派单中'">
+    <div id="myPageTop">
       <div class="headerClass">
-        <span>{{isRouteData.tab}}</span>
+        <span>{{$route.query.tab}}</span>
         <span @click="gotoOrder"><i class="el-icon-close"></i>取消订单</span>
       </div>
       <div class="contentClass">
@@ -125,6 +125,12 @@
         if (n) {
           this.changeInput = ''
         }
+      },
+      centerDialogVisible(n){
+        if(!n){
+          this.changeInput = ''
+          this.radio3 = '10'
+        }
       }
     },
     data() {
@@ -165,24 +171,17 @@
     },
     mounted() {
       this.isRouteData = JSON.parse(this.$route.query.qy)
-      // console.log(this.$route.query)
-      // if(this.$route.query.tab === '派单中'){
-      //   this.popVisibleTitle = this.$route.query.tab
-      // }
-
-// this.dialogTableVisible = this.popVisible
       this.init()
-      let orderSerial =''
-      if(this.isRouteData.orderId ){
+      let orderSerial = ''
+      if (this.isRouteData.orderId) {
         orderSerial = this.isRouteData.orderId
-      }else{
-        orderSerial = this.isRouteData.qy.orderSerial
+      } else {
+        orderSerial = this.isRouteData.orderSerial
       }
       this.orderSerial = orderSerial
 
       this.fetchOrderDetail(orderSerial)
       this.fetchStatusFollowing(orderSerial)
-      this.dowTime()
 
 
     },
@@ -195,13 +194,14 @@
     },
 
     methods: {
-      fetchStatusFollowing(orderSerial){
-        return postStatusFollowing(orderSerial).then(res=>{
-          if(res.status===200){
+      fetchStatusFollowing(orderSerial) {
+        return postStatusFollowing(orderSerial).then(res => {
+          if (res.status === 200) {
             this.statiusFData = res.data
-            // pushDriverNums
-            console.log(res,'跟踪信息')
-          }else{
+            this.setCircle()
+            this.dowTime()
+
+          } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
           }
         })
@@ -224,17 +224,41 @@
         this.fetchCode()
         // let wait = 20
         if (!this.timer) {
-          this.timer = setInterval(() => {
-            if (this.wait > 1) {
-              this.wait--
-              this.isHiddenCar = false
+          if (this.getDetail.isFirst === 1) {
+            if ((this.statiusFData.nowTime - this.statiusFData.useTime) / 1000 < 10) {
+              this.timer = setInterval(() => {
+                if (this.wait > 1) {
+                  this.wait--
+                  this.isHiddenCar = false
+                }
+                else {
+                  clearInterval(this.timer);
+                  this.timer = null
+                  this.isHiddenCar = true
+                }
+              }, 1000)
             }
             else {
-              clearInterval(this.timer);
-              this.timer = null
               this.isHiddenCar = true
             }
-          }, 1000)
+          } else {
+            if ((this.statiusFData.nowTime - this.statiusFData.useTime) / 1000 < 20) {
+              this.timer = setInterval(() => {
+                if (this.wait > 1) {
+                  this.wait--
+                  this.isHiddenCar = false
+                }
+                else {
+                  clearInterval(this.timer);
+                  this.timer = null
+                  this.isHiddenCar = true
+                }
+              }, 1000)
+            }
+            else {
+              this.isHiddenCar = true
+            }
+          }
         }
       },
 
@@ -259,7 +283,7 @@
             } else {
               this.getDetail.payWay = ''
             }
-            this.setCircle()
+            // this.setCircle()
           } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
           }
@@ -288,7 +312,7 @@
       submitRadio() {
         // let params = postAddTip
         let data = {
-          "orderSerial": this.isRouteData.qy.orderSerial,
+          "orderSerial": this.isRouteData.orderSerial,
           "shipperId": "",
           "tip": 0
         }
@@ -299,26 +323,27 @@
           data.tip = this.isRadio === '' ? this.radioList[0].name : this.isRadio
         } else {
 
-          if(!REGEX.ONLY_NUMBER.test(this.changeInput)){
+          if (!REGEX.ONLY_NUMBER.test(this.changeInput)) {
             this.$notify({
               title: '提示',
               dangerouslyUseHTMLString: true,
               message: '<strong>只能输入整数</strong>'
             });
+            this.changeInput = ''
             data.tip = Math.round(this.changeInput)
-            console.log(data.tip);
+            return false
           }
-          if(this.changeInput>200){
+           if (this.changeInput > 200) {
             this.$notify({
               title: '提示',
               dangerouslyUseHTMLString: true,
               message: '<strong>最多只能输入200</strong>'
-            });     
+            });
             this.changeInput = 200
             data.tip = Math.round(this.changeInput)
           }
-          else{
-            alert('')
+          else {
+            data.tip = Math.round(this.changeInput)
           }
         }
         data.tip = Number(data.tip)
@@ -383,29 +408,29 @@
             JIM.login({
               // shlipid+"dev"
               // shlipid+"test"
-              'username' : getUserInfo().shipperId+'dev',
-              'password' : md5(getUserInfo().mobile),
-              }).onSuccess(function(data) {
-                  //data.code 返回码
-                  //data.message 描述
-                }).onFail(function(data) {
-                  // 同上
-                });
+              'username': getUserInfo().shipperId + 'dev',
+              'password': md5(getUserInfo().mobile),
+            }).onSuccess(function (data) {
+              //data.code 返回码
+              //data.message 描述
+            }).onFail(function (data) {
+              // 同上
+            });
 
             JIM.onMsgReceive(function (data) {
               //data = JSON.stringify(data);
               let orderId
               // text: "{"msgType":1,"data":"AFTC201810111647067588272","msg":""}"
-              orderId=JSON.parse(data.messages[0].content.msg_body.text).data
+              orderId = JSON.parse(data.messages[0].content.msg_body.text).data
 
-              if(this.orderSerial === orderId){
+              if (this.orderSerial === orderId) {
                 this.fetchOrderDetail(orderId)
                 this.fetchStatusFollowing(orderId)
               }
               console.log('1msg_receive:', data, '实时消息');
 
             });
-            JIM.onSyncConversation(function(data){
+            JIM.onSyncConversation(function (data) {
               // console.log('离线消息： ', data)
             })
           }).onFail(function (data) {
@@ -579,20 +604,19 @@
 
         // 设置label标签
         // label默认蓝框白底左上角显示，样式className为：amap-marker-label
-
-        if (this.getDetail.isFirst === 1 ) {
+        if (this.getDetail.isFirst === 1) {
           if (this.isHiddenCar = true) {
             marker.setLabel({
               //修改label相对于maker的位置
               offset: new AMap.Pixel(-70, -90),
-              content: "<div class='info'>已为您通知到<span>200</span>名司机</div>"
+              content: "<div class='info1'>已为您通知到<span>" + this.statiusFData.pushDriverNums + "</span>名司机</div>"
             });
           } else {
             // this.isShowNum()
             marker.setLabel({
               //修改label相对于maker的位置
               offset: new AMap.Pixel(-70, -90),
-              content: "<div class='info'>已通知您的收藏司机</div>"
+              content: "<div class='info1'>已通知您的收藏司机</div>"
             });
           }
 
@@ -601,7 +625,7 @@
           marker.setLabel({
             //修改label相对于maker的位置
             offset: new AMap.Pixel(-100, -90),
-            content: "<div class='info'>已为您通知到<span>200</span>名司机</div>"
+            content: "<div class='info1'>已为您通知到<span>" + this.statiusFData.pushDriverNums + "</span>名司机</div>"
           });
         }
       },
@@ -642,7 +666,7 @@
       border-radius: 10px;
     }
 
-    .info {
+    .info1 {
       position: relative;
       top: 0;
       right: 0;
@@ -656,7 +680,7 @@
         color: #ff300d;
       }
     }
-    .info:before {
+    .info1:before {
       display: block;
       content: '';
       width: 0;
