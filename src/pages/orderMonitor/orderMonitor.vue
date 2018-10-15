@@ -287,7 +287,7 @@
         processState: {displayAllMarkers: false},
         queryCountUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorCount",
         queryListUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorList",
-        queryDetailUrl:"/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial="
+        queryDetailUrl: "/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial="
       }
     },
     mounted() {
