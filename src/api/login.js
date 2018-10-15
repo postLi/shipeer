@@ -5,7 +5,7 @@ let sw2 = '/aflc-uc'
 
 export function login(username, password, orgid) {
   var grant_type = 'password'
-  var scope = 'webApp'
+  // var scope = 'webApp'
   /*   return fetch.post('/uaa/oauth/token', {
       username,
       password,

@@ -268,6 +268,7 @@
         passedPolyline: null,
         redball: null,
         track: null,
+        truckDriving: null,
         orderStatus: "全部服务中",
         orderStatusCode: null,
         orderNumAll: "",
@@ -330,7 +331,7 @@
         // path: pois,
         // strokeColor: "#00FF00",  //线颜色
         // strokeOpacity: 1,     //线透明度
-        strokeWeight: 7,      //线宽
+        strokeWeight: 1,      //线宽  7
         // strokeStyle: "solid"  //线样式
         showDir: true
       });
@@ -339,7 +340,7 @@
         // path: lineArr,
         // strokeColor: "#F00",  //线颜色
         // strokeOpacity: 1,     //线透明度
-        strokeWeight: 7,      //线宽
+        strokeWeight: 1,      //线宽   7
         // strokeStyle: "solid"  //线样式
         showDir: true
       });
@@ -356,9 +357,9 @@
         ;
       this.getOrder(null, true);
 
-      AMap.event.addListener(this.mp, "click", function (e) {
-        console.log(e.lnglat);
-      });
+      // AMap.event.addListener(this.mp, "click", function (e) {
+      //   console.log(e.lnglat);
+      // });
     },
     methods: {
       checkLogin() {
@@ -413,6 +414,8 @@
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
 
+        if (this.truckDriving != null)
+          this.truckDriving.clear();
         if (!this.mp)
           return;
         this.mp.clearInfoWindow();
@@ -432,9 +435,11 @@
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
 
-        if (!this.mp)
-          return;
-        this.mp.clearInfoWindow();
+        if (this.mp != null)
+          this.mp.clearInfoWindow();
+
+        if (this.truckDriving != null)
+          this.truckDriving.clear();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         postApi(this.queryCountUrl, {}).then((res) => {
@@ -772,7 +777,7 @@
               trails = res.data.aflcOrderCarTrails;
               var trail = null;
               if (trails != null && trails.length > 0)
-                trail = trails[trails.length - 1];
+                trail = trails[0];
               if (trail != null && trail.longitude != null && trail.latitude != null)
                 lnglat = [trail.longitude, trail.latitude];
 
@@ -815,14 +820,14 @@
               var pois = [];
 
               // var point = null;
-              // for (var i = 0; i < trails.length; ++i) {
+              // for (var i = trails.length-1; i >=0; --i) {
               //   if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
               //     continue;
               //   point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
               //   pois.push(point);
               // }
 
-              for (var i = 0; i < trails.length; ++i) {
+              for (var i = trails.length - 1; i >= 0; --i) {
                 if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
                   continue;
                 pois.push({lnglat: [trails[i].longitude, trails[i].latitude]});
@@ -1337,6 +1342,17 @@
         checkTrack();
       },
       showTrack2(orderId) {
+        var truckDriving = this.truckDriving;
+        if (truckDriving == null) {
+          this.truckDriving = new AMap.TruckDriving({
+            map: this.mp,
+            size: 1,
+            showTraffic: true,
+            autoFitView: true
+          });
+          truckDriving = this.truckDriving;
+        }
+        truckDriving.clear();
         var pois = this.track;
         if (pois == null || pois.length < 2) {
           this.$message({
@@ -1349,12 +1365,6 @@
         var s = (d * 3.6) / 5;
         var mp = this.mp;
         mp.clearInfoWindow();
-
-        var truckDriving = new AMap.TruckDriving({
-          size: 1,
-          showTraffic: true,
-          autoFitView: false
-        });
         var polyline = this.polyline;
         var redball = this.redball;
         var parseRouteToPath = this.parseRouteToPath;
