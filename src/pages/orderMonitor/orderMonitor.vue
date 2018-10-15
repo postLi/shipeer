@@ -354,11 +354,11 @@
     },
     methods: {
       checkLogin() {
-        var v = this.$route.query.access;
+        var v = this.$route.query.access_token;
         if (v != null && v != "")
           VueJsCookie.set('28kytoken', v);
 
-        v = this.$route.query.user;
+        v = this.$route.query.user_token;
         if (v != null && v != "")
           localStorage.set("28ky-userdata", {userToken: v});
 
