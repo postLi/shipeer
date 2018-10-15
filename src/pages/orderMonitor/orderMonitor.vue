@@ -284,7 +284,10 @@
         currentPage: 1,
         maxNum: 999,
         carList: [],
-        processState: {displayAllMarkers: false}
+        processState: {displayAllMarkers: false},
+        queryCountUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorCount",
+        queryListUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorList",
+        queryDetailUrl:"/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial="
       }
     },
     mounted() {
@@ -429,7 +432,7 @@
         this.mp.clearInfoWindow();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
-        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
+        postApi(this.queryCountUrl, {}).then((res) => {
           if (res === null || res.data === null)
             return;
           var v = res.data.af00806HZ;
@@ -486,7 +489,7 @@
           if (t != null)
             vo.keywordQuery = t;
         }
-        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorList", {
+        postApi(this.queryListUrl, {
           currentPage: this.currentPage,
           pageSize: this.pageSize,
           vo: vo
@@ -750,7 +753,7 @@
           var carInfo = this.carList[idx];
           if (carInfo == null)
             return;
-          postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
+          postApi(this.queryDetailUrl + orderId).then((res) => {
             var lnglat = null;
             var trails = null;
             try {
