@@ -268,6 +268,7 @@
         passedPolyline: null,
         redball: null,
         track: null,
+        truckDriving: null,
         orderStatus: "全部服务中",
         orderStatusCode: null,
         orderNumAll: "",
@@ -413,6 +414,8 @@
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
 
+        if (this.truckDriving != null)
+          this.truckDriving.clear();
         if (!this.mp)
           return;
         this.mp.clearInfoWindow();
@@ -432,9 +435,11 @@
         if (this.passedPolyline != null)
           this.passedPolyline.setPath(null);
 
-        if (!this.mp)
-          return;
-        this.mp.clearInfoWindow();
+        if (this.mp != null)
+          this.mp.clearInfoWindow();
+
+        if (this.truckDriving != null)
+          this.truckDriving.clear();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
         postApi(this.queryCountUrl, {}).then((res) => {
@@ -1337,6 +1342,17 @@
         checkTrack();
       },
       showTrack2(orderId) {
+        var truckDriving = this.truckDriving;
+        if (truckDriving == null) {
+          this.truckDriving = new AMap.TruckDriving({
+            map: this.mp,
+            size: 1,
+            showTraffic: true,
+            autoFitView: true
+          });
+          truckDriving = this.truckDriving;
+        }
+        truckDriving.clear();
         var pois = this.track;
         if (pois == null || pois.length < 2) {
           this.$message({
@@ -1349,13 +1365,6 @@
         var s = (d * 3.6) / 5;
         var mp = this.mp;
         mp.clearInfoWindow();
-
-        var truckDriving = new AMap.TruckDriving({
-          map:this.mp,
-          size: 1,
-          showTraffic: true,
-          autoFitView: true
-        });
         var polyline = this.polyline;
         var redball = this.redball;
         var parseRouteToPath = this.parseRouteToPath;
