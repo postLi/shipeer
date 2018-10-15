@@ -298,9 +298,27 @@
         } else if (this.radio3 !== '' && this.changeInput === '') {
           data.tip = this.isRadio === '' ? this.radioList[0].name : this.isRadio
         } else {
-          data.tip = this.changeInput
-          if(!REGEX){
 
+          if(!REGEX.ONLY_NUMBER.test(this.changeInput)){
+            this.$notify({
+              title: '提示',
+              dangerouslyUseHTMLString: true,
+              message: '<strong>只能输入整数</strong>'
+            });
+            data.tip = Math.round(this.changeInput)
+            console.log(data.tip);
+          }
+          if(this.changeInput>200){
+            this.$notify({
+              title: '提示',
+              dangerouslyUseHTMLString: true,
+              message: '<strong>最多只能输入200</strong>'
+            });     
+            this.changeInput = 200
+            data.tip = Math.round(this.changeInput)
+          }
+          else{
+            alert('')
           }
         }
         data.tip = Number(data.tip)
