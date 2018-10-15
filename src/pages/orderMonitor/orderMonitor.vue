@@ -211,7 +211,7 @@
                 <div id="mapAddr"></div>
                 <div class="track">
                   <div style="position: absolute;right: 0">
-                    <a href="javascript:showTrack()">显示轨迹</a>
+                    <a href="javascript:showTrack2()">显示轨迹</a>
                   </div>
                 </div>
               </td>
@@ -306,6 +306,7 @@
 
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
+      window.showTrack2 = this.showTrack2;
       window.checkTrack = this.checkTrack;
       window.closeInfoWindow = this.closeInfoWindow;
       window.translateAddr = this.translateAddr;
@@ -323,7 +324,7 @@
       this.polyline = new AMap.Polyline({
         map: mp,
         // path: pois,
-        strokeColor: "#00FF00",  //线颜色
+        // strokeColor: "#00FF00",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 7,      //线宽
         // strokeStyle: "solid"  //线样式
@@ -332,7 +333,7 @@
       this.passedPolyline = new AMap.Polyline({
         map: mp,
         // path: lineArr,
-        strokeColor: "#F00",  //线颜色
+        // strokeColor: "#F00",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 7,      //线宽
         // strokeStyle: "solid"  //线样式
@@ -803,15 +804,22 @@
             this.translateCode();
 
             if (trails != null && (trails.length) > 0) {
-              var i = 0;
               var pois = [];
-              var point = null;
-              for (; i < trails.length; ++i) {
+
+              // var point = null;
+              // for (var i = 0; i < trails.length; ++i) {
+              //   if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
+              //     continue;
+              //   point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
+              //   pois.push(point);
+              // }
+
+              for (var i = 0; i < trails.length; ++i) {
                 if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
                   continue;
-                point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
-                pois.push(point);
+                pois.push({lnglat: [trails[i].longitude, trails[i].latitude]});
               }
+
               this.track = pois;
             }
           });
@@ -1319,6 +1327,61 @@
         mp.setFitView([polyline, redball]);
         redball.moveAlong(pois, s);
         checkTrack();
+      },
+      showTrack2(orderId) {
+        var pois = this.track;
+        if (pois == null || pois.length < 2) {
+          this.$message({
+            message: '未获取到轨迹数据，请稍后再试. ',
+            type: 'warning'
+          });
+          return;
+        }
+        var d = AMap.GeometryUtil.distanceOfLine(pois);
+        var s = (d * 3.6) / 5;
+        var mp = this.mp;
+        mp.clearInfoWindow();
+
+        var truckDriving = new AMap.TruckDriving({
+          size: 1,
+          showTraffic: true,
+          autoFitView: false
+        });
+        var polyline = this.polyline;
+        var redball = this.redball;
+        var parseRouteToPath = this.parseRouteToPath;
+        truckDriving.search(pois, function (status, result) {
+          if (status === 'complete') {
+            if (result.routes && result.routes.length) {
+              pois = parseRouteToPath(result.routes[0]);
+              var d = AMap.GeometryUtil.distanceOfLine(pois);
+              var s = (d * 3.6) / 5;
+              polyline.setPath(pois);
+              redball.setPosition(pois[0]);
+              redball.setMap(mp);
+              mp.setFitView([polyline, redball]);
+              redball.moveAlong(pois, s);
+              checkTrack();
+            }
+          } else {
+            this.$message({
+              message: '未获取到规划路线，请稍后再试. ',
+              type: 'warning'
+            });
+          }
+        });
+      },
+      parseRouteToPath(route) {
+        var path = [];
+        var step = null;
+        var j = 0, n = 0;
+        for (var i = 0, l = route.steps.length; i < l; i++) {
+          step = route.steps[i];
+          for (j = 0, n = step.path.length; j < n; j++) {
+            path.push(step.path[j])
+          }
+        }
+        return path;
       },
       checkTrack() {
         var polyline = this.polyline;
