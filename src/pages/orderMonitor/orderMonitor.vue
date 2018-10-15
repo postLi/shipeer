@@ -211,7 +211,7 @@
                 <div id="mapAddr"></div>
                 <div class="track">
                   <div style="position: absolute;right: 0">
-                    <a href="javascript:showTrack()">显示轨迹</a>
+                    <a href="javascript:showTrack2()">显示轨迹</a>
                   </div>
                 </div>
               </td>
@@ -269,7 +269,7 @@
         redball: null,
         track: null,
         orderStatus: "全部服务中",
-        orderStatusCode: "",
+        orderStatusCode: null,
         orderNumAll: "",
         orderNumJiedan: "",
         orderNumGanwangtwd: "",
@@ -284,7 +284,11 @@
         currentPage: 1,
         maxNum: 999,
         carList: [],
-        processState: {displayAllMarkers: false}
+        processState: {displayAllMarkers: false},
+        queryCountUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorCount",
+        queryListUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorList",
+        queryDetailUrl: "/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=",
+        querySysDictUrl: "/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/"
       }
     },
     mounted() {
@@ -306,6 +310,7 @@
 
       this.geocoder = new AMap.Geocoder();
       window.showTrack = this.showTrack;
+      window.showTrack2 = this.showTrack2;
       window.checkTrack = this.checkTrack;
       window.closeInfoWindow = this.closeInfoWindow;
       window.translateAddr = this.translateAddr;
@@ -323,7 +328,7 @@
       this.polyline = new AMap.Polyline({
         map: mp,
         // path: pois,
-        strokeColor: "#00FF00",  //线颜色
+        // strokeColor: "#00FF00",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 7,      //线宽
         // strokeStyle: "solid"  //线样式
@@ -332,7 +337,7 @@
       this.passedPolyline = new AMap.Polyline({
         map: mp,
         // path: lineArr,
-        strokeColor: "#F00",  //线颜色
+        // strokeColor: "#F00",  //线颜色
         // strokeOpacity: 1,     //线透明度
         strokeWeight: 7,      //线宽
         // strokeStyle: "solid"  //线样式
@@ -353,11 +358,11 @@
     },
     methods: {
       checkLogin() {
-        var v = this.$route.query.access;
+        var v = this.$route.query.access_token;
         if (v != null && v != "")
           VueJsCookie.set('28kytoken', v);
 
-        v = this.$route.query.user;
+        v = this.$route.query.user_token;
         if (v != null && v != "")
           localStorage.set("28ky-userdata", {userToken: v});
 
@@ -428,7 +433,7 @@
         this.mp.clearInfoWindow();
       },
       getOrder(orderStatus, updateFlag, searchFlag) {
-        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorCount", {}).then((res) => {
+        postApi(this.queryCountUrl, {}).then((res) => {
           if (res === null || res.data === null)
             return;
           var v = res.data.af00806HZ;
@@ -485,7 +490,7 @@
           if (t != null)
             vo.keywordQuery = t;
         }
-        postApi("/aflc-order/aflcMyOrderApi/getOrderMonitorList", {
+        postApi(this.queryListUrl, {
           currentPage: this.currentPage,
           pageSize: this.pageSize,
           vo: vo
@@ -749,7 +754,7 @@
           var carInfo = this.carList[idx];
           if (carInfo == null)
             return;
-          postApi("/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=" + orderId).then((res) => {
+          postApi(this.queryDetailUrl + orderId).then((res) => {
             var lnglat = null;
             var trails = null;
             try {
@@ -803,15 +808,22 @@
             this.translateCode();
 
             if (trails != null && (trails.length) > 0) {
-              var i = 0;
               var pois = [];
-              var point = null;
-              for (; i < trails.length; ++i) {
+
+              // var point = null;
+              // for (var i = 0; i < trails.length; ++i) {
+              //   if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
+              //     continue;
+              //   point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
+              //   pois.push(point);
+              // }
+
+              for (var i = 0; i < trails.length; ++i) {
                 if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
                   continue;
-                point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
-                pois.push(point);
+                pois.push({lnglat: [trails[i].longitude, trails[i].latitude]});
               }
+
               this.track = pois;
             }
           });
@@ -896,7 +908,7 @@
           this.orderStatus = ordStatus;
         this.currentPage = 1;
         this.clear();
-        if (ordStatus === "全部服务中")
+        if (ordStatus == null || ordStatus === "全部服务中")
           this.orderStatusCode = null;
         else if (ordStatus === "司机已接单")
           this.orderStatusCode = "AF0080601HZ";
@@ -1218,7 +1230,7 @@
           }
           if (q == null)
             return;
-          getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
+          getApi(this.querySysDictUrl + q).then((res) => {
             if (res == null || res.data == null) {
               this.$message({
                 message: "获取订单状态数据出错. ",
@@ -1319,6 +1331,61 @@
         mp.setFitView([polyline, redball]);
         redball.moveAlong(pois, s);
         checkTrack();
+      },
+      showTrack2(orderId) {
+        var pois = this.track;
+        if (pois == null || pois.length < 2) {
+          this.$message({
+            message: '未获取到轨迹数据，请稍后再试. ',
+            type: 'warning'
+          });
+          return;
+        }
+        var d = AMap.GeometryUtil.distanceOfLine(pois);
+        var s = (d * 3.6) / 5;
+        var mp = this.mp;
+        mp.clearInfoWindow();
+
+        var truckDriving = new AMap.TruckDriving({
+          size: 1,
+          showTraffic: true,
+          autoFitView: false
+        });
+        var polyline = this.polyline;
+        var redball = this.redball;
+        var parseRouteToPath = this.parseRouteToPath;
+        truckDriving.search(pois, function (status, result) {
+          if (status === 'complete') {
+            if (result.routes && result.routes.length) {
+              pois = parseRouteToPath(result.routes[0]);
+              var d = AMap.GeometryUtil.distanceOfLine(pois);
+              var s = (d * 3.6) / 5;
+              polyline.setPath(pois);
+              redball.setPosition(pois[0]);
+              redball.setMap(mp);
+              mp.setFitView([polyline, redball]);
+              redball.moveAlong(pois, s);
+              checkTrack();
+            }
+          } else {
+            this.$message({
+              message: '未获取到规划路线，请稍后再试. ',
+              type: 'warning'
+            });
+          }
+        });
+      },
+      parseRouteToPath(route) {
+        var path = [];
+        var step = null;
+        var j = 0, n = 0;
+        for (var i = 0, l = route.steps.length; i < l; i++) {
+          step = route.steps[i];
+          for (j = 0, n = step.path.length; j < n; j++) {
+            path.push(step.path[j])
+          }
+        }
+        return path;
       },
       checkTrack() {
         var polyline = this.polyline;
