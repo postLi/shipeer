@@ -330,7 +330,7 @@
         // path: pois,
         // strokeColor: "#00FF00",  //线颜色
         // strokeOpacity: 1,     //线透明度
-        strokeWeight: 7,      //线宽
+        strokeWeight: 1,      //线宽  7
         // strokeStyle: "solid"  //线样式
         showDir: true
       });
@@ -339,7 +339,7 @@
         // path: lineArr,
         // strokeColor: "#F00",  //线颜色
         // strokeOpacity: 1,     //线透明度
-        strokeWeight: 7,      //线宽
+        strokeWeight: 1,      //线宽   7
         // strokeStyle: "solid"  //线样式
         showDir: true
       });
@@ -1351,9 +1351,10 @@
         mp.clearInfoWindow();
 
         var truckDriving = new AMap.TruckDriving({
+          map:this.mp,
           size: 1,
           showTraffic: true,
-          autoFitView: false
+          autoFitView: true
         });
         var polyline = this.polyline;
         var redball = this.redball;
