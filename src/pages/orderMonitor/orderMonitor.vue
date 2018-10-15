@@ -269,7 +269,7 @@
         redball: null,
         track: null,
         orderStatus: "全部服务中",
-        orderStatusCode: "",
+        orderStatusCode: null,
         orderNumAll: "",
         orderNumJiedan: "",
         orderNumGanwangtwd: "",
@@ -904,7 +904,7 @@
           this.orderStatus = ordStatus;
         this.currentPage = 1;
         this.clear();
-        if (ordStatus === "全部服务中")
+        if (ordStatus == null || ordStatus === "全部服务中")
           this.orderStatusCode = null;
         else if (ordStatus === "司机已接单")
           this.orderStatusCode = "AF0080601HZ";
