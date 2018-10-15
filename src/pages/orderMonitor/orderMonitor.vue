@@ -772,7 +772,7 @@
               trails = res.data.aflcOrderCarTrails;
               var trail = null;
               if (trails != null && trails.length > 0)
-                trail = trails[trails.length - 1];
+                trail = trails[0];
               if (trail != null && trail.longitude != null && trail.latitude != null)
                 lnglat = [trail.longitude, trail.latitude];
 
@@ -815,14 +815,14 @@
               var pois = [];
 
               // var point = null;
-              // for (var i = 0; i < trails.length; ++i) {
+              // for (var i = trails.length-1; i >=0; --i) {
               //   if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
               //     continue;
               //   point = new AMap.LngLat(trails[i].longitude, trails[i].latitude);
               //   pois.push(point);
               // }
 
-              for (var i = 0; i < trails.length; ++i) {
+              for (var i = trails.length - 1; i >= 0; --i) {
                 if (trails[i] == null || trails[i].longitude == null || trails[i].latitude == null)
                   continue;
                 pois.push({lnglat: [trails[i].longitude, trails[i].latitude]});
