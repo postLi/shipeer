@@ -287,7 +287,8 @@
         processState: {displayAllMarkers: false},
         queryCountUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorCount",
         queryListUrl: "/aflc-order/aflcMyOrderApi/getOrderMonitorList",
-        queryDetailUrl: "/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial="
+        queryDetailUrl: "/aflc-order/aflcMyOrderApi/myOrderDetail?orderSerial=",
+        querySysDictUrl: "/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/"
       }
     },
     mounted() {
@@ -1229,7 +1230,7 @@
           }
           if (q == null)
             return;
-          getApi("/aflc-common/aflcCommonSysDistApi/findAflcCommonSysDictByCodes/" + q).then((res) => {
+          getApi(this.querySysDictUrl + q).then((res) => {
             if (res == null || res.data == null) {
               this.$message({
                 message: "获取订单状态数据出错. ",
