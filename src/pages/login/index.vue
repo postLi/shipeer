@@ -71,7 +71,8 @@
             <!--prop="verNote"-->
             <el-form-item class="ver-note">
               <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
-                <template slot="append"><span @click="getValidNum">{{getValidtile}}</span></template>
+                <!--<span @click="getValidNum">{{getValidtile}}</span>-->
+                <template slot="append"><el-button @click="getValidNum" :disabled="disabled">{{getValidtile}}</el-button></template>
               </el-input>
             </el-form-item>
           </el-form>
@@ -141,6 +142,8 @@
         imgsrc: '',
         getValidtile: '获取验证码',
         loading: false,
+        disabled: false,
+        zero:'',
         tabId: 0,
         userData: {
           userPhone: '13000000001',
@@ -214,31 +217,27 @@
             message: '请输入图形验证码~',
             type: 'warning'
           })
-
         }
         else {
           validLoginPhone(this.verData.verPhone).then(res => {
             let wait = 60
-
             if (res.status === 200) {
-              // this.$message({
-              //   message: '发送成功,请留意短信~',
-              //   type: 'warning'
-              // })
               if (!this.timer) {
                 this.timer = setInterval(() => {
                   if (wait > 1) {
                     wait--
+
                     this.getValidtile = '发送成功' + wait
+                    this.zero = 0
+                    this.disabled = true
                   }
                   else {
                     this.getValidtile = '获取验证码'
                     clearInterval(this.timer);
                     this.timer = null;
+                    this.disabled = false
                   }
                 }, 1000)
-
-
               }
             } else {
               this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
@@ -462,7 +461,7 @@
             .el-input-group--append {
               .el-input-group__append {
                 color: #1890ff;
-                padding: 0 2px;
+                padding: 0 18px;
               }
             }
 

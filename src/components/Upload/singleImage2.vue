@@ -18,17 +18,13 @@
         :on-exceed="onexceed"
         :on-success="handleImageScucess"
         :on-remove="handleRemove">
-
-        <!-- <i class="el-icon-upload"></i> -->
-        <!-- <el-button :size="size" type="primary" style="">点击上传</el-button> -->
-        <!-- <div class="el-upload__text clearfix"><span class="fl">将文件拖拽至此区域上传</span><em class="fl">点击上传</em></div> -->
-        <!-- <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div> -->
-        <!-- <div class="el-upload__text" style="font-size:4px">将文本拖拽到此区域或,<em>点击上传</em></div> -->
-        <!-- <i class="el-icon-plus"></i> -->
-        <slot name="content">
-          <el-button :size="size" type="primary" class="button" :disabled="disabled">点击上传</el-button>
-          <div class="el-upload__text">将文件拖拽到此区域</div>
-          <div v-if="tip" class="upload__tip">{{ tip }}</div>
+        <slot name="content" v-if='hiddenFn'>
+          <div>没有数据</div>
+        </slot>
+        <slot name="content" v-else>
+          <el-button :size="size" class="button" :disabled="disabled" icon="el-icon-plus"></el-button>
+          <!--<div class="el-upload__text">将文件拖拽到此区域</div>-->
+          <!--<div v-if="tip" class="upload__tip">{{ tip }}</div>-->
 
         </slot>
       </el-upload>
@@ -109,7 +105,8 @@ export default {
       },
       uploadUrl: '',
       dir: '',
-      filelist: []
+      filelist: [],
+      hiddenFn:false,
     }
   },
   watch: {
@@ -136,7 +133,6 @@ export default {
   },
   mounted() {
     this.init()
-    console.log(this.disabled)
   },
   methods: {
     init() {
@@ -156,6 +152,11 @@ export default {
     },
     // 超出上传数量
     onexceed(file, filelist) {
+      if(this.limit >1){
+        this.hiddenFn = true
+      }else{
+        this.hiddenFn = false
+      }
       this.$message.error(`最多上传 ${this.limit} 张!`)
     },
     // 删除列表
@@ -263,7 +264,8 @@ export default {
         @include clearfix;
 
         .el-upload .el-upload-dragger{
-            height: 158px;
+            height: 86px;
+          width: 138px;
 
         }
       .el-upload .el-upload-dragger:focus{
@@ -340,6 +342,8 @@ export default {
         }
         .el-upload--picture-card{
           line-height:43px;
+          width: 138px;
+          height: 86px;
         }
         // .upload__tip{
         //   line-height:43px;

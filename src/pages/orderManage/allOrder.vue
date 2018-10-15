@@ -227,7 +227,7 @@
         this.fetchAllList()
       },
       handleClickToMap(row){
-        this.sendData = row
+        this.sendData = JSON.stringify(row)
         if(row.payStatus === 'AF00801'){
           this.$router.push({path: '/orderRouter/getPickUp',query: {
               tab: this.title,

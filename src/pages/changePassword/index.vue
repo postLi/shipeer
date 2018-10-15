@@ -135,10 +135,10 @@
               putupdatePassword(this.verData.verPhone, old_pwd, new_pwd, sure_pwd).then((res) => {
                 if(res.status ===200){
                   this.$message.success('修改密码成功')
-                  this.$router.push({path: '/login'})
+                  this.$router.push({path: '/'})
                   VueJsCookie.set('28kyuPhone', this.userData.userPhone)
                 }else{
-                  this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+                  this.$message.warning(res.errorInfo || res.text || '无法获取服务端数据~')
                 }
 
 //                 // VueJsCookie.set('28kytoken', data.access_token)

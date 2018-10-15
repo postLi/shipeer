@@ -3,7 +3,7 @@
 
   <div>
     <div v-for='(item,index) in data' style="line-height: 50px;">
-      <div v-if="count === 0 " class=" flex_a border0" style="height: 50px;position: relative" :style="{'color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgba(255, 255, 255,0.65)','background':(item.selected && item.children.length === 0)? 'rgb(47, 179, 1)' : ''}">
+      <div v-if="count === 0 " class=" flex_a border0" style="height: 50px;position: relative" :style="{'color':(item.selected && item.children.length === 0)? '#ffffff' : 'rgba(255, 255, 255,0.65)','background':(item.selected && item.children.length === 0)? 'black' : ''}">
 
         <!--<i  class="iconfont icon-yingyong margin_r_10" v-if="item.id === 228" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
         <!--<i  class="iconfont icon-qiaquan margin_r_10" v-if="item.id === 315" :style="{'color':(item.selected)? '#ffffff' : '#323232'}"></i>-->
@@ -17,8 +17,8 @@
               class="el-tree-node__expand-icon el-icon-arrow-left triangle0"></span>
       </div>
 
-      <div v-if="count !== 0" class=" flex_a border1" style="height: 50px">
-        <div class="tree_item flex_a" style="height: 40px" :style="{'padding-left':  count *  30  + 'px','background-color':(item.selected )? '#2fb301' : ''}">
+      <div v-if="count !== 0" class=" flex_a border1 " style="height: 50px">
+        <div class="tree_item flex_a bgHover" style="height: 40px" :style="{'padding-left':  count *  30  + 'px','background-color':(item.selected )? 'black' : ''}">
           <span @click="clickRouter(item)" class="pointer el-tree-node__label" >
             <span :style="{'color':(item.selected )? '#ffffff' : 'rgba(255, 255, 255,0.65)'}">{{item.name}}</span>
         </span>
@@ -134,9 +134,12 @@
     white-space: nowrap;
   }
   .border0:hover{
-    background-color: black;
+    background-color: rgb(47, 179, 1);
 
 
+  }
+  .bgHover:hover{
+    background-color: rgb(47, 179, 1);
   }
   /*.border1:hover{*/
     /*background-color: #2fb301;*/

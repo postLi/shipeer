@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 const Main = () => import('@/pages/main/main.vue');
 const Login = () => import('@/pages/login/index.vue');
+const Attestation = () => import('@/pages/attestation/index.vue');
 const Register = () => import('@/pages/register/register.vue');
 const PayFor = () => import('@/pages/orderRouter/payFoy.vue');
 const EvaluateDriver = () => import('@/pages/orderRouter/evaluateDriver.vue');
@@ -19,7 +20,6 @@ const ManageAllRecod = () => import('@/pages/manageCenter/allRecod.vue');
 const ManageCoupon = () => import('@/pages/manageCenter/coupon.vue');
 const ManageCouponList = () => import('@/pages/manageCenter/couponList.vue');
 const ManageToPayCoupon = () => import('@/pages/manageCenter/toPayCoupon.vue');
-const ManageAttestation = () => import('@/pages/manageCenter/attestation.vue');
 const OrderManage = () => import('@/pages/orderManage/index.vue');
 const AlcencelOrder = () => import('@/pages/orderManage/alcencel.vue');
 const AllOrderOrder = () => import('@/pages/orderManage/allOrder.vue');
@@ -143,12 +143,6 @@ export default new Router({
           component: ManageToPayCoupon,
         },
         {
-          path: '/attestation',
-          name: 'ManageAttestation',
-          component: ManageAttestation,
-        },
-        //attestation
-        {
           path: '/manageCenter',
           name: 'ManageCenter',
           component: ManageCenter,
@@ -170,6 +164,8 @@ export default new Router({
       path: '/', component: Login, name: 'Login'
     },
     {
+      path: '/attestation', component: Attestation, name: 'Attestation'
+    },{
       path: '/register', component: Register, name: 'Register'
     },
     {

@@ -50,10 +50,9 @@
       return {
         searchCreatTime: [+new Date() - 60 * 24 * 60 * 60 * 1000, +new Date()],
         searchForm: {
-          carInfo: '',
-          incomeExpendType: '',
-          tradeEndTime: '',
-          tradeStartTime: '',
+          "endRechargeTime": "",
+          "startRechargeTime": ""
+
         },
         pickerOptions2: {
           shortcuts: pickerOptions2
@@ -70,16 +69,14 @@
     },
     methods: {
       onSubmit() {
-        this.searchForm.tradeStartTime = this.searchCreatTime ? parseTime(this.searchCreatTime[0], '{y}-{m}-{d} ') + '00:00:00' : ''
-        this.searchForm.tradeEndTime = this.searchCreatTime ? parseTime(this.searchCreatTime[1], '{y}-{m}-{d} ') + '23:59:59' : ''
+        this.searchForm.startRechargeTime = this.searchCreatTime ? parseTime(this.searchCreatTime[0], '{y}-{m}-{d} ') + '00:00:00' : ''
+        this.searchForm.endRechargeTime = this.searchCreatTime ? parseTime(this.searchCreatTime[1], '{y}-{m}-{d} ') + '23:59:59' : ''
         this.$emit('change', this.searchForm)
       },
       clearForm() {
         this.searchForm = {
-          carInfo: '',
-          incomeExpendType: '',
-          tradeEndTime: '',
-          tradeStartTime: '',
+          startRechargeTime: '',
+          endRechargeTime: '',
         }
         this.searchCreatTime = [+new Date() - 60 * 24 * 60 * 60 * 1000, +new Date()]
       }

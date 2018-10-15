@@ -128,7 +128,23 @@ export function getFCode(code) {
 
 // /aflcMyOrderApi/statusFollowing
 // 状态跟踪(货主)
+// export function postStatusFollowing(orderSerial) {
+//
+//   return Axios.post(''+swg2+'/aflcMyOrderApi/statusFollowing'+'?orderSerial='+orderSerial)
+// }
 export function postStatusFollowing(orderSerial) {
+  let str = ''
+  let obj
+  for (const i in obj) {
+    str += '&' + i + '=' + obj[i]
+  }
+  return Axios.request({
+    url: ''+swg2+'/aflcMyOrderApi/statusFollowing' + '?orderSerial=' + orderSerial,
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: str
+  })
 
-  return Axios.post(''+swg2+'/aflcMyOrderApi/statusFollowing'+'?orderSerial='+orderSerial)
 }

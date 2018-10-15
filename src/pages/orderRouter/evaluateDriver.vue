@@ -136,7 +136,6 @@
             "userName": this.isRouteData.driverName
           }
         }
-        console.log( this.senData)
         let promiseObj
         promiseObj = postEvaluateShipper(this.senData)
         promiseObj.then(res =>{

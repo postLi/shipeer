@@ -81,6 +81,7 @@
 </template>
 <script>
   import {loadJs, parseTime} from '@/utils/'
+  import {REGEX} from '../../utils/valiRegex'
   import {
     getAuroraSignature,
     postMyOrderDetail,
@@ -154,6 +155,7 @@
         thename: '',
         theobj: {},
         isRouteData: {},
+        statiusFData: {},
         isRadio: '',
         timer: null,
         wait: 0,
@@ -162,7 +164,7 @@
       }
     },
     mounted() {
-      this.isRouteData = this.$route.query
+      this.isRouteData = JSON.parse(this.$route.query.qy)
       // console.log(this.$route.query)
       // if(this.$route.query.tab === '派单中'){
       //   this.popVisibleTitle = this.$route.query.tab
@@ -196,6 +198,8 @@
       fetchStatusFollowing(orderSerial){
         return postStatusFollowing(orderSerial).then(res=>{
           if(res.status===200){
+            this.statiusFData = res.data
+            // pushDriverNums
             console.log(res,'跟踪信息')
           }else{
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
@@ -295,6 +299,9 @@
           data.tip = this.isRadio === '' ? this.radioList[0].name : this.isRadio
         } else {
           data.tip = this.changeInput
+          if(!REGEX){
+
+          }
         }
         data.tip = Number(data.tip)
 
