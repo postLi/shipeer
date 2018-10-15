@@ -355,6 +355,10 @@
       if (!(this.checkLogin()))
         ;
       this.getOrder(null, true);
+
+      AMap.event.addListener(this.mp, "click", function (e) {
+        console.log(e.lnglat);
+      });
     },
     methods: {
       checkLogin() {
