@@ -34,7 +34,7 @@
           </el-popover>
           <div class="avatar-wrapper" v-popover:popoveruser :title="userInfoData.mobile">
             <img v-if="userInfoData.shipperCardFile===''|| userInfoData.shipperCardFile === null " class="user-avatar"
-                 src="../../assets/default_tx.png">
+                 :src="defaultImg">
             <img class="user-avatar" :src="userInfoData.shipperCardFile" v-else>
             <!--span class="user-name">{{userInfoData.contacts}}<i class="el-icon-arrow-down"></i></span-->
           </div>
@@ -59,7 +59,8 @@
         visible: false,
         serverPhone: getServerPhone(),
         userInfoData: {},
-        uPhone: VueJsCookie.get('28kyuPhone')
+        uPhone: VueJsCookie.get('28kyuPhone'),
+        defaultImg: require('../../assets/default_tx.png')
       }
     },
     mounted() {
@@ -72,7 +73,7 @@
       return getUser(this.uPhone).then(res => {
         if (res.status === 200) {
           this.userInfoData = res.data;
-          console.log("deng: "+res);
+          console.log("deng: " + res);
           setUserInfo(this.userInfoData);
         }
       });
