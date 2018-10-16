@@ -1,5 +1,5 @@
 <template>
-    <div class="box_container" :class="{'hideuploadbtn': (filelist.length >= limit) || disabled}">
+    <div class="box_container" :class="{'hideuploadbtn': (filelist.length >= limit) || disabled}" >
       <el-upload
         class="image-uploader"
         drag
@@ -18,10 +18,7 @@
         :on-exceed="onexceed"
         :on-success="handleImageScucess"
         :on-remove="handleRemove">
-        <slot name="content" v-if='hiddenFn'>
-          <div>没有数据</div>
-        </slot>
-        <slot name="content" v-else>
+        <slot name="content">
           <el-button :size="size" class="button" :disabled="disabled" icon="el-icon-plus"></el-button>
           <!--<div class="el-upload__text">将文件拖拽到此区域</div>-->
           <!--<div v-if="tip" class="upload__tip">{{ tip }}</div>-->
@@ -138,12 +135,14 @@ export default {
     init() {
         // 从后台获取policy
       getUploadPolicy().then(data => {
+        console.log(data,'后台')
         this.upload.OSSAccessKeyId = data.accessid
         this.upload.policy = data.policy
         this.upload.signature = data.signature
         this.uploadUrl = data.host
         this.dir = data.dir
-        this.upload.key = data.dir + this.random_string() + type
+        this.upload.key = data.dir+ this.random_string() + type
+        console.log(this.upload.key);
       }).catch(err => {
       })
     },
@@ -152,12 +151,13 @@ export default {
     },
     // 超出上传数量
     onexceed(file, filelist) {
-      if(this.limit >1){
+      console.log(this.limit);
+      if(this.limit >=2){
         this.hiddenFn = true
       }else{
         this.hiddenFn = false
       }
-      this.$message.error(`最多上传 ${this.limit} 张!`)
+      // this.$message.error(`最多上传 ${this.limit} 张!`)
     },
     // 删除列表
     handleRemove(file, fileList) {
@@ -215,7 +215,7 @@ export default {
           reject(false)
         } else {
             // 设置文件名
-          this.upload.key = this.dir + parseTime(new Date(), '{y}{m}{d}') + '/' + this.random_string() + type
+          this.upload.key = this.dir +'/aflc/'+ parseTime(new Date(), '{y}{m}{d}') + '/' + this.random_string() + type
           resolve(true)
         }
       })
