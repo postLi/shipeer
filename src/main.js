@@ -66,10 +66,9 @@ Axios.interceptors.response.use(
     return res;
   },
   error => {
-    console.warn('=============请求出错==============：', error)
+    console.warn('=============请求出错==============：')
     if (error.response) {
       const status = error.response.status;
-      console.log("deng: " + status);
       if (status === 401) {
         Message({
           type: 'info',
@@ -82,8 +81,9 @@ Axios.interceptors.response.use(
         VueJsCookie.remove('28kyuPhone');
         removeUserInfo();
 
-        return Promise.reject(err);
+        return Promise.reject(error);
       }
+      return error.response;
     } else {
       console.log('response err:', error)// for debug
     }
@@ -91,7 +91,7 @@ Axios.interceptors.response.use(
       type: 'info',
       message: '服务器端返回数据错误，请稍后再试. '
     });
-    return Promise.reject(err);
+    return error;
   }
 );
 
