@@ -36,18 +36,13 @@
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
                         clearable @keyup.enter.native="subLogin">
-
               </el-input>
-              <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
-              <!--maxlength="6" clearable>-->
-
-              <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
               <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable
                         @keyup.enter.native="subLogin">
                 <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
+                  <img :src="imgsrc" @click="changeVcode">
                 </template>
               </el-input>
             </el-form-item>
@@ -65,7 +60,7 @@
               <el-input :maxlength="5" placeholder="请输入图形验证码" v-model="verData.verGra" clearable
                         @keyup.enter.native="subLogin">
                 <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
+                  <img :src="imgsrc" @click="changeVcode">
                 </template>
               </el-input>
             </el-form-item>
@@ -92,7 +87,7 @@
             </ul>
           </div>
           <div class="login-btn">
-            <el-button type="success" @click="subLogin" :loading="processState.login">登录</el-button>
+            <el-button type="success" @click="subLogin">登录</el-button>
           </div>
         </el-form>
 
@@ -145,7 +140,6 @@
         imgsrc: '',
         getValidtile: '获取验证码',
         loading: false,
-        processState: {login: false},
         disabled: false,
         zero: '',
         tabId: 0,
@@ -186,9 +180,8 @@
       }
     },
     mounted() {
-      this.changeVcode()
-      this.getServerPhone()
-      //VueJsCookie.get('28kyuPhone')
+      this.changeVcode();
+      this.getServerPhone();
       if (VueJsCookie.get('28kyuPhone')) {
         this.userData.userPhone = VueJsCookie.get('28kyuPhone')
         this.verData.verPhone = VueJsCookie.get('28kyuPhone')
