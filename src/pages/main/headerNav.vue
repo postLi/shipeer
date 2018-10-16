@@ -32,7 +32,7 @@
               <el-col><span @click="laygot">退出登录</span></el-col>
             </el-row>
           </el-popover>
-          <div class="avatar-wrapper" v-popover:popoveruser :title="userInfoData.contacts">
+          <div class="avatar-wrapper" v-popover:popoveruser :title="userInfoData.mobile">
             <img v-if="userInfoData.shipperCardFile===''|| userInfoData.shipperCardFile === null " class="user-avatar"
                  src="../../assets/default_tx.png">
             <img class="user-avatar" :src="userInfoData.shipperCardFile" v-else>
@@ -71,8 +71,9 @@
       });
       return getUser(this.uPhone).then(res => {
         if (res.status === 200) {
-          this.userInfoData = res.data
-          setUserInfo(this.userInfoData)
+          this.userInfoData = res.data;
+          console.log("deng: "+res);
+          setUserInfo(this.userInfoData);
         }
       });
     },
