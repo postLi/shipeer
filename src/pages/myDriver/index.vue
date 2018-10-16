@@ -49,14 +49,14 @@
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
+          prop="driverPhone"
           width="250"
           label="联系电话">
         </el-table-column>
         <el-table-column
           fixed
           sortable
-          prop="abnormalNo"
+          prop="isFreeName"
           width="250"
           label="当前状态">
         </el-table-column>
@@ -79,7 +79,7 @@
       center>
       <el-form :model="dialogFn" ref="dialog" :rules="rules">
         <el-form-item label="手机号" prop="driverMobile">
-          <el-input placeholder="请输入手机号" :maxlength="11" v-model="dialogFn.driverMobile"></el-input>
+          <el-input placeholder="请输入手机号" :maxlength="11" v-model="dialogFn.driverMobile" clearable></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -88,7 +88,7 @@
 
   </span>
     </el-dialog>
-    <div class="info_tab_footer" ref="footer">共计:{{ total }}
+    <div class="info_tab_footer" ref="footer">
       <div class="show_pager">
         <Pager :total="total" @change="handlePageChange"/>
       </div>
@@ -101,7 +101,7 @@
   import {postDriverList, postDriver,deleteDriver} from '@/api/concentrateAxios/myDriver'
   import {REGEX} from '../../utils/valiRegex'
   import Pager from '@/components/Pagination/index'
-
+  import {getUserInfo} from '@/utils/auth'
   export default {
     data() {
       return {
@@ -116,8 +116,13 @@
         },
         senDataList: {
           currentPage: 1,
-          pageSize: 5,
-          vo: {}
+          pageSize: 10,
+          vo: {
+            shipperId:getUserInfo().shipperId,
+            carNumber:'',
+            driverPhone:'',
+            driverName:''
+          }
         },
         rules: {
           driverMobile: [
@@ -158,6 +163,7 @@
                 this.loading = false
               } else {
                 this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+                this.loading = false
               }
 
             })
@@ -172,13 +178,15 @@
         // return postDriver
       },
       getPaymentList() {
-        // this.loading = true
+        this.loading = true
         return postDriverList(this.senDataList).then(res => {
           if (res.status === 200) {
-            this.dataset = res.data[0].drivers
+            this.dataset = res.data.list
+            this.total = res.data.totalPage
             this.loading = false
           } else {
             this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+            this.loading = false
           }
 
         })
@@ -191,25 +199,28 @@
         this.fetchAllList()
       },
       handleClick(row) {
-        console.log(row.driverId);
+        this.loading = true
         this.$confirm('确定要删除司机吗？', '提示', {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.loading = true
-          deleteDriver(row.driverId).then(res => {
+
+          deleteDriver(row.id).then(res => {
            if(res.status ===200){
              this.$message({
                type: 'success',
                message: '删除成功!'
              })
-             this.fetchData()
+             this.fetchAllList()
              this.loading = false
            }else{
              this.$message.error('错误：' + (res.text || res.errorInfo || res.data || '无法获取服务端数据' || JSON.stringify(res)))
+             this.loading = false
            }
           })
+        }).catch(err=>{
+          this.loading = false
         })
 
       },

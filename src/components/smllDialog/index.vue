@@ -1,8 +1,5 @@
 <template>
   <div class="mySdialog">
-    <!--<el-button type="text">点击打开 Dialog</el-button>-->
-    <!--<el-button type="text" @click="centerDialogVisible = true">点击打开 Dialog</el-button>-->
-
     <el-dialog
       title="费用明细"
       :visible.sync="centerDialogVisible"
@@ -10,18 +7,19 @@
       center>
       <!--<span>需要注意的是内容是默认不居中的</span>-->
       <ul>
-        <li><span class="pf">实际支付:&nbsp;&nbsp;￥{{getDetail.factPay===null?0:getDetail.factPay}}</span><span class="pfy">&nbsp;&nbsp;({{getDetail.payWay}}支付)</span><span></span></li>
+        <li><span class="pf">实际支付:&nbsp;&nbsp;￥{{getDetail.factPay===null?0.00:parseFloat(getDetail.factPay).toFixed(2)}}</span><span class="pfy">&nbsp;&nbsp; <i style="font-style: normal" v-if="getDetail.payWay">({{getDetail.payWay}}付款)</i> <i v-else></i></span><span></span></li>
         <li><span class="spanLeft">预计行驶</span><span class="spanRight">{{getDetail.totalMileage}}公里</span></li>
-        <li><span class="spanLeft">起步价(含{{getDetail.startMileage}}公里)</span><span class="spanRight">{{getDetail.startPrice}}元</span></li>
-        <li><span class="spanLeft">超里程费(超出{{getDetail.outMileage}}公里)</span><span class="spanRight">{{getDetail.outMileagePrice===null?0:getDetail.outMileagePrice}}元</span></li>
-        <li><span class="spanLeft">小费</span><span class="spanRight">{{getDetail.tip===null?0:getDetail.tip}}元</span></li>
+        <li><span class="spanLeft">起步价(含{{getDetail.startMileage||0}}公里)</span><span class="spanRight">{{parseFloat(getDetail.startPrice).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">超里程费(超出{{getDetail.outMileage||0}}公里)</span><span class="spanRight">{{getDetail.outMileagePrice===null?0.00:parseFloat(getDetail.outMileagePrice).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">小费</span><span class="spanRight">{{getDetail.tip===null?0.00:parseFloat(getDetail.tip).toFixed(2)}}元</span></li>
 
-        <li><span class="spanLeft">装卸等候费</span><span class="spanRight">{{getDetail.unloadingFee===null?0:getDetail.unloadingFee}}元</span></li>
-        <li><span class="spanLeft">车主改价</span><span class="spanRight">{{getDetail.driverChangeFee===null?0:getDetail.driverChangeFee}}元</span></li>
-        <li><span class="spanLeft">额外服务费</span><span class="spanRight">{{getDetail.totalExtraCharge===null?0:getDetail.totalExtraCharge}}元</span></li>
-        <li><span class="spanLeft">订单价</span><span class="spanRight">{{getDetail.orderPrice===null?0:getDetail.orderPrice}}元</span></li>
-        <li><span class="saleLeft">优惠金</span><span class="saleRight">{{getDetail.reward===null?0:'-'+getDetail.reward}}元</span></li>
-        <li><span class="saleLeft">优惠券抵扣</span><span class="saleRight">{{getDetail.preferentialPrice===null?0:'-'+getDetail.preferentialPrice}}元</span></li>
+        <li><span class="spanLeft">装卸等候费</span><span class="spanRight">{{getDetail.unloadingFee===null?0.00:parseFloat(getDetail.unloadingFee).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">车主改价</span><span class="spanRight">{{getDetail.driverChangeFee===null?0.00:parseFloat(getDetail.driverChangeFee).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">车主改价</span><span class="spanRight">{{getDetail.driverChangeFee===null?0.00:parseFloat(getDetail.driverChangeFee).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">额外服务费</span><span class="spanRight">{{getDetail.totalExtraCharge===null?0.00:parseFloat(getDetail.totalExtraCharge).toFixed(2)}}元</span></li>
+        <li><span class="spanLeft">订单价</span><span class="spanRight">{{getDetail.orderPrice===null?0.00:parseFloat(getDetail.orderPrice).toFixed(2)}}元</span></li>
+        <li><span class="saleLeft">优惠金</span><span class="saleRight">{{getDetail.reward===null?0.00:'-'+parseFloat(getDetail.reward).toFixed(2)}}元</span></li>
+        <li><span class="saleLeft">优惠券抵扣</span><span class="saleRight">{{getDetail.preferentialPrice===null?0.00:'-'+parseFloat(getDetail.preferentialPrice).toFixed(2)}}元</span></li>
       </ul>
       <span slot="footer" class="dialog-footer">
     <!--<el-button @click="centerDialogVisible = false">取 消</el-button>-->
@@ -51,20 +49,16 @@
       }
     },
     mounted(){
-      if (this.getDetail.payWay === 0) {
+      // AF0041801	余额支付 AF0041803	支付宝支付AF0041802	微信支付 AF0041804	现金支付
+
+      if (this.getDetail.payWay === 'AF0041803') {
         this.getDetail.payWay = '支付宝'
-      } else if (this.getDetail.payWay === 1) {
+      } else if (this.getDetail.payWay === 'AF0041802') {
         this.getDetail.payWay = '微信'
-      } else if (this.getDetail.payWay === 2) {
+      } else if (this.getDetail.payWay === 'AF0041801') {
         this.getDetail.payWay = '余额支付'
-      } else if (this.getDetail.payWay === 3) {
-        this.getDetail.payWay = '收货时付款'
-      } else if (this.getDetail.payWay === 4) {
-        this.getDetail.payWay = '发货时付款'
-      } else if (this.getDetail.payWay === 5) {
-        this.getDetail.payWay = '现金'
-      } else {
-        this.getDetail.payWay = ''
+      } else if (this.getDetail.payWay === 'AF0041804') {
+        this.getDetail.payWay = '现金支付'
       }
     },
     watch:{

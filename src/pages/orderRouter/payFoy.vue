@@ -7,20 +7,22 @@
       <el-main class="clearfix">
         <div class="mainClass clearfix">
           <span class="titleClass">您还需支付</span><span
-          class="priceClass">{{getDetail.factPay?getDetail.factPay:0}}元</span>
+          class="priceClass">{{getDetail.factPay!==null?parseFloat(getDetail.factPay).toFixed(2):0.00}}元</span>
           <ul>
             <li>
-              <div><span>起步价(含{{getDetail.startMileage}}公里)</span><span>{{getDetail.startPrice}}元</span></div>
-              <div><span>超里程费(超出{{getDetail.outMileage}}公里)</span><span>{{getDetail.outMileagePrice===null?0:getDetail.outMileagePrice}}元</span>
+              <div><span>起步价(含{{getDetail.startMileage}}公里)</span><span>{{parseFloat(getDetail.startPrice).toFixed(2)|0.00}}元</span>
+              </div>
+              <div><span>超里程费(超出{{getDetail.outMileage}}公里)</span><span>{{getDetail.outMileagePrice===null?0.00:parseFloat(getDetail.outMileagePrice).toFixed(2)}}元</span>
               </div>
             </li>
             <li>
-              <div><span>订单价</span><span>{{getDetail.orderPrice}}元</span></div>
-              <div><span>优惠券抵扣</span><span class="redClass">{{getDetail.preferentialPrice===null?0:'-'+getDetail.preferentialPrice}}元</span>
+              <div><span>订单价</span><span>{{parseFloat(getDetail.orderPrice).toFixed(2)}}元</span></div>
+              <div><span>优惠券抵扣</span><span class="redClass">{{getDetail.preferentialPrice===null?0.00:'-'+parseFloat(getDetail.preferentialPrice).toFixed(2)}}元</span>
               </div>
             </li>
             <li>
-              <div><span>小费</span><span class="greenClass">+{{getDetail.tip===null?0:getDetail.tip}}元</span></div>
+              <div><span>小费</span><span class="greenClass">+{{getDetail.tip===null?0.00:parseFloat(getDetail.tip).toFixed(2)}}元</span>
+              </div>
               <!--<div><span>超里程费(超出0公里)</span><span>0.00元</span></div>-->
             </li>
           </ul>
@@ -32,8 +34,9 @@
               <el-radio v-model="radio" label="1"><span class="spanClass">
                   <icon-svg iconClass="ddqr_yue" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>{{balance}}</i>元)</span><i class="getup"
-                                                                                                      @click="gotoCoupon">立即充值</i>
+                <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>{{parseFloat(balance).toFixed(2)|0.00}}</i>元)</span><i
+                  class="getup"
+                  @click="gotoCoupon">立即充值</i>
               </el-radio>
 
             </li>
@@ -41,7 +44,7 @@
               <el-radio v-model="radio" label="2"><span class="spanClass">
                   <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">微信支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{Number(getDetail.reward+getDetail.preferentialPrice)}}元）</i></span>
+                <span class="titleP">微信支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{parseFloat(Number(getDetail.reward+getDetail.preferentialPrice)).toFixed(2)|0.00}}元）</i></span>
               </el-radio>
 
             </li>
@@ -52,7 +55,7 @@
               <el-radio v-model="radio" label="3"><span class="spanClass">
                   <icon-svg iconClass="lll02zfb" class="svg"></icon-svg>
                   </span>
-                <span class="titleP">支付宝支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{Number(getDetail.reward+getDetail.preferentialPrice)}}元）</i></span>
+                <span class="titleP">支付宝支付</span> <span class="youhui">搬运等额外费用可在司机装货后支付<i>（优惠{{parseFloat(Number(getDetail.reward+getDetail.preferentialPrice)).toFixed(2)|0.00}}元）</i></span>
               </el-radio>
 
             </li>
@@ -201,7 +204,7 @@
           }
         })
       },
-      fetchWallet(){
+      fetchWallet() {
         this.getWallet()
       },
       onSubmit() {

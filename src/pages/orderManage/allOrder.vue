@@ -125,9 +125,8 @@
             width="150"
             label="操作">
             <template slot-scope="scope">
-              <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
+              <!--<el-button @click="handleClickMessage(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
               <el-button @click="handleClickPy(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>
-              <!--<el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small" v-if="scope.row.payStatus === 'AF00801'">去支付</el-button>-->
               <el-button @click="handleClickEvaDriver(scope.row)" type="text" size="small"  v-if="scope.row.status === 'AF0080701' && scope.row.payStatus === 'AF00802'">评价司机</el-button>
 
               <el-button type="text" size="small" @click="handleClickMessage(scope.row)" v-if="scope.row.status === 'AF0080705'">确认回款</el-button>
@@ -149,7 +148,7 @@
 
 <script>
   import Search from './components/search'
-  import {postMyOrderList} from '@/api/concentrateAxios/orderManage'
+  import {postMyOrderList,postConfirmRecoveryAmount,postConfirmRecoveryList} from '@/api/concentrateAxios/orderManage'
   import {mapGetters} from 'vuex'
   import Pager from '@/components/Pagination/index'
   import {parseTime} from '@/utils/'
@@ -230,6 +229,7 @@
             this.loading = false
           }else{
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+            this.loading = false
           }
         })
       },
@@ -291,16 +291,30 @@
         this.$router.push({path: '/order'})
       },
       handleClickMessage(row) {
+        let data ={
+          orderSerial:''
+        }
+        data.orderSerial=row.orderSerial
+        console.log(data.orderSerial);
         if(row.status === 'AF0080703'){
           this.$confirm('确认已收到此订单司机带回来的回单?', '确认回单', {
             confirmButtonText: '已收到汇款',
             cancelButtonText: '还未收到'
 
           }).then(() => {
-            this.$message({
-              type: 'primary',
-              message: '操作成功!'
-            });
+            this.loading = true
+            postConfirmRecoveryAmount(data).then(res=>{
+              if(res.status ===200){
+                this.$message({
+                  type: 'success',
+                  message: '操作成功!'
+                });
+                this.loading = false
+              }else{
+                this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+                this.loading = false
+              }
+            })
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -313,10 +327,19 @@
             cancelButtonText: '还未收到'
 
           }).then(() => {
-            this.$message({
-              type: 'primary',
-              message: '操作成功!'
-            });
+            this.loading = true
+            postConfirmRecoveryList(data).then(res=>{
+              if(res.status ===200){
+                this.$message({
+                  type: 'success',
+                  message: '操作成功!'
+                });
+                this.loading = false
+              }else{
+                this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+                this.loading = false
+              }
+            })
           }).catch(() => {
             this.$message({
               type: 'info',

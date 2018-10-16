@@ -41,17 +41,17 @@
           <span class="actClass">用车时间:</span><span class="blueClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
         </div>
         <div class="divClass">
-          <span class="unClass">付款方式:</span> <span class="spanclass">{{getDetail.payStatus}}&nbsp;&nbsp;({{getDetail.payWay}}支付)</span>
+          <span class="unClass">付款方式:</span> <span class="spanclass">{{getDetail.payTimeType === '0'?'收货时付款':'发货时付款'}}&nbsp;&nbsp;<i style="font-style: normal" v-if="getDetail.payWay">({{getDetail.payWay}}付款)</i> <i v-else></i></span>
           <!--支付时机(0，收货时付款，1，发货时付款)",name="payTimeType")-->
           <!--payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付-->
 
         </div>
         <div class="divClass">
-          <span class="unClass">实际支付:</span> <span class="spanclass">{{getDetail.orderStatus===0?'未支付':'已支付'}}&nbsp;&nbsp;￥{{getDetail.factPay || 0}}</span>
+          <span class="unClass">实际支付:</span> <span class="spanclass">{{getDetail.orderStatus===0?'未支付':'已支付'}}&nbsp;&nbsp;￥{{parseFloat(getDetail.factPay).toFixed(2) || 0.00}}</span>
 
         </div>
         <div class="divClass">
-          <span class="unClass">运输支付:</span><span class="spanclass">￥{{getDetail.orderPrice || 0}}</span>&nbsp;&nbsp;<span
+          <span class="unClass">运输支付:</span><span class="spanclass">￥{{parseFloat(getDetail.orderPrice).toFixed(2) || 0.00}}</span>&nbsp;&nbsp;<span
           class="blueClassL" @click="closeDetail">费用明细</span>
         </div>
         <div class="divClass">
@@ -137,20 +137,16 @@
           if (res.status === 200) {
             this.getDetail = res.data
             // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
-            if (this.getDetail.payWay === 0) {
+            // AF0041801	余额支付 AF0041803	支付宝支付AF0041802	微信支付 AF0041804	现金支付
+
+            if (this.getDetail.payWay === 'AF0041803') {
               this.getDetail.payWay = '支付宝'
-            } else if (this.getDetail.payWay === 1) {
+            } else if (this.getDetail.payWay === 'AF0041802') {
               this.getDetail.payWay = '微信'
-            } else if (this.getDetail.payWay === 2) {
+            } else if (this.getDetail.payWay === 'AF0041801') {
               this.getDetail.payWay = '余额支付'
-            } else if (this.getDetail.payWay === 3) {
-              this.getDetail.payWay = '收货时付款'
-            } else if (this.getDetail.payWay === 4) {
-              this.getDetail.payWay = '发货时付款'
-            } else if (this.getDetail.payWay === 5) {
-              this.getDetail.payWay = '现金'
-            } else {
-              this.getDetail.payWay = ''
+            } else if (this.getDetail.payWay === 'AF0041804') {
+              this.getDetail.payWay = '现金支付'
             }
             setOrderDtaial(res.data)
           } else {
@@ -234,7 +230,7 @@
       }
       li:last-of-type {
         /*display: inline-block;*/
-        padding: 50px 98px 78px 0;
+        padding: 50px 68px 78px 0;
         float: right;
         /*max-width: 650px;*/
         /*min-width: 650px;*/

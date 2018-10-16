@@ -148,3 +148,19 @@ export function postStatusFollowing(orderSerial) {
   })
 
 }
+
+// /shipperService/confirmRecoveryAmount
+// 确认已回款(货主端)
+export function postConfirmRecoveryAmount(params) {
+
+  return Axios.post(''+swg2+'/shipperService/confirmRecoveryAmount',params)
+}
+// /shipperService/confirmRecoveryList
+// 确认已回单(货主端)
+export function postConfirmRecoveryList(params) {
+
+  return Axios.post(''+swg2+'/shipperService/confirmRecoveryList',params)
+}
+
+// /aflcOrderApi/cancelOrder
+// 取消订单(货主端)

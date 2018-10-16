@@ -2,13 +2,13 @@
 	<div class="search-form">
     <el-form ref="form" :model="searchForm" label-width="80px">
       <el-form-item label="车牌号">
-        <el-input v-model="searchForm.name"></el-input>
+        <el-input v-model="searchForm.carNumber" clearable></el-input>
       </el-form-item>
       <el-form-item label="司机">
-        <el-input v-model="searchForm.name"></el-input>
+        <el-input v-model="searchForm.driverName" clearable></el-input>
       </el-form-item>
       <el-form-item label="联系电话">
-        <el-input v-model="searchForm.name"></el-input>
+        <el-input v-model="searchForm.driverPhone" clearable></el-input>
       </el-form-item>
     </el-form>
     <div class="search-btn">
@@ -25,7 +25,9 @@
     data(){
       return {
         searchForm:{
-          // name:'123'
+          carNumber:'',
+          driverPhone:'',
+          driverName:''
         }
       }
     },
@@ -34,7 +36,11 @@
         this.$emit('change', this.searchForm)
       },
       clearForm(){
-
+        this.searchForm={
+            carNumber:'',
+            driverPhone:'',
+            driverName:''
+        }
       }
     }
   }

@@ -34,9 +34,9 @@
             <!--<li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>-->
             <li><span>付款方式:</span><span>{{getDetail.payTimeType === '0'?'收货时付款':'发货时付款'}}&nbsp;&nbsp; <i style="font-style: normal" v-if="getDetail.payWay">({{getDetail.payWay}}付款)</i> <i v-else></i></span></li>
             <li>
-              <span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{getDetail.factPay || 0}}</span>
+              <span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{ parseFloat(getDetail.factPay).toFixed(2)|0.00}}</span>
             </li>
-            <li><span>运输费用:</span><span>¥{{getDetail.orderPrice || 0}} <el-button type="info" size="mini"
+            <li><span>运输费用:</span><span>¥{{parseFloat(getDetail.orderPrice).toFixed(2)|0.00}} <el-button type="info" size="mini"
                                                                                   class="btnClass" @click="add">加小费{{addTitle}}</el-button></span>
             </li>
             <li><span>需要车型:</span><span>{{getDetail.carTypeName}}</span></li>
