@@ -38,7 +38,7 @@
                 <span class="spanClass"><icon-svg iconClass="lll06yue" class="svg"></icon-svg></span>
                 <!--<img src="../../assets/main/fahuor.png" alt="">-->
                 <p>账户余额</p>
-                <p>¥{{infoData.balance}}</p>
+                <p>¥{{parseFloat(infoData.balance).toFixed(2)}}</p>
                 <p @click="gotoToPayCoupon">（充值特惠，去充值）</p>
               </div>
 
@@ -50,7 +50,7 @@
                 <span class="spanClass"><icon-svg iconClass="lll04youhuij" class="svg"></icon-svg></span>
                 <!--<img src="../../assets/main/fahuor.png" alt="">-->
                 <p>在线交易优惠金</p>
-                <p>¥{{infoData.rewardMax}}</p>
+                <p>¥{{parseFloat(infoData.rewardMax).toFixed(2)}}</p>
                 <p></p>
               </div>
 
@@ -129,9 +129,11 @@
               <el-table-column
                 fixed
                 sortable
-                prop="totalAmount"
                 width="260"
                 label="金额">
+                <template slot-scope="scope">
+                  ￥{{parseFloat(scope.row.totalAmount).toFixed(2)}}
+                </template>
               </el-table-column>
               <el-table-column
                 fixed
@@ -154,8 +156,7 @@
 </template>
 
 <script>
-  import VueJsCookie from 'vue-js-cookie'
-  import Vue from 'vue'
+  import {numFilter} from '@/utils/'
   import Pager from '@/components/Pagination/index'
   // import {getUser} from '@/api/login'
   import {

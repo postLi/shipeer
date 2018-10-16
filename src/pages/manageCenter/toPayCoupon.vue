@@ -4,7 +4,7 @@
       <el-header>
         <div class="headerClass">
           <div class="headerTop">
-            <p class="p-ye">账户余额：<span>{{balance || 0}}</span>元</p>
+            <p class="p-ye">账户余额：<span>{{parseFloat(balance).toFixed(2) || 0.00}}</span>元</p>
             <h4>充值金额：</h4>
             <ul class="clearfix">
               <template v-for="(item,index) in datasetList">
@@ -145,8 +145,11 @@
                 width="400"
                 label="交易方式">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.rechargeWay === 0 ? '支付宝':'微信'"></span>
+                  <span >{{scope.row.rechargeWay === '0' ? '支付宝':'微信'}}</span>
                 </template>
+                <!--<template slot-scope="scope">-->
+                  <!--<span v-if="scope.row.rechargeWay === '0' ? '支付宝':'微信'"></span>-->
+                <!--</template>-->
               </el-table-column>
               <el-table-column
                 fixed
@@ -154,6 +157,9 @@
                 prop="rechargeSum"
                 width="400"
                 label="金额">
+                <template slot-scope="scope">
+                  ￥{{parseFloat(scope.row.rechargeSum).toFixed(2)}}
+                </template>
               </el-table-column>
               <!--<el-table-column-->
               <!--fixed-->
@@ -309,6 +315,7 @@
             this.loading = false
           } else {
             this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res) || '无法获取服务端数据'))
+            this.loading = false
           }
         })
       },
@@ -412,6 +419,7 @@
             this.loading = false
           } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+            this.loading = false
           }
 
         })
@@ -490,6 +498,7 @@
             // this.changeItem = this.datasetList[0]
           } else {
             this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data))
+            this.loading = false
           }
 
         })
@@ -503,6 +512,7 @@
             this.loading = false
           } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+            this.loading = false
           }
 
         })

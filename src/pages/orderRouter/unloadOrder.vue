@@ -16,7 +16,7 @@
               </template>
 
 
-              <li><img src="../../assets/login/code.png" alt=""></li>
+              <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
               <!--<li><img src="../../assets/login/code.png" alt=""></li>-->
             </ul>
 
@@ -24,9 +24,9 @@
           </div>
           <div class="unRight">
             <ul>
-              <li>订单号：{{isRouteData.qy.orderSerial}}</li>
+              <li>订单号：{{isRouteData.orderSerial}}</li>
               <li>司机已卸货</li>
-              <li>订单将于<span>{{isRouteData.qy.autoComplateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span> 自动完成<br>
+              <li>订单将于<span>{{isRouteData.autoComplateTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span> 自动完成<br>
                 您也可以手动完成哦！</li>
               <li> <el-button type="success" @click="submit">确认收货</el-button></li>
               <li></li>
@@ -75,7 +75,7 @@
       OrderDetail
     },
     mounted(){
-      this.isRouteData = this.$route.query
+      this.isRouteData = JSON.parse(this.$route.query.qy)
       console.log(this.isRouteData)
     },
     methods: {
@@ -124,7 +124,7 @@
           float: left;
           /*display: inline-block;*/
           /*padding-right: 50px;*/
-          border-right: 2px solid #ddd;
+          /*border-right: 2px solid #ddd;*/
 
           ul{
             li{
@@ -141,38 +141,7 @@
             margin-top:10vh !important;
             margin: 0 auto 20px !important;
           }
-          .uploadcard {
-            /*padding: 20px 20px 20px 90px;*/
-            //上传图片
-            .el-upload-list--picture-card .el-upload-list__item {
-              width: 195px;
-              height: 158px;
-            }
-            .el-upload-dragger {
-              width: 195px;
-            }
-            .el-upload--picture-card {
-              width: 195px;
-              height: 158px;
-              line-height: 30px;
-            }
-            .upload__tip {
-              line-height: 30px;
-            }
-            .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
-              margin-top: 8px;
-            }
-            //上传图片end
-            .uploadlist {
-              width: 100%;
-              margin-left: 80px;
-              li {
-                float: left;
-                width: 100px;
-                margin-right: 10px;
-              }
-            }
-          }
+
 
         }
         .unRight{
@@ -218,7 +187,8 @@
     .el-main{
       background: #fff;
       /*margin-top: 10px;*/
-      padding:0
+      padding:0;
+      /*overflow: hidden;*/
     }
     .el-footer {
       /*background-color: #B3C0D1;*/

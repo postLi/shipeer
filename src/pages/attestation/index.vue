@@ -30,7 +30,7 @@
             <!--<el-input>-->
               <!--<template slot="append">-->
                 <div class="clearfix uploadcard">
-                <upload :title="'本地上传'" :showFileList="true" :limit="1" listtype="picture" v-model="verData.businessLicenceFile"
+                <upload :title="'本地上传'" :limit="1" v-model="verData.businessLicenceFile"
                 />
                 </div>
               <!--</template>-->
@@ -38,13 +38,13 @@
           </el-form-item>
           <el-form-item class="" label="公司货档口门头照:" prop='companyFacadeFile'>
             <div class="clearfix uploadcard">
-              <upload :title="'本地上传'" :showFileList="true" :limit="1" listtype="picture" v-model="verData.companyFacadeFile"
+              <upload :title="'本地上传'" :limit="1" v-model="verData.companyFacadeFile"
               />
             </div>
           </el-form-item>
           <el-form-item class="" label="发货人名片:" prop='shipperCardFile'>
             <div class="clearfix uploadcard">
-              <upload :title="'本地上传'" :showFileList="true" :limit="1" listtype="picture" v-model="verData.shipperCardFile"
+              <upload :limit="1" :title="'本地上传'" v-model="verData.shipperCardFile"
               />
             </div>
           </el-form-item>
@@ -65,7 +65,8 @@
   import Axios from 'axios'
   import VueJsCookie from 'vue-js-cookie'
   import {getUserInfo} from '@/utils/auth'
-  import Upload from '@/components/Upload/singleImage2'
+  import Upload from '@/components/Upload/singleImage'
+  // import Upload from '@/components/Upload/singleImage2'
 
   export default {
     components:{
@@ -154,18 +155,15 @@
         this.$refs['verLogin'].validate(valid => {
 
           if (valid) {
-          //   let old_pwd = md5(this.verData.old_pwd)
-          //   let new_pwd = md5(this.verData.new_pwd)
-          //   let sure_pwd = md5(this.verData.sure_pwd)
-            postAuthentication(this.verData).then((res) => {
-              console.log(res);
-              // if(res.status ===200){
-              //   this.$message.success('资料认证成功')
-              //   this.$router.go(-1);
-              //   // VueJsCookie.set('28kyuPhone', this.userData.userPhone)
-              // }else{
-              //   this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
-              // }
+            this.loading = true
+              postAuthentication(this.verData).then((res) => {
+              if(res.status ===200){
+                this.$message.success('资料认证成功')
+                this.$router.go(-1);
+                this.loading = false
+              }else{
+                this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+              }
             })
           } else {
 
@@ -262,12 +260,13 @@
               /*padding: 20px 20px 20px 90px;*/
               //上传图片
               .el-upload-list--picture-card .el-upload-list__item {
-                width: 158px;
+                width: 138px;
                 height: 86px;
                 margin: 0 8px 0px 0;
               }
               .el-upload-dragger {
-                width: 158px;
+                width: 138px;
+                height: 86px;
                 .el-button{
                   border: 1px solid #fff;
                   background: #fff;

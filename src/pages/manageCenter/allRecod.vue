@@ -80,9 +80,11 @@
         <el-table-column
           fixed
           sortable
-          prop="totalAmount"
           width="120"
           label="金额">
+          <template slot-scope="scope">
+            ￥{{parseFloat(scope.row.totalAmount).toFixed(2)}}
+          </template>
         </el-table-column>
         <el-table-column
           fixed

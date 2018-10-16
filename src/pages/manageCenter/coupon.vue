@@ -5,8 +5,8 @@
         <div class="headerClass">
           <ul>
             <li>在线交易优惠金</li>
-            <li>奖励上限：{{infoData.rewardMax}}元</li>
-            <li>累计减免：<span>{{infoData.rewardSumAll}}</span>元</li>
+            <li>奖励上限：{{parseFloat(infoData.rewardMax).toFixed(2)}}元</li>
+            <li>累计减免：<span>{{parseFloat(infoData.rewardSumAll).toFixed(2)}}</span>元</li>
           </ul>
         </div>
       </el-header>
@@ -68,6 +68,9 @@
                 prop="totalAmount"
                 width="300"
                 label="订单金额">
+                <template slot-scope="scope">
+                  ￥{{parseFloat(scope.row.totalAmount).toFixed(2)}}
+                </template>
               </el-table-column>
               <el-table-column
                 fixed
@@ -75,6 +78,9 @@
                 prop="rewardSum"
                 width="280"
                 label="减免金额">
+                <template slot-scope="scope">
+                  ￥{{parseFloat(scope.row.rewardSum).toFixed(2)}}
+                </template>
               </el-table-column>
 
               <!--<el-table-column-->
@@ -165,6 +171,7 @@
             this.loading = false
           } else {
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
+            this.loading = false
           }
 
         })

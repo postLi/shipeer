@@ -172,7 +172,8 @@
           currentPage:1,
           pageSize:5,
           status:''
-        }
+        },
+        payStatus:''
 
       }
     },
@@ -213,6 +214,19 @@
             this.dataset = res.data.list
             this.total = res.data.totalPage
             this.totalCount = res.data.totalCount
+            this.payStatus = res.data.list.map(el=>{
+              if(el === 'AF00801'){
+                this.payStatus = '待付款'
+              }else if(el === 'AF00802'){
+                this.payStatus = '已付款'
+              }else if(el === 'AF00803'){
+                this.payStatus = '已退款'
+              }else if(el === 'AF00808'){
+                this.payStatus = '已取消'
+              }else{
+                this.payStatus = '司机已到提货地'
+              }
+            })
             this.loading = false
           }else{
             this.$message.warning(res.text || res.errorInfo || '无法获取服务端数据~')
@@ -285,12 +299,12 @@
           }).then(() => {
             this.$message({
               type: 'primary',
-              message: '删除成功!'
+              message: '操作成功!'
             });
           }).catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消操作'
             });
           });
         }else{
@@ -301,12 +315,12 @@
           }).then(() => {
             this.$message({
               type: 'primary',
-              message: '删除成功!'
+              message: '操作成功!'
             });
           }).catch(() => {
             this.$message({
               type: 'info',
-              message: '已取消删除'
+              message: '已取消操作'
             });
           });
         }

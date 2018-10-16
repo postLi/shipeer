@@ -32,7 +32,7 @@
             <li><span class="dateClass">用车时间:</span><span class="timeClass">{{getDetail.useCarTime | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
             </li>
             <!--<li><span class="dateClass">订单号:</span ><span class="timeClass">10000000000</span></li>-->
-            <li><span>付款方式:</span><span>{{getDetail.payStatus || 0}}&nbsp;&nbsp; ({{getDetail.payWay}}付款)</span></li>
+            <li><span>付款方式:</span><span>{{getDetail.payTimeType === '0'?'收货时付款':'发货时付款'}}&nbsp;&nbsp; <i style="font-style: normal" v-if="getDetail.payWay">({{getDetail.payWay}}付款)</i> <i v-else></i></span></li>
             <li>
               <span>实际支付:</span><span>({{getDetail.orderStatus===0?'未支付':'已支付'}}) &nbsp;￥{{getDetail.factPay || 0}}</span>
             </li>
@@ -268,20 +268,17 @@
           if (res.status === 200) {
             this.getDetail = res.data
             // payWay 交易方式(0:支付宝，1:微信,2：余额支付,3,收货时付款，4发货时付款,5: 现金支付
-            if (this.getDetail.payWay === 0) {
+            // 显示payWay
+            // AF0041801	余额支付 AF0041803	支付宝支付AF0041802	微信支付 AF0041804	现金支付
+
+            if (this.getDetail.payWay === 'AF0041803') {
               this.getDetail.payWay = '支付宝'
-            } else if (this.getDetail.payWay === 1) {
+            } else if (this.getDetail.payWay === 'AF0041802') {
               this.getDetail.payWay = '微信'
-            } else if (this.getDetail.payWay === 2) {
+            } else if (this.getDetail.payWay === 'AF0041801') {
               this.getDetail.payWay = '余额支付'
-            } else if (this.getDetail.payWay === 3) {
-              this.getDetail.payWay = '收货时付款'
-            } else if (this.getDetail.payWay === 4) {
-              this.getDetail.payWay = '发货时付款'
-            } else if (this.getDetail.payWay === 5) {
-              this.getDetail.payWay = '现金'
-            } else {
-              this.getDetail.payWay = ''
+            } else if (this.getDetail.payWay === 'AF0041804') {
+              this.getDetail.payWay = '现金支付'
             }
             // this.setCircle()
           } else {

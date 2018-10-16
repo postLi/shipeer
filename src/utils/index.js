@@ -34,6 +34,10 @@ export function loadJs(src, callback) {
     head.insertBefore(script, head.firstChild)
   })
 }
+export function numFilter(value) {
+  let realVal = Number(value).toFixed(2)
+  return Number(realVal)
+}
 export const pickerOptions2 = [{
   text: '今天',
   onClick(picker) {

@@ -2,7 +2,7 @@
   <div class="odPayForClass-lll" v-loading="loading">
     <el-container class="clearfix">
       <el-header class="clearfix">
-        <OrderDetail :orderid="$route.query.qy.orderSerial"></OrderDetail>
+        <OrderDetail :orderid="isRouteData.orderSerial"></OrderDetail>
       </el-header>
       <el-main class="clearfix">
         <div class="mainClass clearfix">
@@ -30,7 +30,7 @@
           <ul>
             <li>
               <el-radio v-model="radio" label="1"><span class="spanClass">
-                  <icon-svg iconClass="lll01wet" class="svg"></icon-svg>
+                  <icon-svg iconClass="ddqr_yue" class="svg"></icon-svg>
                   </span>
                 <span class="titleP">余额支付</span> <span class="yue">(可用余额<i>{{balance}}</i>元)</span><i class="getup"
                                                                                                       @click="gotoCoupon">立即充值</i>
@@ -187,7 +187,7 @@
     },
     mounted() {
       this.fetchWallet()
-
+      this.isRouteData = JSON.parse(this.$route.query.qy)
     },
     methods: {
       getWallet() {
@@ -219,12 +219,15 @@
       },
       fetchMywall() {
         this.loading = true
-        return postMywalletPay(this.$route.query.qy.orderSerial).then(res => {
+        return postMywalletPay(this.isRouteData.orderSerial).then(res => {
           if (res.status === 200) {
             this.$message.success('支付成功')
+            this.fetchWallet()
+            this.$router.go(-1);
             this.loading = false
           } else {
             this.$message.warning(res.text || res.errorInfo || '未知错误，请重试~')
+            this.loading = false
           }
         })
       },
@@ -232,12 +235,12 @@
         let data = {
           "payChannel": "wx"
         }
-        return postScanPayOrder(this.$route.query.qy.orderSerial, data).then(res => {
+        return postScanPayOrder(this.isRouteData.orderSerial, data).then(res => {
           var fr = new FileReader();
           fr.readAsDataURL(res);
           fr.onload = (e) => {
             this.pfimg = e.target.result;
-            this.getPayResult(this.$route.query.qy.orderSerial, "wx")
+            this.getPayResult(this.isRouteData.orderSerial, "wx")
           }
         })
       },
@@ -245,12 +248,12 @@
         let data = {
           "payChannel": "ali"
         }
-        return postScanPayOrder(this.$route.query.qy.orderSerial, data).then(res => {
+        return postScanPayOrder(this.isRouteData.orderSerial, data).then(res => {
           var fr = new FileReader();
           fr.readAsDataURL(res);
           fr.onload = (e) => {
             this.pfimg = e.target.result;
-            this.getPayResult(this.$route.query.qy.orderSerial, "ali")
+            this.getPayResult(this.isRouteData.orderSerial, "ali")
           }
         })
       },
@@ -267,6 +270,7 @@
               } else {
                 this.centerDialogVisiblezfb = false
               }
+              this.$router.go(-1);
             } else {
               this.getPayResult(rid, type)
             }
@@ -279,10 +283,10 @@
         console.log(val);
       },
       donePy1(event) {
-        this.getPayResult(this.$route.query.qy.orderSerial, "wx")
+        this.getPayResult(this.isRouteData.orderSerial, "wx")
       },
       donePyzfb() {
-        this.getPayResult(this.$route.query.qy.orderSerial, "ali")
+        this.getPayResult(this.isRouteData.orderSerial, "ali")
       },
       gotoCoupon() {
         this.$router.push({path: '/toPayCoupon'})
