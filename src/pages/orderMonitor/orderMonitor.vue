@@ -319,7 +319,7 @@
       window.getOrderDetail2 = this.getOrderDetail2;
       this.redball = new AMap.Marker({
         icon: this.redballUrl,
-        offset: new AMap.Pixel(-16, -41),
+        offset: new AMap.Pixel(-9, -22),
         animation: "AMAP_ANIMATION_DROP",
         autoRotation: false
       });
