@@ -160,7 +160,7 @@
         vertical-align: middle;
       }
       .user-name{
-        display: inline-block;
+        /*display: inline-block;*/
         max-width: 64px;
         color: #333;
         line-height: 50px;

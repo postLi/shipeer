@@ -176,7 +176,7 @@
       float: left;
       /*border*/
       li:first-of-type {
-        padding: 50px 50px 80px 70px;
+        padding: 50px 50px 0px 70px;
         float: left;
         /*display: inline-block;*/
         .liClass-top {
@@ -234,7 +234,7 @@
       }
       li:last-of-type {
         /*display: inline-block;*/
-        padding: 50px 98px 80px 0;
+        padding: 50px 98px 78px 0;
         float: right;
         /*max-width: 650px;*/
         /*min-width: 650px;*/

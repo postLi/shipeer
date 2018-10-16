@@ -46,3 +46,7 @@ export function parseTime(time, cFormat) {
   })
   return time_str
 }
+export function numFilter(value) {
+  let realVal = Number(value).toFixed(2)
+  return Number(realVal)
+}

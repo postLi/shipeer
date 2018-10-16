@@ -18,11 +18,14 @@
         :on-exceed="onexceed"
         :on-success="handleImageScucess"
         :on-remove="handleRemove">
-        <slot name="content">
-          <el-button :size="size" class="button" :disabled="disabled" icon="el-icon-plus"></el-button>
-          <!--<div class="el-upload__text">将文件拖拽到此区域</div>-->
-          <!--<div v-if="tip" class="upload__tip">{{ tip }}</div>-->
+        <slot name="content" >
+          <template v-show="hiddenFn">
+            <el-button :size="size" class="button" :disabled="disabled" icon="el-icon-plus"></el-button>
+            <!--<div class="el-upload__text">将文件拖拽到此区域</div>-->
+            <!--<div v-if="tip" class="upload__tip">{{ tip }}</div>-->
 
+
+          </template>
         </slot>
       </el-upload>
       <el-dialog custom-class="singleimage2" :visible.sync="dialogVisible" :append-to-body="true">
@@ -135,7 +138,6 @@ export default {
     init() {
         // 从后台获取policy
       getUploadPolicy().then(data => {
-        console.log(data,'后台')
         this.upload.OSSAccessKeyId = data.accessid
         this.upload.policy = data.policy
         this.upload.signature = data.signature
@@ -152,12 +154,12 @@ export default {
     // 超出上传数量
     onexceed(file, filelist) {
       console.log(this.limit);
-      if(this.limit >=2){
+      if(this.limit >1){
         this.hiddenFn = true
       }else{
         this.hiddenFn = false
       }
-      // this.$message.error(`最多上传 ${this.limit} 张!`)
+      this.$message.error(`最多上传 ${this.limit} 张!`)
     },
     // 删除列表
     handleRemove(file, fileList) {

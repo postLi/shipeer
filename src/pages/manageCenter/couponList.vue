@@ -72,6 +72,9 @@
                       prop="deduction"
                       width="150"
                       label="满减金额">
+                      <template slot-scope="scope">
+                        ￥{{parseFloat(scope.row.deduction).toFixed(2)}}
+                      </template>
                     </el-table-column>
                     <el-table-column
                       fixed
@@ -183,6 +186,9 @@
                       prop="deduction"
                       width="150"
                       label="满减金额">
+                      <template slot-scope="scope">
+                        ￥{{parseFloat(scope.row.deduction).toFixed(2)}}
+                      </template>
                     </el-table-column>
                     <el-table-column
                       fixed
@@ -295,6 +301,9 @@
                       prop="deduction"
                       width="150"
                       label="满减金额">
+                      <template slot-scope="scope">
+                        ￥{{parseFloat(scope.row.deduction).toFixed(2)}}
+                      </template>
                     </el-table-column>
                     <el-table-column
                       fixed
@@ -425,42 +434,54 @@
           this.$message.info('请输入优惠券码')
           return false
         }
+        this.loading = true
         return postExchange(this.senData).then(res => {
           if(res.status ===200){
             this.fetchAllList()
             this.$message.success(res.data)
+            this.loading = false
           }else{
             this.$message.error('错误：' + (res.text || res.errorInfo || '无法获取服务端数据~' || res.data ))
+            this.loading = false
           }
           // if(res.status)
 
         })
       },
       getPaymentListO() {
+        this.loading = true
         return postAflcCouponUse(this.senDataListO).then(res => {
           if (res.status === 200) {
             this.datasetOne = res.data.list
             this.total = res.data.totalCount
+            this.loading = false
           } else {
             this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
+            this.loading = false
           }
         })
       },
       getPaymentListS() {
+        this.loading = true
         return postAflcCouponUse(this.senDataListS).then(res => {
           if (res.status === 200) {
             this.datasetSecond = res.data.list
+            this.loading = false
           } else {
             this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
+            this.loading = false
           }
         })
       },
       getPaymentListT() {
+        this.loading = true
         return postAflcCouponUse(this.senDataListThird).then(res => {
           if (res.status === 200) {
             this.datasetThird = res.data.list
+            this.loading = false
           } else {
             this.$message.error('错误：' + (err.text || err.errorInfo || '无法获取服务端数据~' || err.data ))
+            this.loading = false
           }
         })
       },
