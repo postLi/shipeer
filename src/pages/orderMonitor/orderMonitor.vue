@@ -353,8 +353,7 @@
       this.infoWindow2.setContent(tempEle.innerHTML);
       tempEle.innerHTML = "";
 
-      if (!(this.checkLogin()))
-        ;
+      this.checkLogin();
       this.getOrder(null, true);
 
       // AMap.event.addListener(this.mp, "click", function (e) {
@@ -373,13 +372,13 @@
 
         v = localStorage.get("28ky-userdata");
         if (v == null || v.userToken == null) {
-          this.notLogin();
+          // this.notLogin();
           return false;
         }
 
         v = VueJsCookie.get('28kytoken');
         if (v == null) {
-          this.notLogin();
+          // this.notLogin();
           return false;
         }
 

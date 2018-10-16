@@ -36,18 +36,13 @@
             <el-form-item class="" prop="userPassword">
               <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"
                         clearable @keyup.enter.native="subLogin">
-
               </el-input>
-              <!--<el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-goods" v-model="userData.userPassword"-->
-              <!--maxlength="6" clearable>-->
-
-              <!--</el-input>-->
             </el-form-item>
             <el-form-item class="" prop="pwVcode">
               <el-input v-model="userData.pwVcode" placeholder="请输入图形验证码" :maxlength="6" clearable
                         @keyup.enter.native="subLogin">
                 <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
+                  <img :src="imgsrc" @click="changeVcode">
                 </template>
               </el-input>
             </el-form-item>
@@ -62,9 +57,10 @@
             </el-form-item>
 
             <el-form-item class="" prop="verGra">
-              <el-input :maxlength="5" placeholder="请输入图形验证码" v-model="verData.verGra" clearable @keyup.enter.native="subLogin">
+              <el-input :maxlength="5" placeholder="请输入图形验证码" v-model="verData.verGra" clearable
+                        @keyup.enter.native="subLogin">
                 <template slot="append">
-                  <img :src="imgsrc" @click="changeVcode" alt="">
+                  <img :src="imgsrc" @click="changeVcode">
                 </template>
               </el-input>
             </el-form-item>
@@ -72,7 +68,9 @@
             <el-form-item class="ver-note">
               <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
                 <!--<span @click="getValidNum">{{getValidtile}}</span>-->
-                <template slot="append"><el-button @click="getValidNum" :disabled="disabled">{{getValidtile}}</el-button></template>
+                <template slot="append">
+                  <el-button @click="getValidNum" :disabled="disabled">{{getValidtile}}</el-button>
+                </template>
               </el-input>
             </el-form-item>
           </el-form>
@@ -111,16 +109,16 @@
       let _this = this
       const checkvcode = function (rule, value, callback) {
         if (!value) {
-          callback(new Error('验证码错误，或者验证码已失效，请重新获取'))
+          callback(new Error('请输入正确的验证码'))
         } else {
           validLoginCode(value).then(result => {
             if (result.status == 200) {
               callback()
             } else {
-              callback(new Error('请输入正确的验证码'))
+              callback(new Error('验证码错误，或者验证码已失效，请点击更换验证码'))
             }
           }).catch(err => {
-            callback(new Error('请求出错了'))
+            callback(new Error('服务端返回数据错误，请稍候再试'))
           })
         }
       }
@@ -143,7 +141,7 @@
         getValidtile: '获取验证码',
         loading: false,
         disabled: false,
-        zero:'',
+        zero: '',
         tabId: 0,
         userData: {
           userPhone: '13000000001',
@@ -182,10 +180,9 @@
       }
     },
     mounted() {
-      this.changeVcode()
-      this.getServerPhone()
-      //VueJsCookie.get('28kyuPhone')
-      if(VueJsCookie.get('28kyuPhone')){
+      this.changeVcode();
+      this.getServerPhone();
+      if (VueJsCookie.get('28kyuPhone')) {
         this.userData.userPhone = VueJsCookie.get('28kyuPhone')
         this.verData.verPhone = VueJsCookie.get('28kyuPhone')
       }
@@ -208,13 +205,13 @@
       getValidNum() {
         if (!this.verData.verPhone) {
           this.$message({
-            message: '请输入正确手机号码~',
+            message: '请输入正确手机号码.',
             type: 'warning'
           })
         }
         else if (!this.verData.verGra) {
           this.$message({
-            message: '请输入图形验证码~',
+            message: '请输入图形验证码.',
             type: 'warning'
           })
         }
@@ -255,32 +252,30 @@
         if (this.tabId === 0) {
           this.$refs['userLogin'].validate(valid => {
             if (valid) {
-              // this.loading = true
+              this.loading = true;
               let userPassword = md5(this.userData.userPassword)
               login(this.userData.userPhone + '|aflc-2', userPassword).then(data => {
-                if(data.status) {
+                if (data.status) {
                   this.$message({
-                    message: '您的账号或者密码有误~',
+                    message: '您的账号或者密码有误.',
                     type: 'warning'
-                  })
-                }else{
+                  });
+                } else {
                   VueJsCookie.set('28kytoken', data.access_token)
                   VueJsCookie.set('28kyuPhone', this.userData.userPhone)
-                  // 跳转到首页
                   this.$router.push({path: '/order'})
                 }
-              }).catch(err=>{
+                this.loading = false;
+              }).catch(err => {
                 this.$message({
-                  message: '您的账号或者密码有误~',
+                  message: '服务端返回数据错误，请稍候再试.',
                   type: 'warning'
-                })
+                });
+                this.loading = false;
               })
-            } else {
-
             }
-          })
+          });
         } else {
-
           this.$refs['verLogin'].validate(valid => {
             if (valid) {
               let verNote = md5(this.verData.verNote)
@@ -291,16 +286,14 @@
                 // 跳转到首页
                 this.$router.push({path: '/orderMonitor'})
                 this.loading = false
-              }).catch(err=>{
+              }).catch(err => {
                 this.$message({
                   message: '您的账号或者密码有误~',
                   type: 'warning'
                 })
               })
-            } else {
-
             }
-          })
+          });
         }
 
         // http://192.168.1.78:7010/aflc-common/aflcCommonSysDistApi/getPlatformCustomerServicePhone
