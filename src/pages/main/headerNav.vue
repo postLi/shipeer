@@ -73,12 +73,8 @@
         if (res.status === 200) {
           this.userInfoData = res.data
           setUserInfo(this.userInfoData)
-        } else {
-          //this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res)))
         }
-
-      })
-      // }
+      });
     },
     methods: {
       ...mapActions(['setBodyWidth']),
