@@ -36,7 +36,6 @@ export function login(username, password, orgid) {
 
 export function loginValid(username, password, orgid) {
   var grant_type = 'authorization_code'
-  var scope = 'webApp'
   const form = new FormData()
   form.append('mobile', username)
   form.append('code', password)

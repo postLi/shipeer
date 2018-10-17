@@ -73,7 +73,6 @@
       return getUser(this.uPhone).then(res => {
         if (res.status === 200) {
           this.userInfoData = res.data;
-          console.log("deng: " + res);
           setUserInfo(this.userInfoData);
         }
       });

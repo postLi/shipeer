@@ -30,7 +30,6 @@
             <el-form-item class="" prop="userPhone">
               <el-input :maxlength="11" placeholder="请输入手机号码" prefix-icon="el-icon-mobile-phone"
                         v-model="userData.userPhone" clearable @keyup.enter.native="subLogin">
-
               </el-input>
             </el-form-item>
             <el-form-item class="" prop="userPassword">
@@ -46,16 +45,13 @@
                 </template>
               </el-input>
             </el-form-item>
-
           </el-form>
-          <el-form class="tab-verClass" v-show="tabId===1" :model="verData" :rules="verRules" ref="verLogin">
-            <!--prop="verPhone"-->
-            <el-form-item class="">
+          <el-form class="tab-verClass" v-show="tabId===1" :model="verData" ref="verLogin" :rules="verRules">
+            <el-form-item class="" prop="verPhone">
               <el-input placeholder="请输入手机号码" :maxlength="11" prefix-icon="el-icon-mobile-phone"
                         v-model="verData.verPhone" clearable @keyup.enter.native="subLogin">
               </el-input>
             </el-form-item>
-
             <el-form-item class="" prop="verGra">
               <el-input :maxlength="5" placeholder="请输入图形验证码" v-model="verData.verGra" clearable
                         @keyup.enter.native="subLogin">
@@ -64,10 +60,8 @@
                 </template>
               </el-input>
             </el-form-item>
-            <!--prop="verNote"-->
             <el-form-item class="ver-note">
               <el-input placeholder="请输入短信验证码" v-model="verData.verNote" clearable @keyup.enter.native="subLogin">
-                <!--<span @click="getValidNum">{{getValidtile}}</span>-->
                 <template slot="append">
                   <el-button @click="getValidNum" :disabled="disabled">{{getValidtile}}</el-button>
                 </template>
@@ -124,10 +118,10 @@
       }
       const checkVerNote = function (rule, value, callback) {
         if (!_this.verData.verPhone) {
-          callback(new Error('请输入正确手机号码'))
+          callback(new Error('请输入正确的手机号码'))
         }
         else if (!_this.verData.verGra) {
-          callback(new Error('请输入图形验证码'))
+          callback(new Error('请输入正确的图形验证码'))
         }
         else {
           callback()
@@ -158,7 +152,7 @@
             {required: true, message: "密码不能为空", trigger: 'blur',}
           ],
           userPhone: [
-            {required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
+            {required: true, message: "请输入正确的手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
           ],
           pwVcode: [
             {
@@ -168,13 +162,13 @@
         },
         verRules: {
           verPhone: [
-            {required: true, message: "请输入正确手机号码", pattern: REGEX.MOBILE, trigger: 'blur',}
+            {required: true, message: "请输入正确的手机号码", pattern: REGEX.MOBILE, trigger: 'blur'}
           ],
           verGra: [{
             validator: checkvcode, trigger: 'blur'
           }],
           verNote: [{
-            validator: checkVerNote, trigger: 'blur'
+            required: true, message: "请输入正确的短信验证码", trigger: 'blur'
           }]
         }
       }
@@ -203,45 +197,37 @@
         })
       },
       getValidNum() {
-        if (!this.verData.verPhone) {
-          this.$message({
-            message: '请输入正确手机号码.',
-            type: 'warning'
-          })
-        }
-        else if (!this.verData.verGra) {
-          this.$message({
-            message: '请输入图形验证码.',
-            type: 'warning'
-          })
-        }
-        else {
-          validLoginPhone(this.verData.verPhone).then(res => {
-            let wait = 60
-            if (res.status === 200) {
-              if (!this.timer) {
-                this.timer = setInterval(() => {
-                  if (wait > 1) {
-                    wait--
+        var form = this.$refs['verLogin'];
+        form.validateField("verPhone", errMsg => {
+          if (errMsg)
+            return;
+          form.validateField("verGra", errMsg => {
+            if (errMsg)
+              return;
+            validLoginPhone(this.verData.verPhone).then(res => {
+              let wait = 60
+              if (res.status === 200) {
+                if (!this.timer) {
+                  this.timer = setInterval(() => {
+                    if (wait > 1) {
+                      wait--;
 
-                    this.getValidtile = '发送成功' + wait
-                    this.zero = 0
-                    this.disabled = true
-                  }
-                  else {
-                    this.getValidtile = '获取验证码'
-                    clearInterval(this.timer);
-                    this.timer = null;
-                    this.disabled = false
-                  }
-                }, 1000)
+                      this.getValidtile = '发送成功(' + wait + ')';
+                      this.disabled = true;
+                    } else {
+                      this.getValidtile = '获取验证码';
+                      clearInterval(this.timer);
+                      this.timer = null;
+                      this.disabled = false;
+                    }
+                  }, 1000);
+                }
+              } else {
+                this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res) || '服务器端返回数据错误.'))
               }
-            } else {
-              this.$message.error('错误：' + (res.text || res.errorInfo || res.data || JSON.stringify(res) || '您的账号或者密码有误~'))
-            }
-          })
-        }
-
+            });
+          });
+        });
       },
       changeVcode() {
         this.userData.pwVcode = ''
@@ -278,20 +264,20 @@
         } else {
           this.$refs['verLogin'].validate(valid => {
             if (valid) {
-              let verNote = md5(this.verData.verNote)
+              this.loading = true;
+              let verNote = md5(this.verData.verNote);
               loginValid(this.verData.verPhone + '|aflc-2', this.verData.verNote).then((data) => {
-
-                VueJsCookie.set('28kytoken', data.access_token)
-                VueJsCookie.set('28kyuPhone', this.verData.verPhone)
-                // 跳转到首页
-                this.$router.push({path: '/orderMonitor'})
-                this.loading = false
+                VueJsCookie.set('28kytoken', data.access_token);
+                VueJsCookie.set('28kyuPhone', this.verData.verPhone);
+                this.$router.push({path: '/order'});
+                this.loading = false;
               }).catch(err => {
+                this.loading = false;
                 this.$message({
-                  message: '您的账号或者密码有误~',
+                  message: '您的账号或者短信验证码有误，或者短信验证码失效，请重新获取.',
                   type: 'warning'
-                })
-              })
+                });
+              });
             }
           });
         }
