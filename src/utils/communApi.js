@@ -16,7 +16,7 @@ let checkPhone = (rule, value, callback,int) => {
       callback();
       return true
     }else {
-      callback(new Error('请输入正确手机号码'));
+      callback(new Error('请输入正确的手机号码'));
       return false
     }
   }
