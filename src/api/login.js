@@ -146,7 +146,23 @@ export function putupdatePassword(mobile, oldPassword, newPassword, surePassword
 // /aflcShipperApi/authentication
 // 货主认证
 export function postAuthentication(params) {
-  return Axios.post('' + sw2 + '/aflcShipperApi/authentication' , params)
+  return Axios.post('' + sw2 + '/aflcShipperApi/authentication', params)
+}
+
+export function checkImageCode(rule, value, callback) {
+  if (!value) {
+    callback(new Error('请输入正确的验证码'))
+  } else {
+    validLoginCode(value).then(result => {
+      if (result.status == 200) {
+        callback()
+      } else {
+        callback(new Error('验证码错误，或者验证码已失效，请点击更换验证码'))
+      }
+    }).catch(err => {
+      callback(new Error('服务端返回数据错误，请稍候再试'))
+    })
+  }
 }
 
 
