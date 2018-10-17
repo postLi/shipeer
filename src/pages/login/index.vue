@@ -68,6 +68,9 @@
               </el-input>
             </el-form-item>
           </el-form>
+          <div class="login-btn">
+            <el-button type="success" @click="subLogin">登录</el-button>
+          </div>
           <div class='login-rember'>
             <ul>
               <li>
@@ -75,18 +78,11 @@
                 微信登录
               </li>
               <li @click="gotoRegister"> 注册</li>
-
               <li v-show="tabId===0" @click="$router.push('/passWordEdit')">忘记密码 <span>|</span></li>
-
             </ul>
           </div>
-          <div class="login-btn">
-            <el-button type="success" @click="subLogin">登录</el-button>
-          </div>
         </el-form>
-
       </div>
-
     </div>
   </div>
 </template>
@@ -446,17 +442,13 @@
 
           }
           .login-btn {
-            margin: 42px 0 40px 0;
-            padding: 20px 0;
             height: 40px;
             .el-button {
               width: 100%;
             }
           }
           .login-rember {
-
             ul {
-
               li:first-of-type {
                 float: left;
                 cursor: pointer;
